@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Sa Mạc Sinh Tử - Battle Royale</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: radial-gradient(circle at center, #2a1a0a 0%, #05050a 100%);
+    overflow: hidden; font-family: 'Segoe UI', sans-serif;
+    display: flex; justify-content: center; align-items: center; height: 100vh;
+  }
+  #gameWrap { position: relative; }
+  canvas {
+    display: block; border: 2px solid #4a3a1a;
+    box-shadow: 0 0 60px rgba(255,180,80,0.5);
+    background: #2a1a0a; border-radius: 4px; cursor: crosshair;
+  }
+  #ui { position: absolute; top: 10px; left: 10px; color: #fff; font-size: 14px; text-shadow: 0 0 6px #000; pointer-events: none; }
+  #menu {
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at center, rgba(40,20,10,0.97), rgba(5,5,15,0.99));
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    color: #fff; z-index: 10; padding: 20px; overflow-y: auto;
+  }
+  #menu h1 {
+    font-size: 42px; margin-bottom: 6px;
+    background: linear-gradient(90deg,#ffb347,#ffd166,#ff4d6d,#c77dff,#4cc9f0);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: 4px; filter: drop-shadow(0 0 20px rgba(255,180,80,0.6));
+  }
+  #menu .subtitle { color: #d4a574; margin-bottom: 20px; letter-spacing: 3px; font-size: 13px; }
+  .mode-select { display: flex; gap: 20px; margin-bottom: 25px; }
+  .mode-btn {
+    width: 220px; padding: 18px 20px;
+    background: linear-gradient(160deg, #3a2010, #1a0a05);
+    border: 2px solid #6a4a2a; border-radius: 12px; cursor: pointer;
+    transition: all .3s cubic-bezier(.34,1.56,.64,1); text-align: center;
+    color: #fff; font-family: inherit;
+  }
+  .mode-btn:hover { transform: translateY(-6px) scale(1.04); border-color: #ffb347; box-shadow: 0 12px 35px rgba(255,180,80,0.5); }
+  .mode-btn .mode-icon { font-size: 36px; display: block; margin-bottom: 8px; }
+  .mode-btn .mode-name { font-size: 17px; font-weight: bold; letter-spacing: 1px; }
+  .mode-btn .mode-desc { font-size: 11px; color: #b8a088; margin-top: 4px; }
+  .chars { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center; max-width: 900px; }
+  .card {
+    width: 140px; padding: 10px 8px;
+    background: linear-gradient(160deg, #2a1a0e, #0f0a05);
+    border: 2px solid #3a2a1a; border-radius: 12px; cursor: pointer;
+    transition: all .3s cubic-bezier(.34,1.56,.64,1); text-align: center;
+  }
+  .card:hover { transform: translateY(-6px) scale(1.04); border-color: #ffb347; box-shadow: 0 12px 35px rgba(255,180,80,0.5); }
+  .card.selected { border-color: #ffb347; box-shadow: 0 0 20px rgba(255,180,80,0.6); }
+  .card .icon { font-size: 30px; margin-bottom: 4px; display: block; }
+  .card .name { font-size: 13px; font-weight: bold; margin-bottom: 3px; letter-spacing: 1px; }
+  .card .desc { font-size: 9px; color: #b8a088; line-height: 1.4; }
+  .controls { color: #8a7050; font-size: 12px; text-align: center; line-height: 1.7; }
+  .controls b { color: #ffb347; }
+  .stage-label { color: #ffb347; font-size: 14px; letter-spacing: 2px; margin-bottom: 8px; font-weight: bold; }
+  .room-select { display: flex; flex-direction: column; gap: 12px; align-items: center; margin-bottom: 20px; }
+  .room-btn {
+    width: 280px; padding: 14px 20px;
+    background: linear-gradient(160deg, #3a2010, #1a0a05);
+    border: 2px solid #6a4a2a; border-radius: 10px; cursor: pointer;
+    color: #fff; font-family: inherit; font-size: 15px;
+    transition: all .3s; display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .room-btn:hover { transform: translateY(-3px); border-color: #ffb347; box-shadow: 0 8px 25px rgba(255,180,80,0.4); }
+  .room-btn .em { font-size: 22px; }
+  .room-input {
+    width: 280px; padding: 12px 15px;
+    background: #1a0f05; border: 2px solid #6a4a2a; border-radius: 10px;
+    color: #fff; font-family: inherit; font-size: 16px;
+    text-align: center; letter-spacing: 3px; outline: none;
+  }
+  .room-input:focus { border-color: #ffb347; box-shadow: 0 0 20px rgba(255,180,80,0.4); }
+  .room-info {
+    background: linear-gradient(160deg, #3a2010, #1a0a05);
+    border: 2px solid #6a4a2a; border-radius: 12px;
+    padding: 20px 30px; margin-bottom: 20px; text-align: center; min-width: 320px;
+  }
+  .room-id-display {
+    font-size: 36px; font-weight: bold; letter-spacing: 6px; color: #ffd166;
+    text-shadow: 0 0 20px rgba(255,209,102,0.8);
+    margin: 10px 0; padding: 10px;
+    background: rgba(0,0,0,0.5); border-radius: 8px; cursor: pointer; user-select: all;
+  }
+  .room-id-display:hover { background: rgba(255,180,80,0.2); }
+  .room-players { color: #fff; font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+  .room-players .count { color: #06d6a0; font-size: 24px; }
+  .player-list { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; margin: 12px 0; min-width: 260px; }
+  .player-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px; background: rgba(255,180,80,0.1);
+    border: 1px solid #6a4a2a; border-radius: 6px; font-size: 13px;
+  }
+  .player-item .host-badge { background: #ffd166; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+  .back-btn {
+    margin-top: 15px; padding: 8px 20px;
+    background: transparent; border: 2px solid #6a4a2a;
+    color: #b8a088; font-family: inherit; font-size: 13px;
+    border-radius: 8px; cursor: pointer; transition: all .2s;
+  }
+  .back-btn:hover { border-color: #ffb347; color: #ffd166; }
+  .start-match-btn {
+    padding: 14px 40px;
+    background: linear-gradient(160deg, #06d6a0, #059669);
+    border: 2px solid #06d6a0; color: #fff;
+    font-family: inherit; font-size: 17px; font-weight: bold;
+    border-radius: 12px; cursor: pointer; letter-spacing: 2px;
+    transition: all .3s; box-shadow: 0 0 30px rgba(6,214,160,0.4);
+  }
+  .start-match-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 0 40px rgba(6,214,160,0.7); }
+  .start-match-btn:disabled { background: #333; border-color: #555; color: #888; cursor: not-allowed; box-shadow: none; }
+  .status-text { color: #ffd166; font-size: 13px; margin-top: 10px; min-height: 20px; }
+  .status-text.error { color: #ff4d6d; }
+  .status-text.success { color: #06d6a0; }
+</style>
+</head>
+<body>
+<div id="gameWrap">
+  <canvas id="cv" width="960" height="600"></canvas>
+  <div id="ui"></div>
+  <div id="menu">
+    <h1>SA MẠC SINH TỬ</h1>
+    <p class="subtitle">B A T T L E &nbsp; R O Y A L E</p>
+    <div id="stage1">
+      <div class="stage-label">CHỌN CHẾ ĐỘ</div>
+      <div class="mode-select">
+        <button class="mode-btn" id="btnPvPBot">
+          <span class="mode-icon">🤖</span>
+          <div class="mode-name">PVP WITH BOT</div>
+          <div class="mode-desc">6 chiến binh - Sống cuối cùng thắng</div>
+        </button>
+        <button class="mode-btn" id="btnPvPFriend">
+          <span class="mode-icon">👥</span>
+          <div class="mode-name">PVP WITH FRIENDS</div>
+          <div class="mode-desc">Tối đa 5 người chơi</div>
+        </button>
+      </div>
+    </div>
+    <div id="stage2" style="display:none;">
+      <div class="stage-label">CHỌN CHIẾN BINH CỦA BẠN</div>
+      <div class="chars" id="charListBot"></div>
+      <button class="back-btn" onclick="backToStage1()">← Quay lại</button>
+    </div>
+    <div id="stage3" style="display:none;">
+      <div class="stage-label">CHỌN CHIẾN BINH CỦA BẠN</div>
+      <div class="chars" id="charListFriend"></div>
+      <div class="room-select">
+        <button class="room-btn" id="btnCreateRoom"><span class="em">🏠</span> TẠO PHÒNG</button>
+        <button class="room-btn" id="btnJoinRoom"><span class="em">🔑</span> NHẬP ID PHÒNG</button>
+      </div>
+      <div id="joinInputWrap" style="display:none;">
+        <input type="text" class="room-input" id="roomIdInput" placeholder="NHẬP ID PHÒNG" maxlength="6">
+        <button class="room-btn" id="btnConfirmJoin" style="margin-top:10px;">XÁC NHẬN</button>
+      </div>
+      <div class="status-text" id="friendStatus"></div>
+      <button class="back-btn" onclick="backToStage1()">← Quay lại</button>
+    </div>
+    <div id="stage4" style="display:none;">
+      <div class="room-info">
+        <div style="color:#b8a088;font-size:12px;letter-spacing:2px;">ID PHÒNG (BẤM ĐỂ COPY)</div>
+        <div class="room-id-display" id="roomIdDisplay" onclick="copyRoomId()">------</div>
+        <div class="room-players">👥 <span class="count" id="playerCount">0</span> / 05</div>
+        <div class="player-list" id="playerList"></div>
+      </div>
+      <div class="status-text" id="lobbyStatus">Đang chờ người chơi...</div>
+      <button class="start-match-btn" id="btnStartMatch" style="display:none;">BẮT ĐẦU TRẬN ĐẤU</button>
+      <button class="back-btn" onclick="leaveRoom()">← Rời phòng</button>
+    </div>
+    <div class="controls">
+      <b>WASD</b> di chuyển &nbsp;|&nbsp; <b>Chuột</b> ngắm &nbsp;|&nbsp; <b>Chuột trái</b> đánh<br>
+      <b>Q</b> · <b>E</b> · <b>R</b> chiêu thức
+    </div>
+  </div>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+const W = cv.width, H = cv.height;
+const menu = document.getElementById('menu');
+const uiEl = document.getElementById('ui');
+
+const keys = {};
+const mouse = { x: W/2, y: H/2, down: false };
+addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; });
+addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+cv.addEventListener('mousemove', e => {
+  const r = cv.getBoundingClientRect();
+  mouse.x = (e.clientX - r.left) * (W / r.width);
+  mouse.y = (e.clientY - r.top) * (H / r.height);
+});
+cv.addEventListener('mousedown', () => { mouse.down = true; });
+cv.addEventListener('mouseup', () => { mouse.down = false; });
+cv.addEventListener('contextmenu', e => e.preventDefault());
+
+const rand = (a,b) => a + Math.random()*(b-a);
+const dist = (a,b) => Math.hypot(a.x-b.x, a.y-b.y);
+const clamp = (v,a,b) => Math.max(a, Math.min(b,v));
+const lerp = (a,b,t) => a + (b-a)*t;
+const easeOut = t => 1 - Math.pow(1-t, 3);
+
+const CHAR_DATA = [
+  { name: 'BÌNH AN', color: '#4cc9f0', color2: '#1a5f8a', accent: '#a0e7ff', icon: '🧙',
+    hp: 100, speed: 2.7, radius: 16, atkDmg: 6, atkRange: 260, atkCd: 20, melee: false,
+    skills: ['Dịch Chuyển', 'Cầu Lửa', 'Liên Hoàn Đạn'], skillCd: [280, 240, 480],
+    desc: 'Xạ thủ<br>Dịch Chuyển · Cầu Lửa · Liên Hoàn Đạn' },
+  { name: 'BÌNH MINH', color: '#ffd166', color2: '#a06b1a', accent: '#ffedb3', icon: '🛡️',
+    hp: 160, speed: 1.9, radius: 22, atkDmg: 14, atkRange: 55, atkCd: 34, melee: true,
+    skills: ['Địa Chấn', 'Húc', 'Cuồng Nộ'], skillCd: [280, 200, 420],
+    desc: 'Đấu sĩ<br>Địa Chấn · Húc · Cuồng Nộ' },
+  { name: 'KHẢI KIỆT', color: '#ff4d6d', color2: '#8a1a30', accent: '#ff9db1', icon: '⚔️',
+    hp: 110, speed: 3.2, radius: 16, atkDmg: 9, atkRange: 60, atkCd: 16, melee: true,
+    skills: ['Chém Xoáy', 'Lướt Kiếm', 'Bão Kiếm'], skillCd: [180, 150, 400],
+    desc: 'Sát thủ<br>Chém Xoáy · Lướt Kiếm · Bão Kiếm' },
+  { name: 'KHÔI NGUYÊN', color: '#ffd700', color2: '#8a6a00', accent: '#fff4b3', icon: '🌟',
+    hp: 130, speed: 2.3, radius: 18, atkDmg: 11, atkRange: 70, atkCd: 24, melee: true,
+    skills: ['Thánh Quang', 'Khiên Chắn', 'Tháp Hủy Diệt'], skillCd: [200, 280, 5400],
+    desc: 'Thánh kỵ sĩ<br>Thánh Quang · Khiên Chắn · Tháp Hủy Diệt' },
+  { name: 'ANNIE NÂU', color: '#c77dff', color2: '#4a1a6a', accent: '#e0c8ff', icon: '🔮',
+    hp: 95, speed: 2.5, radius: 16, atkDmg: 7, atkRange: 230, atkCd: 24, melee: false,
+    skills: ['Hắc Cầu', 'Trói Hồn', 'Triệu Hồi Nhện'], skillCd: [160, 220, 720],
+    desc: 'Pháp sư bóng tối<br>Hắc Cầu · Trói Hồn · Triệu Hồi Nhện' }
+];
+
+// Render cards
+function buildCharLists() {
+  const html = CHAR_DATA.map((c, i) => `
+    <div class="card" data-char="${i}">
+      <span class="icon">${c.icon}</span>
+      <div class="name">${c.name}</div>
+      <div class="desc">${c.desc}</div>
+    </div>
+  `).join('');
+  document.getElementById('charListBot').innerHTML = html;
+  document.getElementById('charListFriend').innerHTML = html;
+}
+buildCharLists();
+
+let player = null;
+let bots = [];
+let allFighters = [];
+let remotePlayersMap = {};
+let projectiles = [];
+let particles = [];
+let effects = [];
+let damageTexts = [];
+let spiderMinions = [];
+let gameTime = 0;
+let selectedChar = 0;
+let matchState = 'countdown';
+let countdownTimer = 180;
+let gameOver = false;
+let matchOver = false;
+let winner = null;
+let pvpKills = 0;
+let screenShake = 0;
+let hitStop = 0;
+let aliveCount = 6;
+let killFeed = [];
+let currentMode = 'bot';
+let socket = null;
+let myRoomId = null;
+let isHost = false;
+let myPlayerId = null;
+let myName = 'PLAYER';
+
+let activeTimeouts = [];
+let activeIntervals = [];
+
+function safeSetTimeout(fn, ms) {
+  const id = setTimeout(() => {
+    activeTimeouts = activeTimeouts.filter(t => t !== id);
+    if (!matchOver && !gameOver) fn();
+  }, ms);
+  activeTimeouts.push(id);
+  return id;
+}
+function safeSetInterval(fn, ms) {
+  const id = setInterval(() => {
+    if (matchOver || gameOver) { clearInterval(id); activeIntervals = activeIntervals.filter(i => i !== id); return; }
+    fn();
+  }, ms);
+  activeIntervals.push(id);
+  return id;
+}
+function clearAllTimers() {
+  activeTimeouts.forEach(id => clearTimeout(id));
+  activeIntervals.forEach(id => clearInterval(id));
+  activeTimeouts = []; activeIntervals = [];
+}
+
+// ===== DRAW WEAPONS =====
+function drawMageGun(c, r, t, chargeAmount, atkAnim) {
+  c.save();
+  const gunGrd = c.createLinearGradient(0, -8, 0, 8);
+  gunGrd.addColorStop(0, '#3a3a4a'); gunGrd.addColorStop(0.5, '#5a5a6e'); gunGrd.addColorStop(1, '#1a1a2a');
+  c.fillStyle = gunGrd; c.strokeStyle = '#0a0a1a'; c.lineWidth = 1.5;
+  c.beginPath();
+  c.moveTo(r*0.6, -7); c.lineTo(r*1.8, -6); c.lineTo(r*1.8, 6); c.lineTo(r*0.6, 7);
+  c.closePath(); c.fill(); c.stroke();
+  c.fillStyle = '#2a2a3a'; c.fillRect(r*1.8, -3, r*0.4, 6);
+  c.strokeRect(r*1.8, -3, r*0.4, 6);
+  c.fillStyle = '#4cc9f0'; c.shadowColor = '#4cc9f0';
+  c.shadowBlur = 12 + atkAnim*15 + chargeAmount*20;
+  c.fillRect(r*0.7, -3, r*1.1, 6);
+  c.shadowBlur = 0;
+  c.restore();
+}
+function drawMinigun(c, r, t, spinAmount) {
+  c.save();
+  const bodyGrd = c.createLinearGradient(0, -14, 0, 14);
+  bodyGrd.addColorStop(0, '#4a4a5e'); bodyGrd.addColorStop(0.5, '#6a6a7e'); bodyGrd.addColorStop(1, '#1a1a2a');
+  c.fillStyle = bodyGrd; c.strokeStyle = '#0a0a1a'; c.lineWidth = 2;
+  c.beginPath();
+  c.moveTo(r*0.3, -12); c.lineTo(r*1.4, -14); c.lineTo(r*1.6, -8);
+  c.lineTo(r*1.6, 8); c.lineTo(r*1.4, 14); c.lineTo(r*0.3, 12);
+  c.closePath(); c.fill(); c.stroke();
+  const barrelX = r*1.7;
+  for (let i=0;i<6;i++) {
+    const a = i * Math.PI/3 + spinAmount;
+    const by = Math.sin(a) * 6;
+    const bs = 1 + Math.cos(a) * 0.3;
+    c.fillStyle = '#3a3a4a'; c.strokeStyle = '#0a0a1a'; c.lineWidth = 1;
+    c.beginPath(); c.ellipse(barrelX, by, r*0.35, 3*bs, 0, 0, Math.PI*2);
+    c.fill(); c.stroke();
+  }
+  c.fillStyle = '#2a2a3a'; c.fillRect(barrelX + r*0.3, -3, r*0.35, 6);
+  c.fillStyle = '#4cc9f0'; c.shadowColor = '#4cc9f0'; c.shadowBlur = 20;
+  c.fillRect(r*0.5, -3, r*0.9, 6);
+  c.shadowBlur = 0;
+  c.restore();
+}
+function drawTankHammer(c, r, t, swingAngle) {
+  c.save();
+  const handleGrd = c.createLinearGradient(0, 0, r*1.8, 0);
+  handleGrd.addColorStop(0, '#2a1810'); handleGrd.addColorStop(0.5, '#5a3a1a'); handleGrd.addColorStop(1, '#2a1810');
+  c.strokeStyle = handleGrd; c.lineWidth = 6; c.lineCap = 'round';
+  c.beginPath(); c.moveTo(r*0.5, r*0.3); c.lineTo(r*1.8, r*0.3); c.stroke();
+  c.save(); c.translate(r*1.85, r*0.3); c.rotate(swingAngle);
+  const hammerGrd = c.createLinearGradient(-15, -15, 15, 15);
+  hammerGrd.addColorStop(0, '#b8b8c8'); hammerGrd.addColorStop(0.5, '#6a6a7a'); hammerGrd.addColorStop(1, '#3a3a4a');
+  c.fillStyle = hammerGrd; c.strokeStyle = '#2a2a3a'; c.lineWidth = 2;
+  c.beginPath();
+  c.moveTo(-14, -14); c.lineTo(14, -16); c.lineTo(18, 0); c.lineTo(14, 16); c.lineTo(-14, 14);
+  c.closePath(); c.fill(); c.stroke();
+  c.restore(); c.restore();
+}
+function drawDualSword(c, r, t, swingAmount, side) {
+  c.save();
+  c.rotate(side * 0.4);
+  c.fillStyle = '#1a1a2a';
+  c.fillRect(r*0.3, -3 + side*8, r*0.35, 6);
+  const guardGrd = c.createLinearGradient(r*0.65, 0, r*0.65 + 8, 0);
+  guardGrd.addColorStop(0, '#ffd166'); guardGrd.addColorStop(1, '#a06b1a');
+  c.fillStyle = guardGrd;
+  c.fillRect(r*0.62, -8 + side*8, 5, 16);
+  const bladeGrd = c.createLinearGradient(r*0.67, -2, r*0.67, 2);
+  bladeGrd.addColorStop(0, '#ffffff'); bladeGrd.addColorStop(0.3, '#e0e0f0');
+  bladeGrd.addColorStop(0.7, '#9090a8'); bladeGrd.addColorStop(1, '#505060');
+  c.fillStyle = bladeGrd; c.shadowColor = '#ff4d6d'; c.shadowBlur = 12;
+  c.beginPath();
+  c.moveTo(r*0.67, -3 + side*8); c.lineTo(r*1.75, -2 + side*8);
+  c.lineTo(r*1.95, side*8); c.lineTo(r*1.75, 2 + side*8); c.lineTo(r*0.67, 3 + side*8);
+  c.closePath(); c.fill();
+  c.shadowBlur = 0;
+  c.restore();
+}
+function drawHolySword(c, r, t, swingAmount) {
+  c.save();
+  c.fillStyle = '#3a2a1a'; c.fillRect(r*0.3, -3, r*0.4, 6);
+  c.fillStyle = '#ffd700'; c.shadowColor = '#ffd700'; c.shadowBlur = 15;
+  c.fillRect(r*0.68, -10, 6, 20);
+  c.beginPath(); c.arc(r*0.71, 0, 5, 0, Math.PI*2);
+  c.fillStyle = '#fff4b3'; c.fill();
+  const bladeGrd = c.createLinearGradient(r*0.7, -3, r*0.7, 3);
+  bladeGrd.addColorStop(0, '#fff'); bladeGrd.addColorStop(0.4, '#ffd700'); bladeGrd.addColorStop(1, '#fff');
+  c.fillStyle = bladeGrd; c.shadowColor = '#ffd700'; c.shadowBlur = 20;
+  c.beginPath();
+  c.moveTo(r*0.74, -3); c.lineTo(r*1.9, -2); c.lineTo(r*2.1, 0); c.lineTo(r*1.9, 2); c.lineTo(r*0.74, 3);
+  c.closePath(); c.fill();
+  c.shadowBlur = 0;
+  c.restore();
+}
+function drawShadowStaff(c, r, t, chargeAmount) {
+  c.save();
+  const woodGrd = c.createLinearGradient(0, 0, r*1.6, 0);
+  woodGrd.addColorStop(0, '#1a0a2a'); woodGrd.addColorStop(0.5, '#3a1a5a'); woodGrd.addColorStop(1, '#1a0a2a');
+  c.strokeStyle = woodGrd; c.lineWidth = 5; c.lineCap = 'round';
+  c.beginPath(); c.moveTo(r*0.3, r*0.5); c.lineTo(r*1.7, r*0.1); c.stroke();
+  const gemX = r*1.75, gemY = r*0.05;
+  c.fillStyle = '#e0c8ff'; c.shadowColor = '#c77dff';
+  c.shadowBlur = 20 + chargeAmount*20;
+  c.beginPath();
+  c.moveTo(gemX, gemY - 8 - chargeAmount*3);
+  c.lineTo(gemX + 6 + chargeAmount*2, gemY);
+  c.lineTo(gemX, gemY + 8 + chargeAmount*3);
+  c.lineTo(gemX - 6 - chargeAmount*2, gemY);
+  c.closePath(); c.fill();
+  c.shadowBlur = 0;
+  c.restore();
+}
+
+function drawCharBody(c, data, scale, animState, extraWings) {
+  const r = data.radius * scale;
+  const name = data.name;
+  const t = animState.time;
+  const walk = animState.walkPhase;
+  const bob = animState.bob;
+  const atkAnim = animState.attackProgress;
+  const castAnim = animState.castProgress;
+  const extra = animState.extra || {};
+  if (extraWings && name === 'KHÔI NGUYÊN') drawWings(c, r, t);
+
+  c.save();
+  const legBob = Math.sin(walk * Math.PI * 2) * 2;
+  c.fillStyle = data.color2; c.strokeStyle = '#000'; c.lineWidth = 1;
+  c.beginPath(); c.ellipse(-r*0.2, r*0.7 + legBob*scale, r*0.3, r*0.45, 0, 0, Math.PI*2); c.fill(); c.stroke();
+  c.beginPath(); c.ellipse(-r*0.2, r*0.7 - legBob*scale, r*0.3, r*0.45, 0, 0, Math.PI*2); c.fill(); c.stroke();
+
+  const grd = c.createRadialGradient(-r*0.3, -r*0.4, 0, 0, 0, r*1.3);
+  grd.addColorStop(0, data.accent); grd.addColorStop(0.4, data.color); grd.addColorStop(1, data.color2);
+  c.fillStyle = grd; c.strokeStyle = '#1a0a0a'; c.lineWidth = 2;
+  if (name === 'BÌNH MINH') {
+    c.beginPath(); c.ellipse(-r*0.1, 0, r*1.05, r*1.1, 0, 0, Math.PI*2); c.fill(); c.stroke();
+  } else if (name === 'ANNIE NÂU') {
+    c.beginPath(); c.ellipse(0, 0, r*0.85, r*1.05, 0, 0, Math.PI*2); c.fill(); c.stroke();
+  } else {
+    c.beginPath(); c.ellipse(0, 0, r, r*1.05, 0, 0, Math.PI*2); c.fill(); c.stroke();
+  }
+
+  const armSwing = atkAnim * 0.8 - castAnim * 0.3;
+  c.save();
+  c.translate(r*0.15, -r*0.15);
+  c.rotate(armSwing);
+  c.save();
+  c.rotate(atkAnim * 1.2);
+  if (name === 'BÌNH AN') {
+    if (extra.minigunActive) drawMinigun(c, r*0.5, t, extra.minigunSpin || 0);
+    else drawMageGun(c, r*0.5, t, castAnim, atkAnim);
+  } else if (name === 'BÌNH MINH') drawTankHammer(c, r*0.5, t, atkAnim * 1.5);
+  else if (name === 'KHÔI NGUYÊN') drawHolySword(c, r*0.5, t, atkAnim);
+  else if (name === 'ANNIE NÂU') drawShadowStaff(c, r*0.5, t, castAnim);
+  c.restore(); c.restore();
+
+  c.save();
+  c.translate(-r*0.05, -bob*scale);
+  const headR = r*0.7;
+  const headGrd = c.createRadialGradient(-headR*0.3, -headR*0.3, 0, 0, 0, headR);
+  headGrd.addColorStop(0, '#ffe0c8'); headGrd.addColorStop(1, '#c9a58a');
+  c.fillStyle = headGrd; c.strokeStyle = '#1a0a0a'; c.lineWidth = 2;
+  c.beginPath(); c.arc(0, -r*0.5, headR, 0, Math.PI*2); c.fill(); c.stroke();
+
+  if (name === 'BÌNH AN') {
+    c.fillStyle = '#2a1a1a';
+    c.beginPath(); c.arc(-headR*0.2, -r*0.5 - headR*0.3, headR*0.85, Math.PI, Math.PI*2); c.fill();
+    c.fillStyle = 'rgba(30, 60, 100, 0.7)'; c.strokeStyle = '#ffd166'; c.lineWidth = 1.8;
+    c.beginPath(); c.ellipse(headR*0.15, -r*0.5 - headR*0.15, headR*0.28, headR*0.22, 0, 0, Math.PI*2); c.fill(); c.stroke();
+    c.beginPath(); c.ellipse(headR*0.15, -r*0.5 + headR*0.15, headR*0.28, headR*0.22, 0, 0, Math.PI*2); c.fill(); c.stroke();
+  } else if (name === 'BÌNH MINH') {
+    c.fillStyle = '#2a1a1a';
+    c.beginPath(); c.arc(0, -r*0.55, headR*0.75, 0, Math.PI*2); c.fill();
+    c.fillStyle = '#fff';
+    c.beginPath(); c.ellipse(headR*0.2, -r*0.5 - headR*0.15, headR*0.18, headR*0.2, 0, 0, Math.PI*2); c.fill();
+    c.beginPath(); c.ellipse(headR*0.2, -r*0.5 + headR*0.15, headR*0.18, headR*0.2, 0, 0, Math.PI*2); c.fill();
+    c.fillStyle = '#000';
+    c.beginPath(); c.arc(headR*0.25, -r*0.5 - headR*0.15, headR*0.09, 0, Math.PI*2); c.fill();
+    c.beginPath(); c.arc(headR*0.25, -r*0.5 + headR*0.15, headR*0.09, 0, Math.PI*2); c.fill();
+  } else if (name === 'KHẢI KIỆT') {
+    c.fillStyle = '#1a0a1a';
+    c.beginPath(); c.arc(0, -r*0.5, headR*0.9, 0, Math.PI*2); c.fill();
+    c.fillStyle = '#ff4d6d';
+    c.fillRect(-headR*0.9, -r*0.5 - headR*0.5, headR*1.8, headR*0.15);
+    c.fillStyle = '#fff';
+    c.beginPath(); c.ellipse(headR*0.3, -r*0.5 - headR*0.15, headR*0.15, headR*0.1, 0, 0, Math.PI*2); c.fill();
+    c.beginPath(); c.ellipse(headR*0.3, -r*0.5 + headR*0.15, headR*0.15, headR*0.1, 0, 0, Math.PI*2); c.fill();
+    c.fillStyle = '#ff4d6d';
+    c.beginPath(); c.arc(headR*0.35, -r*0.5 - headR*0.15, headR*0.07, 0, Math.PI*2); c.fill();
+    c.beginPath(); c.arc(headR*0.35, -r*0.5 + headR*0.15, headR*0.07, 0, Math.PI*2); c.fill();
+  } else if (name === 'KHÔI NGUYÊN') {
+    c.fillStyle = '#ffe066';
+    c.beginPath(); c.arc(0, -r*0.5, headR*0.95, 0, Math.PI*2); c.fill();
+    c.fillStyle = '#fff';
+    c.beginPath(); c.ellipse(headR*0.25, -r*0.5 - headR*0.15, headR*0.18, headR*0.15, 0, 0, Math.PI*2); c.fill();
+    c.beginPath(); c.ellipse(headR*0.25, -r*0.5 + headR*0.15, headR*0.18, headR*0.15, 0, 0, Math.PI*2); c.fill();
+    c.fillStyle = '#4cc9f0';
+    c.beginPath(); c.arc(headR*0.3, -r*0.5 - headR*0.15, headR*0.08, 0, Math.PI*2); c.fill();
+    c.beginPath(); c.arc(headR*0.3, -r*0.5 + headR*0.15, headR*0.08, 0, Math.PI*2); c.fill();
+  } else if (name === 'ANNIE NÂU') {
+    c.fillStyle = '#3a1a4a'; c.strokeStyle = '#c77dff'; c.lineWidth = 1;
+    c.beginPath(); c.arc(0, -r*0.5, headR*0.95, 0, Math.PI*2); c.fill();
+    c.beginPath();
+    c.moveTo(-headR*0.7, -r*0.5 - headR*0.3);
+    c.quadraticCurveTo(-headR*2.3, -r*0.5 + headR*0.5, -headR*2.0, r*0.6);
+    c.quadraticCurveTo(-headR*1.5, r*0.3, -headR*1.1, -r*0.2);
+    c.fill(); c.stroke();
+    c.fillStyle = '#fff';
+    c.beginPath(); c.ellipse(headR*0.3, -r*0.5 - headR*0.15, headR*0.2, headR*0.15, 0, 0, Math.PI*2); c.fill();
+    c.beginPath(); c.ellipse(headR*0.3, -r*0.5 + headR*0.15, headR*0.2, headR*0.15, 0, 0, Math.PI*2); c.fill();
+    c.fillStyle = '#c77dff';
+    c.beginPath(); c.arc(headR*0.35, -r*0.5 - headR*0.15, headR*0.09, 0, Math.PI*2); c.fill();
+    c.beginPath(); c.arc(headR*0.35, -r*0.5 + headR*0.15, headR*0.09, 0, Math.PI*2); c.fill();
+  }
+  c.restore();
+  c.restore();
+}
+
+function drawWings(c, r, t) {
+  c.save();
+  for (let side = -1; side <= 1; side += 2) {
+    for (let layer = 0; layer < 2; layer++) {
+      const scale = 1 - layer * 0.25;
+      const dist = 15 + layer * 8;
+      const flap = Math.sin(t*0.15 + layer) * 0.3;
+      c.save();
+      c.rotate(side * (0.4 + layer*0.2) + flap*side);
+      const wingGrd = c.createLinearGradient(0, 0, -r*2.5 * scale, 0);
+      wingGrd.addColorStop(0, 'rgba(255,215,0,0.9)');
+      wingGrd.addColorStop(0.5, 'rgba(255,240,150,0.7)');
+      wingGrd.addColorStop(1, 'rgba(255,215,0,0)');
+      c.fillStyle = wingGrd; c.shadowColor = '#ffd700'; c.shadowBlur = 20;
+      c.beginPath();
+      c.moveTo(-dist, -r*0.3 * side);
+      c.quadraticCurveTo(-r*2 * scale, -r*1.5 * scale, -r*2.5 * scale, -r*0.5 * scale);
+      c.quadraticCurveTo(-r*1.8 * scale, -r*0.2 * scale, -dist, r*0.2 * side);
+      c.closePath(); c.fill();
+      c.restore();
+    }
+  }
+  c.restore();
+}
+
+class Player {
+  constructor(data, isBot, botIndex, totalFighters, isRemote, remoteId) {
+    this.data = data;
+    this.isBot = isBot || false;
+    this.isRemote = isRemote || false;
+    this.remoteId = remoteId || null;
+    this.botIndex = botIndex || 0;
+    if (totalFighters) {
+      const angle = (botIndex + (isBot ? 1 : 0)) / totalFighters * Math.PI * 2;
+      const radius = 240;
+      this.x = clamp(W/2 + Math.cos(angle) * radius, 60, W-60);
+      this.y = clamp(H/2 + Math.sin(angle) * radius, 60, H-60);
+      this.spawnAngle = angle;
+    } else {
+      this.x = W/2; this.y = H/2; this.spawnAngle = 0;
+    }
+    this.hp = data.hp; this.maxHp = data.hp;
+    this.radius = data.radius;
+    this.angle = 0;
+    this.atkCd = 0;
+    this.skillCds = [0,0,0];
+    this.hitFlash = 0;
+    this.buffs = { rage: 0, lunge: 0, speedBoost: 0, invuln: 0, minigun: 0, shield: 0, wings: 0 };
+    this.iframe = 0;
+    this.dead = false;
+    this.castLock = 0;
+    this.ghosts = [];
+    this.walkPhase = 0;
+    this.bob = 0;
+    this.attackAnim = 0;
+    this.attackAnimMax = 10;
+    this.castAnim = 0;
+    this.castAnimMax = 20;
+    this.minigunSpin = 0;
+    this.minigunTimer = 0;
+    this.target = null;
+    this.aiTimer = 0;
+    this.displayName = '';
+  }
+
+  update() {
+    if (this.dead) return;
+    if (this.isRemote) return; // Remote players only synced via socket
+
+    if (matchState === 'countdown') {
+      this.bob = Math.sin(gameTime * 0.06) * 0.8;
+      this.angle = this.spawnAngle + Math.PI;
+      return;
+    }
+    if (matchState !== 'fighting') return;
+
+    if (this.atkCd > 0) this.atkCd--;
+    if (this.hitFlash > 0) this.hitFlash--;
+    if (this.iframe > 0) this.iframe--;
+    if (this.castLock > 0) this.castLock--;
+    if (this.buffs.rage > 0) this.buffs.rage--;
+    if (this.buffs.lunge > 0) this.buffs.lunge--;
+    if (this.buffs.speedBoost > 0) this.buffs.speedBoost--;
+    if (this.buffs.invuln > 0) this.buffs.invuln--;
+    if (this.buffs.shield > 0) this.buffs.shield--;
+    if (this.buffs.wings > 0) this.buffs.wings--;
+    if (this.attackAnim > 0) this.attackAnim--;
+    if (this.castAnim > 0) this.castAnim--;
+
+    if (this.buffs.minigun > 0) {
+      this.buffs.minigun--;
+      this.minigunSpin += 0.6;
+      this.minigunTimer++;
+      if (this.minigunTimer >= 4) {
+        this.minigunTimer = 0;
+        this.fireMinigunBullet();
+      }
+      if (this.buffs.minigun === 0) this.minigunSpin = 0;
+    }
+
+    for (let i=0;i<3;i++) if (this.skillCds[i] > 0) this.skillCds[i]--;
+
+    if (this.isBot) this.updateAI();
+    else this.angle = Math.atan2(mouse.y - this.y, mouse.x - this.x);
+
+    let mx = 0, my = 0;
+    if (this.castLock <= 0) {
+      if (this.isBot) {
+        if (this.aiMoveX) mx = this.aiMoveX;
+        if (this.aiMoveY) my = this.aiMoveY;
+      } else {
+        if (keys['w']) my -= 1;
+        if (keys['s']) my += 1;
+        if (keys['a']) mx -= 1;
+        if (keys['d']) mx += 1;
+      }
+    }
+    const len = Math.hypot(mx,my);
+    const moving = len > 0;
+
+    if (moving) {
+      this.walkPhase += 0.15;
+      if (this.walkPhase > 1) this.walkPhase -= 1;
+      this.bob = Math.sin(gameTime * 0.2) * 1.5;
+    } else {
+      this.walkPhase *= 0.9;
+      this.bob = Math.sin(gameTime * 0.06) * 0.8;
+    }
+
+    let speed = this.data.speed;
+    if (this.buffs.speedBoost > 0) speed *= 1.5;
+    if (this.buffs.rage > 0) speed *= 1.3;
+
+    if (this.buffs.lunge > 0) {
+      this.x += Math.cos(this.angle) * 12;
+      this.y += Math.sin(this.angle) * 12;
+      this.ghosts.push({ x: this.x, y: this.y, angle: this.angle, life: 12 });
+    } else if (moving) {
+      this.x += (mx/len) * speed;
+      this.y += (my/len) * speed;
+    }
+    this.x = clamp(this.x, this.radius, W - this.radius);
+    this.y = clamp(this.y, this.radius, H - this.radius);
+    this.ghosts.forEach(g => g.life--);
+    this.ghosts = this.ghosts.filter(g => g.life > 0);
+
+    if (!this.isBot) {
+      if (mouse.down && this.atkCd <= 0 && this.castLock <= 0 && this.buffs.minigun <= 0) this.attack();
+      if (keys['q'] && this.skillCds[0] <= 0 && this.castLock <= 0) this.useSkill(0);
+      if (keys['e'] && this.skillCds[1] <= 0 && this.castLock <= 0) this.useSkill(1);
+      if (keys['r'] && this.skillCds[2] <= 0 && this.castLock <= 0) this.useSkill(2);
+    }
+  }
+
+  updateAI() {
+    this.aiTimer--;
+    const alive = allFighters.filter(p => p && !p.dead && p !== this);
+    if (alive.length === 0) { this.aiMoveX = 0; this.aiMoveY = 0; return; }
+    let nearest = null, nd = 99999;
+    for (const p of alive) {
+      const d = dist(this, p);
+      if (d < nd) { nd = d; nearest = p; }
+    }
+    this.target = nearest;
+    if (!nearest) { this.aiMoveX = 0; this.aiMoveY = 0; return; }
+    this.angle = Math.atan2(nearest.y - this.y, nearest.x - this.x);
+    if (this.aiTimer <= 0) {
+      this.aiTimer = rand(20, 60);
+      const r = Math.random();
+      if (r < 0.15 && this.skillCds[2] <= 0) this.useSkill(2);
+      else if (r < 0.4 && this.skillCds[1] <= 0) this.useSkill(1);
+      else if (r < 0.65 && this.skillCds[0] <= 0) this.useSkill(0);
+    }
+    const optimalDist = this.data.melee ? 50 : 180;
+    if (nd > optimalDist + 30) {
+      this.aiMoveX = Math.cos(this.angle); this.aiMoveY = Math.sin(this.angle);
+    } else if (nd < optimalDist - 30) {
+      this.aiMoveX = -Math.cos(this.angle); this.aiMoveY = -Math.sin(this.angle);
+    } else {
+      const sideAngle = this.angle + Math.PI/2 * (Math.sin(gameTime*0.05) > 0 ? 1 : -1);
+      this.aiMoveX = Math.cos(sideAngle) * 0.5; this.aiMoveY = Math.sin(sideAngle) * 0.5;
+    }
+    if (this.atkCd <= 0 && this.castLock <= 0 && this.buffs.minigun <= 0 && nd < this.data.atkRange + 40) this.attack();
+  }
+
+  fireMinigunBullet() {
+    if (this.dead || matchOver) return;
+    const spread = (Math.random() - 0.5) * 0.25;
+    const a = this.angle + spread;
+    const sx = this.x + Math.cos(this.angle) * 40;
+    const sy = this.y + Math.sin(this.angle) * 40;
+    projectiles.push(new Projectile(sx, sy, a, 4, 7, this, this, '#a0e7ff', 12, 1.5, 500));
+  }
+
+  attack() {
+    this.atkCd = this.data.atkCd;
+    this.attackAnim = this.attackAnimMax;
+    const dmg = this.data.atkDmg * (this.buffs.rage > 0 ? 1.5 : 1);
+    const targets = allFighters.filter(p => p && !p.dead && p !== this);
+    if (!this.data.melee) {
+      const sx = this.x + Math.cos(this.angle) * 25;
+      const sy = this.y + Math.sin(this.angle) * 25;
+      projectiles.push(new Projectile(sx, sy, this.angle, 6, dmg, this, this, this.data.color, 5, 3, 380));
+    } else {
+      const range = this.data.atkRange;
+      const arc = 1.3;
+      let hitAny = false;
+      targets.forEach(e => {
+        const d = dist(this, e);
+        const a = Math.atan2(e.y - this.y, e.x - this.x);
+        let diff = Math.abs(a - this.angle);
+        if (diff > Math.PI) diff = 2*Math.PI - diff;
+        if (d < range + e.radius && diff < arc/2) { e.takeDamage(dmg, this.angle, 6, this); hitAny = true; }
+      });
+      effects.push(new SlashEffect(this.x, this.y, this.angle, range, this.data.color, 12));
+      if (hitAny) hitStop = 2;
+    }
+  }
+
+  useSkill(idx) {
+    if (this.dead || matchOver) return;
+    this.skillCds[idx] = this.data.skillCd[idx];
+    const sname = this.data.skills[idx];
+    if (!this.isBot && !this.isRemote) createSkillText(sname, this.data.color);
+    const targets = allFighters.filter(p => p && !p.dead && p !== this);
+
+    if (this.data.name === 'BÌNH AN') {
+      if (idx === 0) {
+        this.castLock = 8;
+        const tpDist = 200;
+        const nx = clamp(this.x + Math.cos(this.angle)*tpDist, 30, W-30);
+        const ny = clamp(this.y + Math.sin(this.angle)*tpDist, 30, H-30);
+        const ox = this.x, oy = this.y;
+        for (let i=0;i<=12;i++) {
+          const tt = i/12;
+          spawnParticles(lerp(ox, nx, tt), lerp(oy, ny, tt), this.data.color, 4, 2);
+        }
+        effects.push(new ShockwaveEffect(ox, oy, 70, this.data.color, 25));
+        this.x = nx; this.y = ny;
+        this.iframe = 30;
+        effects.push(new ShockwaveEffect(nx, ny, 70, '#ffffff', 25));
+      } else if (idx === 1) {
+        this.castLock = 24; this.castAnim = this.castAnimMax;
+        effects.push(new ChargeEffect(this.x, this.y, this.data.color, 24));
+        const self = this;
+        safeSetTimeout(() => {
+          if (self.dead) return;
+          const sx = self.x + Math.cos(self.angle) * 30;
+          const sy = self.y + Math.sin(self.angle) * 30;
+          projectiles.push(new Projectile(sx, sy, self.angle, 14, 40, self, self, '#ff6b35', 4, 3, 380, true));
+        }, 350);
+      } else {
+        this.castLock = 8;
+        this.buffs.minigun = 180; this.buffs.invuln = 180; this.iframe = 180;
+        this.minigunTimer = 0;
+        effects.push(new ShockwaveEffect(this.x, this.y, 100, this.data.color, 25));
+        spawnParticles(this.x, this.y, this.data.color, 30, 6);
+      }
+    } else if (this.data.name === 'BÌNH MINH') {
+      if (idx === 0) {
+        this.castLock = 25; this.castAnim = this.castAnimMax;
+        effects.push(new ChargeEffect(this.x, this.y, '#ffd166', 20));
+        const self = this;
+        safeSetTimeout(() => {
+          if (self.dead) return;
+          const radius = 160;
+          targets.forEach(e => {
+            if (dist(self, e) < radius + e.radius) {
+              const a = Math.atan2(e.y-self.y, e.x-self.x);
+              e.takeDamage(35, a, 15, self);
+            }
+          });
+          effects.push(new ShockwaveEffect(self.x, self.y, radius, '#ffd166', 40));
+        }, 380);
+      } else if (idx === 1) {
+        this.castLock = 6; this.buffs.lunge = 22;
+        const self = this;
+        for (let i=0;i<5;i++) {
+          safeSetTimeout(() => {
+            if (self.dead) return;
+            targets.forEach(e => {
+              if (dist(self, e) < self.radius + e.radius + 20) e.takeDamage(25/3, self.angle, 6, self);
+            });
+          }, i*60);
+        }
+      } else {
+        this.castLock = 30;
+        this.buffs.rage = 360; this.buffs.speedBoost = 360;
+        this.hp = Math.min(this.maxHp, this.hp + 30);
+        effects.push(new ShockwaveEffect(this.x, this.y, 120, '#ff4d6d', 30));
+      }
+    } else if (this.data.name === 'KHẢI KIỆT') {
+      if (idx === 0) {
+        this.castLock = 15;
+        const radius = 120;
+        const self = this;
+        for (let i=0;i<3;i++) {
+          safeSetTimeout(() => {
+            if (self.dead) return;
+            targets.forEach(e => {
+              if (dist(self, e) < radius + e.radius) {
+                const a = Math.atan2(e.y-self.y, e.x-self.x);
+                e.takeDamage(15, a, 4, self);
+              }
+            });
+            effects.push(new SlashEffect(self.x, self.y, i*2.1 + gameTime*0.05, radius, self.data.color, 12));
+          }, i*90);
+        }
+      } else if (idx === 1) {
+        this.castLock = 3; this.buffs.lunge = 14; this.iframe = 18;
+        const self = this;
+        safeSetTimeout(() => {
+          if (self.dead) return;
+          targets.forEach(e => {
+            if (dist(self, e) < self.radius + e.radius + 25) e.takeDamage(35, self.angle, 8, self);
+          });
+        }, 100);
+      } else {
+        this.castLock = 25;
+        let count = 0;
+        const self = this;
+        safeSetInterval(() => {
+          if (self.dead || count > 12) return;
+          const a = Math.random() * Math.PI * 2;
+          effects.push(new SlashEffect(self.x + Math.cos(a)*40, self.y + Math.sin(a)*40, a + Math.PI/2, 90, self.data.color, 12));
+          targets.forEach(e => {
+            if (dist(self, e) < 150 + e.radius) e.takeDamage(7, Math.atan2(e.y-self.y, e.x-self.x), 2, self);
+          });
+          count++;
+        }, 90);
+      }
+    } else if (this.data.name === 'KHÔI NGUYÊN') {
+      if (idx === 0) {
+        this.castLock = 20; this.castAnim = this.castAnimMax;
+        const radius = 140;
+        targets.forEach(e => {
+          if (dist(this, e) < radius + e.radius) {
+            const a = Math.atan2(e.y-this.y, e.x-this.x);
+            e.takeDamage(20, a, 8, this);
+          }
+        });
+        this.hp = Math.min(this.maxHp, this.hp + 25);
+        if (!this.isBot) addDamageText(this.x, this.y - this.radius - 20, '+25', '#06d6a0');
+        effects.push(new HolyEffect(this.x, this.y, radius, 40));
+      } else if (idx === 1) {
+        this.castLock = 10; this.buffs.shield = 240; this.iframe = 30;
+        effects.push(new ShieldEffect(this));
+      } else {
+        // NERF 1/4
+        this.castLock = 10;
+        this.buffs.wings = 120; this.buffs.invuln = 120; this.iframe = 120;
+        effects.push(new ShockwaveEffect(this.x, this.y, 100, '#ffd700', 25));
+        effects.push(new HolyEffect(this.x, this.y, 80, 30));
+      }
+    } else if (this.data.name === 'ANNIE NÂU') {
+      if (idx === 0) {
+        this.castLock = 18; this.castAnim = this.castAnimMax;
+        effects.push(new ChargeEffect(this.x, this.y, '#c77dff', 18));
+        const self = this;
+        safeSetTimeout(() => {
+          if (self.dead) return;
+          const sx = self.x + Math.cos(self.angle) * 30;
+          const sy = self.y + Math.sin(self.angle) * 30;
+          projectiles.push(new Projectile(sx, sy, self.angle, 12, 32, self, self, '#c77dff', 5, 3, 420, true));
+        }, 280);
+      } else if (idx === 1) {
+        this.castLock = 20; this.castAnim = this.castAnimMax;
+        const radius = 170;
+        targets.forEach(e => {
+          if (dist(this, e) < radius + e.radius) {
+            const a = Math.atan2(e.y-this.y, e.x-this.x);
+            e.takeDamage(15, a, 0, this);
+            effects.push(new ChainEffect(this.x, this.y, e.x, e.y, 60));
+          }
+        });
+        effects.push(new ShockwaveEffect(this.x, this.y, radius, '#c77dff', 40));
+      } else {
+        this.castLock = 15; this.castAnim = this.castAnimMax;
+        for (let i=0;i<2;i++) {
+          const angle = this.angle + (i === 0 ? -0.4 : 0.4);
+          spiderMinions.push(new SpiderMinion(this.x, this.y, angle, this));
+        }
+      }
+    }
+  }
+
+  takeDamage(dmg, angle, kb, attacker) {
+    if (this.iframe > 0 || this.dead) return;
+    if (this.buffs.shield > 0) dmg *= 0.3;
+    this.hp -= dmg;
+    this.hitFlash = 10;
+    screenShake = Math.max(screenShake, this.isBot || this.isRemote ? 3 : 6);
+    spawnParticles(this.x, this.y, '#ff4d6d', 8, 3);
+    if (this.hp <= 0) {
+      this.hp = 0; this.dead = true;
+      spawnParticles(this.x, this.y, this.data.color, 50, 7);
+      spawnParticles(this.x, this.y, '#fff', 25, 5);
+      screenShake = 20; hitStop = 5;
+      effects.push(new DeathEffect(this.x, this.y, this.data.color));
+      if (attacker) {
+        attacker.kills = (attacker.kills || 0) + 1;
+        if (attacker === player) { pvpKills++; createSkillText(`+1 KILL`, '#06d6a0'); }
+        killFeed.push({
+          killer: attacker.displayName || attacker.data.name,
+          killerColor: attacker.data.color,
+          victim: this.displayName || this.data.name,
+          victimColor: this.data.color, life: 180
+        });
+      }
+      checkWinCondition();
+    }
+  }
+
+  draw() {
+    if (this.dead) return;
+    this.ghosts.forEach(g => {
+      ctx.save();
+      ctx.globalAlpha = g.life / 20 * 0.5;
+      ctx.translate(g.x, g.y); ctx.rotate(g.angle);
+      const animState = { time: gameTime, walkPhase: this.walkPhase, bob: this.bob, attackProgress: 0, castProgress: 0, extra: {} };
+      drawCharBody(ctx, this.data, 0.85, animState, false);
+      ctx.restore();
+    });
+    if (this.buffs.wings > 0) {
+      ctx.save();
+      ctx.globalAlpha = 0.4 + Math.sin(gameTime*0.3)*0.15;
+      const r = this.radius + 40 + Math.sin(gameTime*0.2)*8;
+      const auraGrd = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, r);
+      auraGrd.addColorStop(0, 'rgba(255,215,0,0.6)');
+      auraGrd.addColorStop(0.5, 'rgba(255,215,0,0.2)');
+      auraGrd.addColorStop(1, 'rgba(255,215,0,0)');
+      ctx.fillStyle = auraGrd;
+      ctx.beginPath(); ctx.arc(this.x, this.y, r, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
+    if (this.buffs.minigun > 0) {
+      ctx.save();
+      ctx.globalAlpha = 0.4 + Math.sin(gameTime*0.4)*0.2;
+      const r = this.radius + 20;
+      ctx.strokeStyle = '#a0e7ff'; ctx.shadowColor = '#4cc9f0'; ctx.shadowBlur = 20;
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(this.x, this.y, r, 0, Math.PI*2); ctx.stroke();
+      ctx.restore();
+    }
+    if (this.buffs.shield > 0) {
+      ctx.save();
+      ctx.globalAlpha = 0.5 + Math.sin(gameTime*0.3)*0.2;
+      const r = this.radius + 22;
+      const shieldGrd = ctx.createRadialGradient(this.x, this.y, r*0.7, this.x, this.y, r);
+      shieldGrd.addColorStop(0, 'rgba(255,215,0,0)');
+      shieldGrd.addColorStop(0.7, 'rgba(255,215,0,0.4)');
+      shieldGrd.addColorStop(1, 'rgba(255,215,0,0.8)');
+      ctx.fillStyle = shieldGrd;
+      ctx.beginPath(); ctx.arc(this.x, this.y, r, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.beginPath(); ctx.ellipse(0, this.radius*0.9, this.radius*1.15, this.radius*0.45, 0, 0, Math.PI*2); ctx.fill();
+    if (this.iframe > 0 && Math.floor(gameTime/4) % 2 === 0 && this.buffs.wings <= 0) ctx.globalAlpha = 0.5;
+    ctx.rotate(this.angle);
+    if (this.hitFlash > 0) ctx.globalAlpha = 0.5 + Math.random()*0.5;
+    const animState = {
+      time: gameTime, walkPhase: this.walkPhase, bob: this.bob,
+      attackProgress: this.attackAnim / this.attackAnimMax,
+      castProgress: this.castAnim / this.castAnimMax,
+      extra: { minigunActive: this.buffs.minigun > 0, minigunSpin: this.minigunSpin }
+    };
+    drawCharBody(ctx, this.data, 1, animState, this.buffs.wings > 0);
+    ctx.restore();
+
+    if ((this.isBot || this.isRemote) && matchState !== 'countdown') {
+      const nm = this.isRemote ? (this.displayName || 'PLAYER') : this.data.name;
+      ctx.save();
+      ctx.font = 'bold 11px Segoe UI';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = this.isRemote ? '#06d6a0' : this.data.color;
+      ctx.strokeStyle = '#000'; ctx.lineWidth = 3;
+      ctx.strokeText(nm, this.x, this.y - this.radius - 42);
+      ctx.fillText(nm, this.x, this.y - this.radius - 42);
+      ctx.restore();
+    }
+    if (matchState === 'countdown') {
+      ctx.save();
+      const t = countdownTimer / 180;
+      ctx.globalAlpha = 0.6;
+      ctx.strokeStyle = this.data.color;
+      ctx.shadowColor = this.data.color; ctx.shadowBlur = 15;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius + 20 + (1-t)*30, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.restore();
+    }
+    this.drawHPBar();
+    if (!this.isBot && !this.isRemote) this.drawSkillRings();
+    this.drawSwordsOrbit();
+  }
+
+  drawSwordsOrbit() {
+    if (this.buffs.wings <= 0 || this.data.name !== 'KHÔI NGUYÊN') return;
+    const count = 1, orbitR = 40;
+    for (let i=0;i<count;i++) {
+      const a = (i / count) * Math.PI * 2 + gameTime * 0.05;
+      const sx = this.x + Math.cos(a) * orbitR;
+      const sy = this.y + Math.sin(a) * orbitR;
+      if (matchState === 'fighting') {
+        for (const e of allFighters) {
+          if (e === this || e.dead) continue;
+          if (dist({x:sx, y:sy}, e) < e.radius + 12) {
+            e.takeDamage(11, 0, 0, this);
+            effects.push(new ShockwaveEffect(e.x, e.y, 40, '#ffd700', 20));
+            hitStop = 1;
+          }
+        }
+      }
+      ctx.save();
+      ctx.translate(sx, sy); ctx.rotate(a + Math.PI/2);
+      ctx.fillStyle = '#ffd700'; ctx.shadowColor = '#ffd700'; ctx.shadowBlur = 15;
+      ctx.fillRect(-2, -18, 4, 36);
+      ctx.beginPath(); ctx.moveTo(-3, -18); ctx.lineTo(0, -26); ctx.lineTo(3, -18); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#8a6a00'; ctx.fillRect(-3, 18, 6, 6);
+      ctx.restore();
+    }
+  }
+
+  drawHPBar() {
+    const w = (this.isBot || this.isRemote) ? 50 : 60, h = (this.isBot || this.isRemote) ? 5 : 7;
+    const x = this.x - w/2, y = this.y - this.radius - ((this.isBot || this.isRemote) ? 30 : 28);
+    ctx.fillStyle = 'rgba(0,0,0,0.85)';
+    ctx.fillRect(x-2, y-2, w+4, h+4);
+    ctx.fillStyle = '#1a1a2a';
+    ctx.fillRect(x, y, w, h);
+    const pct = this.hp / this.maxHp;
+    const grd = ctx.createLinearGradient(x, y, x+w, y);
+    grd.addColorStop(0, this.data.color); grd.addColorStop(1, '#fff');
+    ctx.fillStyle = grd;
+    ctx.fillRect(x, y, w * pct, h);
+    ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1;
+    ctx.strokeRect(x, y, w, h);
+  }
+
+  drawSkillRings() {
+    for (let i=0;i<3;i++) {
+      if (this.skillCds[i] <= 0) {
+        const a = gameTime * 0.05 + i * (Math.PI*2/3);
+        ctx.save();
+        ctx.globalAlpha = 0.5 + Math.sin(gameTime*0.1 + i)*0.2;
+        ctx.strokeStyle = this.data.color; ctx.shadowColor = this.data.color; ctx.shadowBlur = 10;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius + 8 + i*4, a, a + 0.7);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+  }
+}
+
+class SpiderMinion {
+  constructor(x, y, angle, owner) {
+    this.x = x; this.y = y; this.angle = angle; this.owner = owner;
+    this.speed = 5; this.life = 600; this.dead = false;
+    this.state = 'flying'; this.target = null;
+    this.drainTimer = 0; this.wiggle = 0;
+  }
+  update() {
+    if (matchState !== 'fighting' || matchOver) return;
+    if (this.owner.dead) { this.dead = true; return; }
+    this.life--;
+    if (this.life <= 0) { this.dead = true; return; }
+    this.wiggle += 0.3;
+    if (this.state === 'flying') {
+      this.x += Math.cos(this.angle) * this.speed;
+      this.y += Math.sin(this.angle) * this.speed;
+      const targets = allFighters.filter(p => p && !p.dead && p !== this.owner);
+      let nearest = null, nd = 60;
+      for (const p of targets) {
+        const d = dist(this, p);
+        if (d < nd) { nd = d; nearest = p; }
+      }
+      if (nearest && nd < nearest.radius + 15) { this.state = 'latched'; this.target = nearest; }
+      if (this.x < -50 || this.x > W+50 || this.y < -50 || this.y > H+50) this.dead = true;
+    } else if (this.state === 'latched') {
+      if (!this.target || this.target.dead) { this.dead = true; return; }
+      this.x = this.target.x + Math.cos(this.wiggle) * 5;
+      this.y = this.target.y + Math.sin(this.wiggle) * 5;
+      this.drainTimer++;
+      if (this.drainTimer >= 30) {
+        this.drainTimer = 0;
+        this.target.takeDamage(3, 0, 0, this.owner);
+        if (!this.owner.dead) this.owner.hp = Math.min(this.owner.maxHp, this.owner.hp + 4);
+      }
+    }
+  }
+  draw() {
+    ctx.save();
+    ctx.translate(this.x, this.y); ctx.rotate(this.angle);
+    ctx.strokeStyle = '#5a3a1a'; ctx.lineWidth = 1.5; ctx.lineCap = 'round';
+    for (let i=0;i<8;i++) {
+      const side = i < 4 ? -1 : 1;
+      const idx = i % 4;
+      const baseA = (idx - 1.5) * 0.5;
+      const wig = Math.sin(this.wiggle + i) * 2;
+      const legAngle = baseA + side * 0.3;
+      const legLen = 10 + idx * 1.5;
+      ctx.beginPath();
+      ctx.moveTo(0, side * 3);
+      ctx.lineTo(Math.cos(legAngle) * 6, side * (5 + wig), Math.sin(legAngle) * 6);
+      ctx.lineTo(Math.cos(legAngle) * legLen, side * (5 + wig), Math.sin(legAngle) * legLen);
+      ctx.stroke();
+    }
+    const bodyGrd = ctx.createRadialGradient(-2, -2, 0, 0, 0, 8);
+    bodyGrd.addColorStop(0, '#c78a4a'); bodyGrd.addColorStop(0.6, '#a06b1a'); bodyGrd.addColorStop(1, '#5a3a1a');
+    ctx.fillStyle = bodyGrd; ctx.strokeStyle = '#3a2010'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.ellipse(0, 0, 8, 6, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#ff4d6d'; ctx.shadowColor = '#ff4d6d'; ctx.shadowBlur = 6;
+    ctx.beginPath(); ctx.arc(-6, -2, 1.5, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(-6, 2, 1.5, 0, Math.PI*2); ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.restore();
+  }
+}
+
+class Projectile {
+  constructor(x, y, angle, radius, dmg, owner, source, color, speed, kb, range, explosive=false) {
+    this.x = x; this.y = y; this.angle = angle; this.radius = radius;
+    this.dmg = dmg; this.owner = owner; this.source = source;
+    this.color = color; this.speed = speed; this.kb = kb;
+    this.startX = x; this.startY = y; this.range = range;
+    this.explosive = explosive; this.dead = false; this.life = 100;
+  }
+  update() {
+    this.life--;
+    if (this.life <= 0) { this.dead = true; return; }
+    this.x += Math.cos(this.angle) * this.speed;
+    this.y += Math.sin(this.angle) * this.speed;
+    const targets = allFighters.filter(p => p && !p.dead && p !== this.source);
+    for (const e of targets) {
+      if (dist(this, e) < this.radius + e.radius) {
+        e.takeDamage(this.dmg, this.angle, this.kb, this.source);
+        if (this.explosive) this.explode();
+        else this.dead = true;
+        return;
+      }
+    }
+    const traveled = Math.hypot(this.x - this.startX, this.y - this.startY);
+    if (traveled > this.range) { this.dead = true; return; }
+    if (this.x < -50 || this.x > W+50 || this.y < -50 || this.y > H+50) this.dead = true;
+  }
+  explode() {
+    this.dead = true;
+    const radius = 90;
+    const targets = allFighters.filter(p => p && !p.dead && p !== this.source);
+    targets.forEach(e => {
+      if (dist(this, e) < radius + e.radius) {
+        const a = Math.atan2(e.y-this.y, e.x-this.x);
+        e.takeDamage(this.dmg, a, 10, this.source);
+      }
+    });
+    effects.push(new ShockwaveEffect(this.x, this.y, radius, this.color, 35));
+    spawnParticles(this.x, this.y, this.color, 25, 6);
+    screenShake = 12; hitStop = 3;
+  }
+  draw() {
+    ctx.save();
+    ctx.translate(this.x, this.y); ctx.rotate(this.angle);
+    ctx.shadowColor = this.color; ctx.shadowBlur = 20;
+    ctx.fillStyle = this.color;
+    ctx.beginPath(); ctx.ellipse(0, 0, this.radius*1.5, this.radius*0.85, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.ellipse(0, 0, this.radius*0.7, this.radius*0.4, 0, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+}
+
+class ShockwaveEffect {
+  constructor(x, y, maxR, color, life) {
+    this.x = x; this.y = y; this.maxR = maxR; this.color = color;
+    this.life = life; this.maxLife = life; this.r = 0;
+  }
+  update() { this.life--; this.r = this.maxR * (1 - this.life/this.maxLife); }
+  draw() {
+    const t = this.life / this.maxLife;
+    ctx.save();
+    ctx.globalAlpha = t;
+    ctx.strokeStyle = this.color; ctx.lineWidth = 5 * t;
+    ctx.shadowColor = this.color; ctx.shadowBlur = 20;
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.stroke();
+    ctx.restore();
+  }
+  get dead() { return this.life <= 0; }
+}
+class DeathEffect {
+  constructor(x, y, color) {
+    this.x = x; this.y = y; this.color = color;
+    this.life = 60; this.maxLife = 60; this.soulY = 0;
+  }
+  update() { this.life--; this.soulY -= 0.8; }
+  draw() {
+    const t = this.life/this.maxLife;
+    ctx.save();
+    ctx.globalAlpha = t * 0.8;
+    const soulY = this.y + this.soulY;
+    const grd = ctx.createRadialGradient(this.x, soulY, 0, this.x, soulY, 30);
+    grd.addColorStop(0, this.color);
+    grd.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = grd; ctx.shadowColor = this.color; ctx.shadowBlur = 30;
+    ctx.beginPath(); ctx.arc(this.x, soulY, 20 * t, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+  get dead() { return this.life <= 0; }
+}
+class HolyEffect {
+  constructor(x, y, radius, life) {
+    this.x = x; this.y = y; this.radius = radius;
+    this.life = life; this.maxLife = life;
+  }
+  update() { this.life--; }
+  draw() {
+    const t = 1 - this.life/this.maxLife;
+    ctx.save();
+    ctx.globalAlpha = this.life/this.maxLife;
+    for (let i=0;i<8;i++) {
+      const a = i * Math.PI/4 + gameTime*0.02;
+      ctx.strokeStyle = '#ffd700'; ctx.shadowColor = '#ffd700'; ctx.shadowBlur = 20;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(this.x + Math.cos(a)*this.radius*0.3, this.y + Math.sin(a)*this.radius*0.3);
+      ctx.lineTo(this.x + Math.cos(a)*this.radius*(0.7+t*0.3), this.y + Math.sin(a)*this.radius*(0.7+t*0.3));
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+  get dead() { return this.life <= 0; }
+}
+class ShieldEffect {
+  constructor(target) { this.target = target; this.life = 30; this.maxLife = 30; }
+  update() { this.life--; }
+  draw() {
+    const t = 1 - this.life/this.maxLife;
+    const r = 40 + t * 40;
+    ctx.save();
+    ctx.globalAlpha = this.life/this.maxLife * 0.8;
+    ctx.strokeStyle = '#ffd700'; ctx.shadowColor = '#ffd700'; ctx.shadowBlur = 30;
+    ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.arc(this.target.x, this.target.y, r, 0, Math.PI*2); ctx.stroke();
+    ctx.restore();
+  }
+  get dead() { return this.life <= 0; }
+}
+class ChainEffect {
+  constructor(x1, y1, x2, y2, life) {
+    this.x1 = x1; this.y1 = y1; this.x2 = x2; this.y2 = y2;
+    this.life = life; this.maxLife = life;
+  }
+  update() { this.life--; }
+  draw() {
+    const t = this.life/this.maxLife;
+    ctx.save();
+    ctx.globalAlpha = t * 0.9;
+    ctx.strokeStyle = '#c77dff'; ctx.shadowColor = '#c77dff'; ctx.shadowBlur = 15;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    for (let i=0;i<=12;i++) {
+      const tt = i/12;
+      const px = lerp(this.x1, this.x2, tt);
+      const py = lerp(this.y1, this.y2, tt);
+      const wave = Math.sin(gameTime*0.3 + i) * 5 * Math.sin(tt*Math.PI);
+      const perpA = Math.atan2(this.y2-this.y1, this.x2-this.x1) + Math.PI/2;
+      if (i === 0) ctx.moveTo(px + Math.cos(perpA)*wave, py + Math.sin(perpA)*wave);
+      else ctx.lineTo(px + Math.cos(perpA)*wave, py + Math.sin(perpA)*wave);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+  get dead() { return this.life <= 0; }
+}
+class SlashEffect {
+  constructor(x, y, angle, range, color, life) {
+    this.x = x; this.y = y; this.angle = angle;
+    this.range = range; this.color = color;
+    this.life = life; this.maxLife = life;
+    this.startAngle = angle - 1.0; this.endAngle = angle + 1.0;
+  }
+  update() { this.life--; }
+  draw() {
+    const t = this.life / this.maxLife;
+    const eased = easeOut(1 - t);
+    ctx.save();
+    ctx.globalAlpha = t;
+    const arcA = lerp(this.startAngle, this.endAngle, eased);
+    ctx.strokeStyle = this.color; ctx.lineWidth = 6 * t;
+    ctx.shadowColor = this.color; ctx.shadowBlur = 18;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.range * 0.85, this.startAngle, arcA);
+    ctx.stroke();
+    ctx.restore();
+  }
+  get dead() { return this.life <= 0; }
+}
+class ChargeEffect {
+  constructor(x, y, color, life) {
+    this.x = x; this.y = y; this.color = color;
+    this.life = life; this.maxLife = life;
+  }
+  update() { this.life--; }
+  draw() {
+    const t = 1 - this.life / this.maxLife;
+    ctx.save();
+    ctx.globalAlpha = 0.7 * (this.life/this.maxLife);
+    ctx.strokeStyle = this.color; ctx.shadowColor = this.color; ctx.shadowBlur = 20;
+    ctx.lineWidth = 2;
+    for (let i=0;i<3;i++) {
+      const r = (25 + i*12) * (0.5 + t*0.5);
+      const a = gameTime * 0.1 + i;
+      ctx.beginPath(); ctx.arc(this.x, this.y, r, a, a + Math.PI*1.5); ctx.stroke();
+    }
+    ctx.restore();
+  }
+  get dead() { return this.life <= 0; }
+}
+
+function spawnParticles(x, y, color, count, speed) {
+  if (particles.length > 500) return;
+  for (let i=0;i<count;i++) {
+    const a = Math.random() * Math.PI * 2;
+    const s = Math.random() * speed;
+    particles.push({
+      x, y, vx: Math.cos(a)*s, vy: Math.sin(a)*s,
+      life: 20 + Math.random() * 20, maxLife: 40,
+      color, size: 2 + Math.random() * 3,
+      spin: Math.random() * Math.PI * 2,
+      spinSpeed: (Math.random() - 0.5) * 0.3
+    });
+  }
+}
+function addDamageText(x, y, val, color) {
+  if (damageTexts.length > 100) damageTexts.shift();
+  damageTexts.push({
+    x, y, val: typeof val === 'number' ? Math.round(val) : val, color,
+    life: 45, maxLife: 45, vy: -1.5, vx: rand(-0.6, 0.6), scale: 1.2
+  });
+}
+function createSkillText(skill, color) {
+  effects.push({
+    life: 70, maxLife: 70,
+    update() { this.life--; },
+    get dead() { return this.life <= 0; },
+    draw() {
+      const t = this.life / this.maxLife;
+      const appear = easeOut(1-t);
+      ctx.save();
+      ctx.globalAlpha = Math.min(1, t*3);
+      ctx.font = 'bold 28px Segoe UI';
+      ctx.textAlign = 'center';
+      ctx.translate(W/2, 120 - (1-t) * 40);
+      ctx.scale(appear, appear);
+      ctx.fillStyle = color; ctx.strokeStyle = '#000'; ctx.lineWidth = 4;
+      ctx.shadowColor = color; ctx.shadowBlur = 25;
+      ctx.strokeText(skill, 0, 0); ctx.fillText(skill, 0, 0);
+      ctx.restore();
+    }
+  });
+}
+
+function checkWinCondition() {
+  const alive = allFighters.filter(p => !p.dead);
+  aliveCount = alive.length;
+  if (alive.length === 1 && matchState === 'fighting') {
+    matchOver = true; matchState = 'over'; gameOver = true;
+    winner = alive[0] === player ? 'BẠN' : (alive[0].displayName || alive[0].data.name);
+    clearAllTimers();
+    if (currentMode === 'friend' && socket) socket.emit('game_over', { winner });
+  }
+  if (alive.length === 0) {
+    matchOver = true; matchState = 'over'; gameOver = true;
+    winner = 'HÒA';
+    clearAllTimers();
+  }
+}
+
+function spawnAllFighters(playerCharIndex) {
+  const availableIndices = [0,1,2,3,4].filter(i => i !== playerCharIndex);
+  const shuffled = [...availableIndices].sort(() => Math.random() - 0.5);
+  const botChars = [];
+  for (let i=0;i<5;i++) botChars.push(shuffled[i % shuffled.length]);
+  const total = 6;
+  player = new Player(CHAR_DATA[playerCharIndex], false, 0, total);
+  bots = [];
+  for (let i=0;i<5;i++) bots.push(new Player(CHAR_DATA[botChars[i]], true, i, total));
+  allFighters = [player, ...bots];
+  aliveCount = total;
+}
+
+function startFriendMatchFromServer(playersData) {
+  const total = playersData.length;
+  allFighters = [];
+  player = null;
+  playersData.forEach((pdata, idx) => {
+    const charData = CHAR_DATA[pdata.charIndex];
+    const p = new Player(charData, false, idx, total, pdata.id !== myPlayerId, pdata.id);
+    p.displayName = pdata.name;
+    if (pdata.id === myPlayerId) { player = p; player.isRemote = false; }
+    else p.isRemote = true;
+    allFighters.push(p);
+  });
+  if (!player) { player = allFighters[0]; player.isRemote = false; }
+  bots = [];
+  aliveCount = total;
+  projectiles = []; particles = []; effects = []; damageTexts = []; spiderMinions = [];
+  killFeed = [];
+  matchState = 'countdown'; countdownTimer = 180;
+  matchOver = false; gameOver = false; winner = null;
+  pvpKills = 0; gameTime = 0;
+  menu.style.display = 'none';
+  requestAnimationFrame(loop);
+}
+
+let lastTime = 0;
+function loop(now) {
+  requestAnimationFrame(loop);
+  lastTime = now;
+  if (!player) return;
+
+  if (matchState === 'countdown') {
+    countdownTimer--;
+    if (countdownTimer <= 0) {
+      matchState = 'fighting';
+      createSkillText('FIGHT!', '#ff4d6d');
+      screenShake = 15;
+      allFighters.forEach(f => {
+        effects.push(new ShockwaveEffect(f.x, f.y, 80, f.data.color, 30));
+        spawnParticles(f.x, f.y, f.data.color, 20, 5);
+      });
+    }
+    allFighters.forEach(f => f.update());
+    updateAllEffects();
+    render();
+    drawUI();
+    drawCountdown();
+    return;
+  }
+  if (matchOver) {
+    updateAllEffects();
+    render();
+    drawUI();
+    drawMatchOver();
+    return;
+  }
+  if (hitStop > 0) {
+    hitStop--;
+    updateAllEffects();
+    if (screenShake > 0) screenShake *= 0.9;
+    render();
+    drawUI();
+    return;
+  }
+  gameTime++;
+  allFighters.forEach(f => f.update());
+  spiderMinions.forEach(s => s.update());
+  spiderMinions = spiderMinions.filter(s => !s.dead);
+  projectiles.forEach(p => p.update());
+  projectiles = projectiles.filter(p => !p.dead);
+  updateAllEffects();
+  killFeed.forEach(k => k.life--);
+  killFeed = killFeed.filter(k => k.life > 0);
+  if (screenShake > 0) screenShake *= 0.9;
+
+  // Broadcast state if host
+  if (currentMode === 'friend' && isHost && socket && gameTime % 3 === 0) {
+    broadcastState();
+  }
+  // Client sends own position
+  if (currentMode === 'friend' && !isHost && player && !player.dead && gameTime % 2 === 0) {
+    socket.emit('player_action', {
+      type: 'pos', x: Math.round(player.x), y: Math.round(player.y),
+      angle: Math.round(player.angle*100)/100, hp: Math.round(player.hp),
+      walkPhase: Math.round(player.walkPhase*100)/100, dead: player.dead
+    });
+  }
+
+  render();
+  drawUI();
+}
+
+function updateAllEffects() {
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    p.vx *= 0.95; p.vy *= 0.95; p.vy += 0.05;
+    p.life--; p.spin += p.spinSpeed;
+  });
+  particles = particles.filter(p => p.life > 0);
+  effects.forEach(e => e.update());
+  effects = effects.filter(e => !e.dead);
+  damageTexts.forEach(d => {
+    d.x += d.vx; d.y += d.vy;
+    d.vy *= 0.93; d.scale = lerp(d.scale, 1, 0.1);
+    d.life--;
+  });
+  damageTexts = damageTexts.filter(d => d.life > 0);
+}
+
+function render() {
+  ctx.save();
+  if (screenShake > 0.5) ctx.translate(rand(-screenShake, screenShake), rand(-screenShake, screenShake));
+  drawBackground();
+  const entities = [];
+  allFighters.forEach(f => { if (!f.dead) entities.push({ y: f.y, draw: () => f.draw() }); });
+  entities.sort((a,b) => a.y - b.y);
+  entities.forEach(e => e.draw());
+  spiderMinions.forEach(s => s.draw());
+  projectiles.forEach(p => p.draw());
+  effects.forEach(e => e.draw());
+  particles.forEach(p => {
+    ctx.save();
+    ctx.globalAlpha = p.life / p.maxLife;
+    ctx.translate(p.x, p.y);
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = p.color; ctx.shadowBlur = 8;
+    ctx.beginPath(); ctx.arc(0, 0, p.size, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  });
+  damageTexts.forEach(d => {
+    ctx.save();
+    ctx.globalAlpha = d.life / d.maxLife;
+    ctx.font = `bold ${16 * d.scale}px Segoe UI`;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = d.color;
+    ctx.strokeStyle = '#000'; ctx.lineWidth = 4;
+    ctx.strokeText(d.val, d.x, d.y); ctx.fillText(d.val, d.x, d.y);
+    ctx.restore();
+  });
+  ctx.restore();
+}
+
+function drawBackground() {
+  const grd = ctx.createLinearGradient(0, 0, 0, H);
+  grd.addColorStop(0, '#d4a574'); grd.addColorStop(0.4, '#c69c6d'); grd.addColorStop(1, '#8a6a4a');
+  ctx.fillStyle = grd; ctx.fillRect(0, 0, W, H);
+  ctx.save();
+  ctx.globalAlpha = 0.15;
+  for (let i=0;i<30;i++) {
+    const x = (i * 97 + gameTime * 0.3) % W;
+    const y = (i * 131) % H;
+    ctx.fillStyle = '#fff';
+    ctx.beginPath(); ctx.arc(x, y, 1, 0, Math.PI*2); ctx.fill();
+  }
+  ctx.restore();
+  ctx.save();
+  ctx.globalAlpha = 0.25;
+  for (let i=0;i<5;i++) {
+    const offsetX = (i * 200 + gameTime * 0.5) % (W + 300) - 150;
+    const offsetY = 100 + i * 80;
+    const duneGrd = ctx.createLinearGradient(offsetX, offsetY - 40, offsetX, offsetY + 40);
+    duneGrd.addColorStop(0, 'rgba(255,220,180,0)');
+    duneGrd.addColorStop(0.5, 'rgba(255,220,180,0.5)');
+    duneGrd.addColorStop(1, 'rgba(255,220,180,0)');
+    ctx.fillStyle = duneGrd;
+    ctx.beginPath(); ctx.ellipse(offsetX, offsetY, 180, 30, 0, 0, Math.PI*2); ctx.fill();
+  }
+  ctx.restore();
+  const vg = ctx.createRadialGradient(W/2, H/2, H*0.3, W/2, H/2, H*0.9);
+  vg.addColorStop(0, 'rgba(0,0,0,0)');
+  vg.addColorStop(1, 'rgba(60,30,0,0.5)');
+  ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(255,180,80,0.4)'; ctx.lineWidth = 3;
+  ctx.strokeRect(2, 2, W-4, H-4);
+}
+
+function drawUI() {
+  if (!player) return;
+  let txt = `<span style="color:${player.data.color};font-weight:bold">${player.data.name}</span> · HP: <span style="color:#06d6a0">${Math.ceil(player.hp)}/${player.maxHp}</span><br>`;
+  txt += `<span style="color:#ffd166">⚔ KILLS: ${pvpKills}</span> · <span style="color:#ffb347">👥 CÒN SỐNG: ${aliveCount}/${allFighters.length}</span>`;
+  if (currentMode === 'friend') txt += ` · <span style="color:#06d6a0">🌐 ONLINE</span>`;
+  uiEl.innerHTML = txt;
+
+  ctx.save();
+  killFeed.forEach((k, i) => {
+    const alpha = Math.min(1, k.life / 60);
+    const y = 40 + i * 26;
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(W - 260, y - 18, 245, 22);
+    ctx.textAlign = 'right';
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.fillStyle = k.killerColor;
+    ctx.fillText(k.killer, W - 200, y);
+    ctx.fillStyle = '#fff'; ctx.font = '13px Segoe UI';
+    ctx.fillText(' ⚔ ', W - 190, y);
+    ctx.fillStyle = k.victimColor; ctx.font = 'bold 13px Segoe UI';
+    ctx.fillText(k.victim, W - 20, y);
+  });
+  ctx.restore();
+
+  const sx = W - 220, sy = H - 70;
+  for (let i=0;i<3;i++) {
+    const cd = player.skillCds[i];
+    const maxCd = player.data.skillCd[i];
+    const ready = cd <= 0;
+    const x = sx + i * 70;
+    ctx.save();
+    ctx.fillStyle = ready ? 'rgba(255,180,80,0.2)' : 'rgba(30,20,10,0.7)';
+    ctx.strokeStyle = ready ? player.data.color : '#553';
+    ctx.lineWidth = 2;
+    ctx.fillRect(x, sy, 60, 60);
+    ctx.strokeRect(x, sy, 60, 60);
+    if (!ready) {
+      ctx.fillStyle = 'rgba(0,0,0,0.75)';
+      ctx.fillRect(x, sy, 60, 60 * (cd/maxCd));
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 20px Segoe UI';
+      ctx.textAlign = 'center';
+      if (cd >= 60) ctx.fillText(Math.ceil(cd/60) + 's', x + 30, sy + 40);
+      else ctx.fillText(Math.ceil(cd/60), x + 30, sy + 40);
+    } else {
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 16px Segoe UI';
+      ctx.textAlign = 'center';
+      ctx.fillText(['Q','E','R'][i], x + 30, sy + 22);
+      ctx.font = '9px Segoe UI';
+      ctx.fillStyle = '#ddd';
+      ctx.fillText(player.data.skills[i].slice(0, 12), x + 30, sy + 40);
+    }
+    ctx.restore();
+  }
+}
+
+function drawCountdown() {
+  const seconds = Math.ceil(countdownTimer / 60);
+  const sub = (countdownTimer % 60) / 60;
+  ctx.save();
+  ctx.fillStyle = 'rgba(0,0,0,0.3)';
+  ctx.fillRect(0, 0, W, H);
+  ctx.font = 'bold 180px Segoe UI';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const scale = 1 + sub * 0.5;
+  ctx.translate(W/2, H/2);
+  ctx.scale(scale, scale);
+  ctx.globalAlpha = 0.3 + sub * 0.7;
+  ctx.fillStyle = seconds === 1 ? '#06d6a0' : seconds === 2 ? '#ffd166' : '#ff4d6d';
+  ctx.strokeStyle = '#000'; ctx.lineWidth = 10;
+  ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 50;
+  ctx.strokeText(seconds, 0, 0);
+  ctx.fillText(seconds, 0, 0);
+  ctx.restore();
+}
+
+function drawMatchOver() {
+  ctx.save();
+  ctx.fillStyle = 'rgba(0,0,0,0.85)';
+  ctx.fillRect(0, 0, W, H);
+  const isWin = winner === 'BẠN';
+  const title = isWin ? 'CHIẾN THẮNG!' : (winner === 'HÒA' ? 'HÒA!' : 'BẠN ĐÃ BỊ HẠ');
+  const color = isWin ? '#ffd700' : (winner === 'HÒA' ? '#ffb347' : '#ff4d6d');
+  ctx.fillStyle = color;
+  ctx.font = 'bold 72px Segoe UI';
+  ctx.textAlign = 'center';
+  ctx.shadowColor = color; ctx.shadowBlur = 50;
+  ctx.fillText(title, W/2, H/2 - 60);
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 28px Segoe UI';
+  if (isWin) ctx.fillText('🏆 BẠN LÀ NGƯỜI SỐNG SÓT CUỐI CÙNG', W/2, H/2 + 10);
+  else if (winner !== 'HÒA') ctx.fillText(`🏆 ${winner} đã chiến thắng`, W/2, H/2 + 10);
+  ctx.font = '20px Segoe UI';
+  ctx.fillStyle = '#ffd166';
+  ctx.fillText(`⚔ ${pvpKills} KILLS`, W/2, H/2 + 60);
+  ctx.fillStyle = '#8899bb';
+  ctx.font = '18px Segoe UI';
+  ctx.fillText('Nhấn F5 để chơi lại', W/2, H/2 + 110);
+  ctx.restore();
+}
+
+// ===== NETWORK =====
+function connectSocket() {
+  if (socket && socket.connected) return;
+  socket = io();
+
+  socket.on('connect', () => {
+    console.log('Connected:', socket.id);
+    myPlayerId = socket.id;
+  });
+  socket.on('room_created', (data) => {
+    myRoomId = data.roomId; isHost = true;
+    document.getElementById('roomIdDisplay').textContent = myRoomId;
+    showStage('stage4');
+    updateLobby(data.players);
+    setStatus('lobbyStatus', '✓ Phòng đã tạo. Chờ người chơi...', 'success');
+  });
+  socket.on('lobby_update', (data) => updateLobby(data.players));
+  socket.on('join_error', (data) => {
+    setStatus('friendStatus', '❌ ' + data.message, 'error');
+    setStatus('lobbyStatus', '❌ ' + data.message, 'error');
+  });
+  socket.on('start_error', (data) => setStatus('lobbyStatus', '⚠ ' + data.message, 'error'));
+  socket.on('match_start', (data) => startFriendMatchFromServer(data.players));
+  socket.on('state_sync', (state) => { if (!isHost) applyStateFromHost(state); });
+  socket.on('remote_action', (data) => {
+    if (!isHost) return;
+    // Update remote player's position on host
+    const rp = allFighters.find(f => f.remoteId === data.playerId);
+    if (rp && data.action && data.action.type === 'pos') {
+      rp.x = lerp(rp.x, data.action.x, 0.5);
+      rp.y = lerp(rp.y, data.action.y, 0.5);
+      rp.angle = data.action.angle;
+      rp.hp = data.action.hp;
+      rp.walkPhase = data.action.walkPhase;
+      if (data.action.dead && !rp.dead) rp.takeDamage(9999, 0, 0, null);
+    }
+  });
+  socket.on('host_changed', (data) => { isHost = (data.newHostId === myPlayerId); });
+  socket.on('game_over_sync', (data) => {
+    if (matchOver) return;
+    matchOver = true; matchState = 'over'; gameOver = true;
+    winner = data.winner;
+  });
+  socket.on('disconnect', () => setStatus('lobbyStatus', '❌ Mất kết nối server!', 'error'));
+}
+
+function broadcastState() {
+  if (!isHost || !socket) return;
+  const state = {
+    gameTime, matchState,
+    players: allFighters.map(f => ({
+      id: f.remoteId || myPlayerId,
+      x: Math.round(f.x), y: Math.round(f.y),
+      angle: Math.round(f.angle*100)/100,
+      hp: Math.round(f.hp), dead: f.dead,
+      walkPhase: Math.round(f.walkPhase*100)/100,
+      buffs: {
+        wings: f.buffs.wings > 0, minigun: f.buffs.minigun > 0,
+        shield: f.buffs.shield > 0, rage: f.buffs.rage > 0
+      },
+      castAnim: Math.round(f.castAnim),
+      attackAnim: Math.round(f.attackAnim),
+      hitFlash: f.hitFlash > 0
+    }))
+  };
+  socket.emit('state_update', state);
+}
+
+function applyStateFromHost(state) {
+  gameTime = state.gameTime;
+  matchState = state.matchState;
+  state.players.forEach(ps => {
+    const f = allFighters.find(x => x.remoteId === ps.id);
+    if (!f || f === player) return;
+    f.x = lerp(f.x, ps.x, 0.4);
+    f.y = lerp(f.y, ps.y, 0.4);
+    f.angle = ps.angle; f.hp = ps.hp; f.dead = ps.dead;
+    f.walkPhase = ps.walkPhase;
+    f.buffs.wings = ps.buffs.wings ? 30 : 0;
+    f.buffs.minigun = ps.buffs.minigun ? 30 : 0;
+    f.buffs.shield = ps.buffs.shield ? 30 : 0;
+    f.buffs.rage = ps.buffs.rage ? 30 : 0;
+    f.castAnim = ps.castAnim; f.attackAnim = ps.attackAnim;
+    if (ps.hitFlash) f.hitFlash = 5;
+  });
+  aliveCount = allFighters.filter(x => !x.dead).length;
+}
+
+function updateLobby(players) {
+  document.getElementById('playerCount').textContent = players.length;
+  const listEl = document.getElementById('playerList');
+  listEl.innerHTML = '';
+  players.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'player-item';
+    const charName = CHAR_DATA[p.charIndex].name;
+    const charColor = CHAR_DATA[p.charIndex].color;
+    div.innerHTML = `
+      <span style="color:${charColor}">${charName}</span>
+      <span style="color:#b8a088;font-size:11px">${p.name}</span>
+      ${p.isHost ? '<span class="host-badge">HOST</span>' : ''}
+    `;
+    listEl.appendChild(div);
+  });
+  const btn = document.getElementById('btnStartMatch');
+  if (isHost) {
+    btn.style.display = players.length >= 2 ? 'block' : 'none';
+    btn.disabled = players.length < 2;
+    btn.textContent = players.length >= 2 ? `BẮT ĐẦU (${players.length}/5)` : 'CẦN ÍT NHẤT 2 NGƯỜI';
+  } else {
+    btn.style.display = 'none';
+  }
+}
+
+function setStatus(id, msg, type='') {
+  const el = document.getElementById(id);
+  if (el) { el.textContent = msg; el.className = 'status-text ' + type; }
+}
+function showStage(stageId) {
+  ['stage1','stage2','stage3','stage4'].forEach(s => document.getElementById(s).style.display = 'none');
+  document.getElementById(stageId).style.display = 'block';
+}
+function copyRoomId() {
+  const id = document.getElementById('roomIdDisplay').textContent;
+  if (id === '------') return;
+  navigator.clipboard.writeText(id).then(() => {
+    const el = document.getElementById('roomIdDisplay');
+    const orig = el.textContent;
+    el.textContent = '✓ ĐÃ COPY';
+    setTimeout(() => el.textContent = orig, 1000);
+  });
+}
+function leaveRoom() {
+  if (socket) { socket.disconnect(); socket = null; }
+  isHost = false; myRoomId = null;
+  backToStage1();
+}
+function backToStage1() {
+  if (socket) { socket.disconnect(); socket = null; }
+  isHost = false; myRoomId = null;
+  showStage('stage1');
+}
+
+// ===== MENU EVENTS =====
+document.getElementById('btnPvPBot').addEventListener('click', () => {
+  currentMode = 'bot'; showStage('stage2');
+});
+document.getElementById('btnPvPFriend').addEventListener('click', () => {
+  currentMode = 'friend'; showStage('stage3');
+});
+document.querySelectorAll('#charListBot .card').forEach(card => {
+  card.addEventListener('click', () => {
+    selectedChar = parseInt(card.dataset.char);
+    startBotGame();
+  });
+});
+document.querySelectorAll('#charListFriend .card').forEach(card => {
+  card.addEventListener('click', () => {
+    selectedChar = parseInt(card.dataset.char);
+    document.querySelectorAll('#charListFriend .card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+  });
+});
+document.getElementById('btnCreateRoom').addEventListener('click', () => {
+  if (!document.querySelector('#charListFriend .card.selected')) {
+    setStatus('friendStatus', '⚠ Vui lòng chọn nhân vật trước!', 'error'); return;
+  }
+  setStatus('friendStatus', 'Đang tạo phòng...', '');
+  connectSocket();
+  setTimeout(() => {
+    if (socket && socket.connected) {
+      socket.emit('create_room', { name: 'HOST', charIndex: selectedChar });
+    }
+  }, 500);
+});
+document.getElementById('btnJoinRoom').addEventListener('click', () => {
+  if (!document.querySelector('#charListFriend .card.selected')) {
+    setStatus('friendStatus', '⚠ Vui lòng chọn nhân vật trước!', 'error'); return;
+  }
+  document.getElementById('joinInputWrap').style.display = 'block';
+});
+document.getElementById('btnConfirmJoin').addEventListener('click', () => {
+  const id = document.getElementById('roomIdInput').value.trim().toUpperCase();
+  if (id.length !== 6) { setStatus('friendStatus', '❌ ID phòng phải có 6 ký tự', 'error'); return; }
+  setStatus('friendStatus', 'Đang kết nối...', '');
+  connectSocket();
+  setTimeout(() => {
+    if (socket && socket.connected) {
+      socket.emit('join_room', { roomId: id, name: 'PLAYER', charIndex: selectedChar });
+    }
+  }, 500);
+});
+document.getElementById('roomIdInput').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') document.getElementById('btnConfirmJoin').click();
+});
+document.getElementById('btnStartMatch').addEventListener('click', () => {
+  if (!isHost || !socket) return;
+  socket.emit('start_match');
+});
+
+function startBotGame() {
+  clearAllTimers();
+  menu.style.display = 'none';
+  projectiles = []; particles = []; effects = []; damageTexts = []; spiderMinions = [];
+  killFeed = [];
+  gameTime = 0; matchOver = false; gameOver = false; winner = null;
+  screenShake = 0; hitStop = 0; pvpKills = 0;
+  countdownTimer = 180; matchState = 'countdown';
+  spawnAllFighters(selectedChar);
+  requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>
