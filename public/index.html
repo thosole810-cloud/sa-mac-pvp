@@ -1680,10 +1680,7 @@ class Tower {
   }
 }
 function spawnTowers() {
-  towers = [];
-  towers.push(new Tower(W * 0.2, H * 0.85, 1));
-  towers.push(new Tower(W * 0.5, H * 0.9, 1));
-  towers.push(new Tower(W * 0.8, H * 0.85, 1));
+  towers = []; // ✅ Không spawn trụ nào
 }
 
 // ===== DRAGON =====
