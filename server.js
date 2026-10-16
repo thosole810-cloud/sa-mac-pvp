@@ -68,6 +68,13 @@ io.on('connection', (socket) => {
     console.log('Phong ' + roomId + ' bat dau!');
   });
 
+  socket.on('sync_map', (mapData) => {
+    const roomId = socket.roomId;
+    const room = rooms[roomId];
+    if (!room || room.hostId !== socket.id) return;
+    socket.to(roomId).emit('receive_map', mapData);
+  });
+
   socket.on('state_update', (state) => {
     const roomId = socket.roomId;
     const room = rooms[roomId];
