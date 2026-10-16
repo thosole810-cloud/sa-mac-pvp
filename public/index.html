@@ -581,14 +581,7 @@ function normalizeForFilter(str) {
   return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
 }
 function containsBadWord(name) {
-  const normalized = normalizeForFilter(name);
-  const compact = normalized.replace(/\s/g, '');
-  const allBad = [...BAD_WORDS_VI, ...BAD_WORDS_EN];
-  for (const bad of allBad) {
-    const badNorm = normalizeForFilter(bad).replace(/\s/g, '');
-    if (!badNorm) continue;
-    if (compact.includes(badNorm)) return bad;
-  }
+  // ✅ Đã tắt lọc từ bậy — cho phép đặt tên gì cũng được
   return null;
 }
 function validateName(name) {
