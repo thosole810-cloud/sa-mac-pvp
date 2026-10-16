@@ -425,36 +425,45 @@ let trainingDummy = null;
 let trainingOptions = { infiniteCD: false, infiniteGold: false, dummyHeal: true, showDamage: true };
 let trainingStats = { total: 0, hits: 0, maxHit: 0, startTime: 0 };
 
-// ===== MAP GENERATION =====
-function generateObstacles() {
+// ===== MAP GENERATION (đã fix — chỉ có 1 hàm) =====
+function generateObstacles(seed) {
   obstacles = [];
+  let rng = Math.random;
+  if (seed !== undefined) {
+    let s = seed;
+    rng = () => {
+      s = (s * 9301 + 49297) % 233280;
+      return s / 233280;
+    };
+  }
+  const rnd = (a,b) => a + rng()*(b-a);
   const laneYTop = H * 0.25;
   const laneYMid = H * 0.5;
   const laneYBot = H * 0.75;
   const wallY1 = (laneYTop + laneYMid) / 2;
   const wallY2 = (laneYMid + laneYBot) / 2;
   for (let x = 200; x < W - 200; x += 200) {
-    if (Math.random() < 0.65) {
-      obstacles.push({ x: x + rand(-40, 40), y: wallY1 + rand(-30, 30), radius: rand(50, 75), type: 'rock', rotation: rand(0, Math.PI*2), hp: 99999 });
+    if (rng() < 0.65) {
+      obstacles.push({ x: x + rnd(-40, 40), y: wallY1 + rnd(-30, 30), radius: rnd(50, 75), type: 'rock', rotation: rnd(0, Math.PI*2), hp: 99999 });
     }
-    if (Math.random() < 0.65) {
-      obstacles.push({ x: x + rand(-40, 40), y: wallY2 + rand(-30, 30), radius: rand(50, 75), type: 'rock', rotation: rand(0, Math.PI*2), hp: 99999 });
+    if (rng() < 0.65) {
+      obstacles.push({ x: x + rnd(-40, 40), y: wallY2 + rnd(-30, 30), radius: rnd(50, 75), type: 'rock', rotation: rnd(0, Math.PI*2), hp: 99999 });
     }
   }
   for (let i=0;i<15;i++) {
-    const lane = Math.floor(Math.random() * 3);
+    const lane = Math.floor(rng() * 3);
     const laneY = lane === 0 ? laneYTop : lane === 1 ? laneYMid : laneYBot;
-    const x = rand(150, W-150);
-    const y = laneY + rand(-80, 80);
+    const x = rnd(150, W-150);
+    const y = laneY + rnd(-80, 80);
     if (obstacles.some(o => Math.hypot(x-o.x, y-o.y) < o.radius + 60)) continue;
-    obstacles.push({ x, y, radius: rand(22, 32), type: 'cactus', rotation: rand(0, Math.PI*2), hp: 99999 });
+    obstacles.push({ x, y, radius: rnd(22, 32), type: 'cactus', rotation: rnd(0, Math.PI*2), hp: 99999 });
   }
   const corners = [
     {x: 150, y: 150}, {x: W-150, y: 150},
     {x: 150, y: H-150}, {x: W-150, y: H-150}
   ];
   corners.forEach(c => {
-    obstacles.push({ x: c.x, y: c.y, radius: rand(55, 75), type: 'rock', rotation: rand(0, Math.PI*2), hp: 99999 });
+    obstacles.push({ x: c.x, y: c.y, radius: rnd(55, 75), type: 'rock', rotation: rnd(0, Math.PI*2), hp: 99999 });
   });
 }
 
@@ -815,15 +824,10 @@ class Player {
     this.bonusHp = 0;
     this.cdReduction = 0;
     this.hasPhoenix = false;
-    // FIX: level scale
     this.towerKills = 0;
   }
 
-  getLevelScale() {
-    // Level 1: 0.5x, Level 15: 1.0x (nhân với max)
-    return 0.5 + (this.level - 1) / 14 * 0.5;
-  }
-
+  getLevelScale() { return 0.5 + (this.level - 1) / 14 * 0.5; }
   getTotalAtkDmg() {
     const lvlScale = this.getLevelScale();
     let base = this.data.atkDmg + (this.data.maxAtkDmg - this.data.atkDmg) * (lvlScale - 0.5) * 2;
@@ -834,7 +838,6 @@ class Player {
     if (this.buffs.dragonRage > 0) base *= 2;
     return base;
   }
-
   getTotalSpeed() {
     const lvlScale = this.getLevelScale();
     let base = this.data.speed + (this.data.maxSpeed - this.data.speed) * (lvlScale - 0.5) * 2;
@@ -844,7 +847,6 @@ class Player {
     if (this.buffs.rage > 0) base *= 1.3;
     return base;
   }
-
   addXP(amount) {
     this.xp += amount;
     while (this.xp >= this.xpNeeded && this.level < 15) {
@@ -861,12 +863,10 @@ class Player {
       }
     }
   }
-
   addGold(amount) {
     this.gold += amount;
     if (this === player) addDamageText(this.x, this.y - this.radius - 20, `+${amount}💰`, '#ffd166');
   }
-
   update() {
     if (this.dead) return;
     if (this.isRemote) return;
@@ -877,7 +877,6 @@ class Player {
     }
     if (matchState !== 'fighting') return;
     if (shopOpen && this === player) return;
-
     if (this.atkCd > 0) this.atkCd--;
     if (this.hitFlash > 0) this.hitFlash--;
     if (this.iframe > 0) this.iframe--;
@@ -891,7 +890,6 @@ class Player {
     if (this.buffs.dragonRage > 0) this.buffs.dragonRage--;
     if (this.attackAnim > 0) this.attackAnim--;
     if (this.castAnim > 0) this.castAnim--;
-
     if (this.buffs.minigun > 0) {
       this.buffs.minigun--;
       this.minigunSpin += 0.6;
@@ -899,17 +897,13 @@ class Player {
       if (this.minigunTimer >= 4) { this.minigunTimer = 0; this.fireMinigunBullet(); }
       if (this.buffs.minigun === 0) this.minigunSpin = 0;
     }
-
-    // Training mode: infinite CD
     if (trainingMode && trainingOptions.infiniteCD && this === player) {
       this.skillCds = [0, 0, 0];
     } else {
       for (let i=0;i<3;i++) if (this.skillCds[i] > 0) this.skillCds[i]--;
     }
-
     if (this.isBot) this.updateAI();
     else this.angle = Math.atan2(mouse.y - this.y, mouse.x - this.x);
-
     let mx = 0, my = 0;
     if (this.castLock <= 0) {
       if (this.isBot) {
@@ -924,7 +918,6 @@ class Player {
     }
     const len = Math.hypot(mx,my);
     const moving = len > 0;
-
     if (moving) {
       this.walkPhase += 0.15;
       if (this.walkPhase > 1) this.walkPhase -= 1;
@@ -933,9 +926,7 @@ class Player {
       this.walkPhase *= 0.9;
       this.bob = Math.sin(gameTime * 0.06) * 0.8;
     }
-
     let speed = this.getTotalSpeed();
-
     if (this.buffs.lunge > 0) {
       this.x += Math.cos(this.angle) * 12;
       this.y += Math.sin(this.angle) * 12;
@@ -950,7 +941,6 @@ class Player {
     this.y = clamp(this.y, this.radius, H - this.radius);
     this.ghosts.forEach(g => g.life--);
     this.ghosts = this.ghosts.filter(g => g.life > 0);
-
     if (!this.isBot) {
       if (mouse.down && this.atkCd <= 0 && this.castLock <= 0 && this.buffs.minigun <= 0 && !shopOpen) this.attack();
       if (keys['q'] && this.skillCds[0] <= 0 && this.castLock <= 0 && !shopOpen) this.useSkill(0);
@@ -958,32 +948,19 @@ class Player {
       if (keys['r'] && this.skillCds[2] <= 0 && this.castLock <= 0 && !shopOpen) this.useSkill(2);
     }
   }
-
   updateAI() {
     this.aiTimer--;
     const alive = allFighters.filter(p => p && !p.dead && p !== this);
     let nearest = null, nd = 99999;
-    for (const p of alive) {
-      const d = dist(this, p);
-      if (d < nd) { nd = d; nearest = p; }
-    }
+    for (const p of alive) { const d = dist(this, p); if (d < nd) { nd = d; nearest = p; } }
     let nearestMonster = null, nmd = 250;
-    for (const m of monsters) {
-      if (m.dead || !m.aggro) continue;
-      const d = dist(this, m);
-      if (d < nmd) { nmd = d; nearestMonster = m; }
-    }
-    if (dragon && !dragon.dead && dist(this, dragon) < 400) {
-      this.target = dragon;
-    } else if (nearestMonster) {
-      this.target = nearestMonster;
-    } else {
-      this.target = nearest;
-    }
+    for (const m of monsters) { if (m.dead || !m.aggro) continue; const d = dist(this, m); if (d < nmd) { nmd = d; nearestMonster = m; } }
+    if (dragon && !dragon.dead && dist(this, dragon) < 400) this.target = dragon;
+    else if (nearestMonster) this.target = nearestMonster;
+    else this.target = nearest;
     if (!this.target) { this.aiMoveX = 0; this.aiMoveY = 0; return; }
     const td = dist(this, this.target);
     this.angle = Math.atan2(this.target.y - this.y, this.target.x - this.x);
-
     if (this.aiTimer <= 0) {
       this.aiTimer = rand(20, 60);
       const r = Math.random();
@@ -991,25 +968,19 @@ class Player {
       else if (r < 0.4 && this.skillCds[1] <= 0) this.useSkill(1);
       else if (r < 0.65 && this.skillCds[0] <= 0) this.useSkill(0);
     }
-
     const optimalDist = this.data.melee ? 50 : 180;
-    if (td > optimalDist + 30) {
-      this.aiMoveX = Math.cos(this.angle); this.aiMoveY = Math.sin(this.angle);
-    } else if (td < optimalDist - 30) {
-      this.aiMoveX = -Math.cos(this.angle); this.aiMoveY = -Math.sin(this.angle);
-    } else {
+    if (td > optimalDist + 30) { this.aiMoveX = Math.cos(this.angle); this.aiMoveY = Math.sin(this.angle); }
+    else if (td < optimalDist - 30) { this.aiMoveX = -Math.cos(this.angle); this.aiMoveY = -Math.sin(this.angle); }
+    else {
       const sideAngle = this.angle + Math.PI/2 * (Math.sin(gameTime*0.05) > 0 ? 1 : -1);
       this.aiMoveX = Math.cos(sideAngle) * 0.5; this.aiMoveY = Math.sin(sideAngle) * 0.5;
     }
-    if (this.atkCd <= 0 && this.castLock <= 0 && this.buffs.minigun <= 0 && td < this.data.atkRange + 40) {
-      this.attack();
-    }
+    if (this.atkCd <= 0 && this.castLock <= 0 && this.buffs.minigun <= 0 && td < this.data.atkRange + 40) this.attack();
     if (this.gold > 500 && Math.random() < 0.001) {
       const item = SHOP_ITEMS[Math.floor(Math.random() * SHOP_ITEMS.length)];
       if (!item.consumable && !this.ownedItems[item.id] && this.gold >= item.price) this.buyItem(item.id, true);
     }
   }
-
   buyItem(itemId, isBot) {
     const item = SHOP_ITEMS.find(i => i.id === itemId);
     if (!item) return false;
@@ -1025,13 +996,9 @@ class Player {
     else if (item.id === 'dragon_scale') { this.ownedItems.dragon_scale = true; }
     else if (item.id === 'potion') { this.hp = Math.min(this.maxHp, this.hp + 60); }
     else if (item.id === 'phoenix') { this.hasPhoenix = true; }
-    if (this === player && !isBot) {
-      createSkillText(`MUA ${item.name}!`, '#06d6a0');
-      spawnParticles(this.x, this.y, '#ffd166', 20, 5);
-    }
+    if (this === player && !isBot) { createSkillText(`MUA ${item.name}!`, '#06d6a0'); spawnParticles(this.x, this.y, '#ffd166', 20, 5); }
     return true;
   }
-
   fireMinigunBullet() {
     if (this.dead || matchOver) return;
     const spread = (Math.random() - 0.5) * 0.25;
@@ -1040,7 +1007,6 @@ class Player {
     const sy = this.y + Math.sin(this.angle) * 40;
     projectiles.push(new Projectile(sx, sy, a, 4, 5, this, this, '#a0e7ff', 12, 1.5, 500));
   }
-
   attack() {
     this.atkCd = this.data.atkCd;
     this.attackAnim = this.attackAnimMax;
@@ -1061,22 +1027,14 @@ class Player {
         const a = Math.atan2(e.y - this.y, e.x - this.x);
         let diff = Math.abs(a - this.angle);
         if (diff > Math.PI) diff = 2*Math.PI - diff;
-        if (d < range + e.radius && diff < arc/2) {
-          if (e.takeDamage) e.takeDamage(dmg, this.angle, 6, this);
-          hitAny = true;
-        }
+        if (d < range + e.radius && diff < arc/2) { if (e.takeDamage) e.takeDamage(dmg, this.angle, 6, this); hitAny = true; }
       });
-      if (this.data.name === 'NHẬT HUY') {
-        effects.push(new SpaceSlashEffect(this.x, this.y, this.angle, range + 20, '#06d6a0', 14));
-      } else if (this.data.name === 'QUÂN HACKER') {
-        effects.push(new HackerSlashEffect(this.x, this.y, this.angle, range + 20, '#00ff88', 14));
-      } else {
-        effects.push(new SlashEffect(this.x, this.y, this.angle, range, this.data.color, 12));
-      }
+      if (this.data.name === 'NHẬT HUY') effects.push(new SpaceSlashEffect(this.x, this.y, this.angle, range + 20, '#06d6a0', 14));
+      else if (this.data.name === 'QUÂN HACKER') effects.push(new HackerSlashEffect(this.x, this.y, this.angle, range + 20, '#00ff88', 14));
+      else effects.push(new SlashEffect(this.x, this.y, this.angle, range, this.data.color, 12));
       if (hitAny) hitStop = 2;
     }
   }
-
   useSkill(idx) {
     if (this.dead || matchOver) return;
     const cdMult = this.ownedItems.ring ? 0.8 : 1;
@@ -1281,7 +1239,6 @@ class Player {
       }
     }
   }
-
   takeDamage(dmg, angle, kb, attacker) {
     if (this.iframe > 0 || this.dead) return;
     if (this.buffs.shield > 0) dmg *= 0.3;
@@ -1324,7 +1281,6 @@ class Player {
       checkWinCondition();
     }
   }
-
   draw() {
     if (this.dead) return;
     this.ghosts.forEach(g => {
@@ -1402,7 +1358,6 @@ class Player {
     this.drawHPBar();
     if (!this.isBot && !this.isRemote) this.drawSkillRings();
   }
-
   drawHPBar() {
     const w = (this.isBot || this.isRemote) ? 55 : 70, h = (this.isBot || this.isRemote) ? 6 : 8;
     const x = this.x - w/2, y = this.y - this.radius - ((this.isBot || this.isRemote) ? 30 : 32);
@@ -1421,7 +1376,6 @@ class Player {
     ctx.fillStyle = xpg; ctx.fillRect(x, xpY, w * xpPct, xpH);
     ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 1; ctx.strokeRect(x, y, w, h);
   }
-
   drawSkillRings() {
     for (let i=0;i<3;i++) {
       if (this.skillCds[i] <= 0) {
@@ -1435,7 +1389,7 @@ class Player {
     }
   }
 }
-
+ 
 // ===== MONSTER =====
 class Monster {
   constructor(x, y, tier) {
@@ -1553,11 +1507,12 @@ class Monster {
     }
   }
 }
+
 // ===== TOWER =====
 class Tower {
   constructor(x, y, team) {
     this.x = x; this.y = y;
-    this.team = team; // 1 = blue (player), 2 = red (enemy), 0 = neutral
+    this.team = team;
     this.maxHp = 500; this.hp = 500;
     this.radius = 40;
     this.range = 350;
@@ -1573,7 +1528,6 @@ class Tower {
     if (this.dead) {
       this.respawnTimer--;
       if (this.respawnTimer <= 0) {
-        // Respawn
         this.hp = this.maxHp;
         this.dead = false;
         this.hitFlash = 0;
@@ -1584,20 +1538,16 @@ class Tower {
     }
     if (this.hitFlash > 0) this.hitFlash--;
     if (this.attackCd > 0) this.attackCd--;
-
-    // Tìm kẻ địch gần nhất
     const targets = [...allFighters.filter(p => !p.dead), ...monsters.filter(m => !m.dead)];
     if (dragon && !dragon.dead) targets.push(dragon);
     let nearest = null, nd = this.range;
     for (const t of targets) {
-      // Bỏ qua nếu là đồng minh (chỉ bắn kẻ địch + quái)
       if (this.team === 1 && t.data && t.data.isAlly) continue;
       const d = dist(this, t);
       if (d < nd) { nd = d; nearest = t; }
     }
     if (nearest && this.attackCd <= 0) {
       this.attackCd = 40;
-      // Bắn đạn
       const angle = Math.atan2(nearest.y - this.y, nearest.x - this.x);
       projectiles.push(new Projectile(this.x, this.y, angle, 8, this.dmg, null, this, this.baseColor, 8, 2, this.range, false));
       spawnParticles(this.x + Math.cos(angle) * 40, this.y + Math.sin(angle) * 40, this.accent, 6, 3);
@@ -1611,7 +1561,7 @@ class Tower {
     spawnParticles(this.x, this.y, this.baseColor, 6, 3);
     if (this.hp <= 0) {
       this.hp = 0; this.dead = true;
-      this.respawnTimer = 600; // 10s
+      this.respawnTimer = 600;
       spawnParticles(this.x, this.y, this.baseColor, 50, 8);
       spawnParticles(this.x, this.y, '#fff', 30, 6);
       screenShake = 20; hitStop = 5;
@@ -1637,12 +1587,10 @@ class Tower {
     ctx.translate(this.x, this.y);
     if (this.dead) {
       ctx.globalAlpha = 0.4;
-      // Vết tích đổ nát
       ctx.fillStyle = '#2a1a10';
       ctx.beginPath(); ctx.ellipse(0, 0, this.radius * 0.8, this.radius * 0.4, 0, 0, Math.PI*2); ctx.fill();
       ctx.strokeStyle = this.baseColor; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.arc(0, 0, this.radius * 0.5, 0, Math.PI*2); ctx.stroke();
-      // Timer hồi sinh
       const pct = 1 - this.respawnTimer / 600;
       ctx.strokeStyle = this.baseColor;
       ctx.shadowColor = this.baseColor; ctx.shadowBlur = 15;
@@ -1651,11 +1599,8 @@ class Tower {
       ctx.restore();
       return;
     }
-    // Shadow
     ctx.fillStyle = 'rgba(0,0,0,0.5)';
     ctx.beginPath(); ctx.ellipse(0, this.radius*0.8, this.radius*1.2, this.radius*0.5, 0, 0, Math.PI*2); ctx.fill();
-
-    // Base
     const baseGrd = ctx.createRadialGradient(-this.radius*0.3, -this.radius*0.3, 0, 0, 0, this.radius);
     baseGrd.addColorStop(0, this.accent);
     baseGrd.addColorStop(0.6, this.baseColor);
@@ -1663,12 +1608,9 @@ class Tower {
     ctx.fillStyle = baseGrd;
     ctx.strokeStyle = '#000'; ctx.lineWidth = 3;
     ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-
-    // Xoay
     const rot = gameTime * 0.03;
     ctx.save();
     ctx.rotate(rot);
-    // Cánh quạt
     for (let i=0;i<4;i++) {
       const a = i * Math.PI/2;
       ctx.fillStyle = this.accent;
@@ -1680,24 +1622,18 @@ class Tower {
       ctx.closePath(); ctx.fill();
     }
     ctx.restore();
-
-    // Đỉnh trụ
     ctx.fillStyle = this.accent;
     ctx.shadowColor = this.baseColor; ctx.shadowBlur = 25;
     ctx.beginPath(); ctx.arc(0, 0, this.radius * 0.5, 0, Math.PI*2); ctx.fill();
     ctx.fillStyle = '#fff';
     ctx.beginPath(); ctx.arc(-3, -3, this.radius * 0.2, 0, Math.PI*2); ctx.fill();
     ctx.shadowBlur = 0;
-
-    // Hit flash
     if (this.hitFlash > 0) {
       ctx.globalAlpha = 0.6;
       ctx.fillStyle = '#fff';
       ctx.beginPath(); ctx.arc(0, 0, this.radius + 5, 0, Math.PI*2); ctx.fill();
     }
     ctx.restore();
-
-    // HP bar
     if (this.hp < this.maxHp) {
       const w = this.radius * 2;
       const x = this.x - w/2, y = this.y - this.radius - 18;
@@ -1714,7 +1650,6 @@ class Tower {
 
 function spawnTowers() {
   towers = [];
-  // 3 trụ cho player (team 1) - phía dưới map
   towers.push(new Tower(W * 0.2, H * 0.85, 1));
   towers.push(new Tower(W * 0.5, H * 0.9, 1));
   towers.push(new Tower(W * 0.8, H * 0.85, 1));
@@ -1854,11 +1789,9 @@ class TrainingDummy {
     this.hitFlash = 10;
     this.damageFlash = 20;
     this.lastHitDamage = Math.round(dmg);
-    // Update stats
     trainingStats.total += dmg;
     trainingStats.hits++;
     if (dmg > trainingStats.maxHit) trainingStats.maxHit = dmg;
-    // Hiển thị damage text lớn
     if (trainingOptions.showDamage) {
       damageTexts.push({
         x: this.x + rand(-15,15), y: this.y - this.radius - 15,
@@ -1870,10 +1803,8 @@ class TrainingDummy {
   draw() {
     ctx.save();
     ctx.translate(this.x, this.y);
-    // Shadow
     ctx.fillStyle = 'rgba(0,0,0,0.5)';
     ctx.beginPath(); ctx.ellipse(0, this.radius*0.8, this.radius*1.2, this.radius*0.5, 0, 0, Math.PI*2); ctx.fill();
-    // Body
     const g = ctx.createRadialGradient(-this.radius*0.3, -this.radius*0.3, 0, 0, 0, this.radius);
     g.addColorStop(0, this.hitFlash > 0 ? '#fff' : '#c9a58a');
     g.addColorStop(0.5, this.hitFlash > 0 ? '#ffd166' : '#8a6a4a');
@@ -1881,15 +1812,12 @@ class TrainingDummy {
     ctx.fillStyle = g;
     ctx.strokeStyle = '#1a0a0a'; ctx.lineWidth = 3;
     ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-    // Đầu dummy
     ctx.beginPath(); ctx.arc(0, -this.radius*0.5, this.radius*0.6, 0, Math.PI*2); ctx.fill(); ctx.stroke();
-    // Mắt băng đỏ
     ctx.fillStyle = '#ff4d6d';
     ctx.shadowColor = '#ff4d6d'; ctx.shadowBlur = 10;
     ctx.beginPath(); ctx.arc(-this.radius*0.2, -this.radius*0.6, 3, 0, Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.arc(this.radius*0.2, -this.radius*0.6, 3, 0, Math.PI*2); ctx.fill();
     ctx.shadowBlur = 0;
-    // Khi bị đánh, aura đỏ
     if (this.damageFlash > 0) {
       ctx.globalAlpha = this.damageFlash / 20;
       ctx.strokeStyle = '#ff0044';
@@ -1899,7 +1827,6 @@ class TrainingDummy {
       ctx.shadowBlur = 0;
     }
     ctx.restore();
-    // Label BIA TẬP
     ctx.save();
     ctx.font = 'bold 14px Segoe UI';
     ctx.textAlign = 'center';
@@ -2071,7 +1998,6 @@ class SpiderMinion {
     this.retargetTimer--;
 
     if (this.state === 'flying') {
-      // Tìm target mỗi 10 frame
       if (!this.target || this.target.dead || this.retargetTimer <= 0) {
         this.retargetTimer = 10;
         const targets = allFighters.filter(p => p && !p.dead && p !== this.owner);
@@ -2085,7 +2011,6 @@ class SpiderMinion {
         }
         if (nearest) this.target = nearest;
       }
-      // Bay TỚI target
       if (this.target && !this.target.dead) {
         this.angle = Math.atan2(this.target.y - this.y, this.target.x - this.x);
         this.x += Math.cos(this.angle) * this.speed;
@@ -2318,7 +2243,7 @@ function updateTrainingStatsUI() {
   const dps = elapsed > 0 ? trainingStats.total / elapsed : 0;
   document.getElementById('tStatDPS').textContent = Math.round(dps);
 }
-
+ 
 // ===== NETWORK =====
 function connectSocket() {
   if (socket && socket.connected) return;
@@ -2335,6 +2260,11 @@ function connectSocket() {
   socket.on('start_error', (data) => setStatus('lobbyStatus', '⚠ ' + data.message, 'error'));
   socket.on('match_start', (data) => startFriendMatchFromServer(data.players));
   socket.on('state_sync', (state) => { if (!isHost) applyStateFromHost(state); });
+  socket.on('receive_map', (mapData) => {
+    if (isHost) return;
+    obstacles = mapData.obstacles;
+    monsters = mapData.monsters.map(m => new Monster(m.x, m.y, m.tier));
+  });
   socket.on('remote_action', (data) => {
     if (!isHost) return;
     const rp = allFighters.find(f => f.remoteId === data.playerId);
@@ -2457,7 +2387,7 @@ function startBotGame() {
   gameTime = 0; matchOver = false; gameOver = false; winner = null;
   screenShake = 0; hitStop = 0; pvpKills = 0; shopOpen = false;
   countdownTimer = 180; matchState = 'countdown';
-  generateObstacles();
+  generateObstacles(Math.floor(Math.random() * 1000000));
   spawnMonsters();
   spawnTowers();
   spawnAllFighters(selectedChar);
@@ -2477,14 +2407,12 @@ function startTrainingMode() {
   gameTime = 0; matchOver = false; gameOver = false; winner = null;
   screenShake = 0; hitStop = 0; pvpKills = 0; shopOpen = false;
   countdownTimer = 1; matchState = 'fighting';
-  generateObstacles();
-  // Training mode setup
+  generateObstacles(Math.floor(Math.random() * 1000000));
   const charData = CHAR_DATA[selectedChar];
   player = new Player(charData, false, 0, 1);
   player.x = W/2;
   player.y = H * 0.7;
   player.level = 1;
-  // Dummy ở giữa
   trainingDummy = new TrainingDummy(W/2, H * 0.3);
   allFighters = [player];
   bots = [];
@@ -2517,9 +2445,27 @@ function startFriendMatchFromServer(playersData) {
   matchState = 'countdown'; countdownTimer = 180;
   matchOver = false; gameOver = false; winner = null;
   pvpKills = 0; gameTime = 0; shopOpen = false;
-  generateObstacles();
-  spawnMonsters();
-  spawnTowers();
+
+  if (isHost) {
+    const mapSeed = Math.floor(Math.random() * 1000000);
+    generateObstacles(mapSeed);
+    spawnMonsters();
+    spawnTowers();
+    if (socket) {
+      const mapData = {
+        seed: mapSeed,
+        obstacles: obstacles,
+        monsters: monsters.map(m => ({ x: m.x, y: m.y, tier: m.tier }))
+      };
+      socket.emit('sync_map', mapData);
+      setTimeout(() => { if (socket) socket.emit('sync_map', mapData); }, 500);
+    }
+  } else {
+    generateObstacles(0);
+    monsters = [];
+    spawnTowers();
+  }
+
   menu.style.display = 'none';
   document.getElementById('shopBtn').style.display = 'flex';
   requestAnimationFrame(loop);
@@ -2533,7 +2479,6 @@ function loop(now) {
   if (!player) return;
 
   if (trainingMode) {
-    // Training loop
     gameTime++;
     player.update();
     trainingDummy.update();
@@ -2605,6 +2550,15 @@ function loop(now) {
   killFeed.forEach(k => k.life--);
   killFeed = killFeed.filter(k => k.life > 0);
   if (screenShake > 0) screenShake *= 0.9;
+
+  if (currentMode === 'friend' && isHost && socket && gameTime % 3 === 0) broadcastState();
+  if (currentMode === 'friend' && !isHost && player && !player.dead && gameTime % 2 === 0) {
+    socket.emit('player_action', {
+      type: 'pos', x: Math.round(player.x), y: Math.round(player.y),
+      angle: Math.round(player.angle*100)/100, hp: Math.round(player.hp),
+      walkPhase: Math.round(player.walkPhase*100)/100, dead: player.dead
+    });
+  }
 
   render();
   drawUI();
