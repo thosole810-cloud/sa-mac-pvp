@@ -218,11 +218,8 @@
   }
   #trainingStats .label { color: #b8a088; }
   #trainingStats .value { color: #ffd166; font-weight: bold; }
-
-  /* ===== TOUCH CONTROLS ===== */
   #touchControls { position: absolute; inset: 0; pointer-events: none; z-index: 15; display: none; }
   #touchControls.show { display: block; }
-  
   #joyBase {
     position: absolute; left: 30px; bottom: 30px;
     width: 140px; height: 140px;
@@ -243,7 +240,6 @@
     transition: transform .05s linear;
     pointer-events: none;
   }
-  
   .touch-btn {
     position: absolute;
     width: 70px; height: 70px;
@@ -273,7 +269,6 @@
     color: #fff; font-size: 16px; font-weight: bold;
   }
   .touch-btn.cooling .cd-overlay { display: flex; }
-  
   #btnAttack {
     right: 30px; bottom: 100px;
     width: 90px; height: 90px;
@@ -297,7 +292,6 @@
     background: radial-gradient(circle, rgba(199,125,255,0.7), rgba(199,125,255,0.3));
     box-shadow: 0 0 45px rgba(199,125,255,0.9);
   }
-
   #mobileShopBtn {
     position: absolute; top: 10px; right: 10px;
     width: 55px; height: 55px;
@@ -308,8 +302,6 @@
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 0 25px rgba(255,180,80,0.7);
   }
-
-  /* Responsive cho mobile */
   @media (max-width: 900px) {
     #menu h1 { font-size: 32px; letter-spacing: 2px; }
     .mode-btn { width: 160px; padding: 14px; }
@@ -350,42 +342,24 @@
 <div id="gameWrap">
   <canvas id="cv" width="1920" height="1080"></canvas>
   <div id="ui"></div>
-
-  <!-- Touch Controls -->
   <div id="touchControls">
-    <div id="joyBase">
-      <div id="joyKnob"></div>
-    </div>
+    <div id="joyBase"><div id="joyKnob"></div></div>
     <div class="touch-btn" id="btnAttack">⚔<span class="lbl">ĐÁNH</span><div class="cd-overlay">0</div></div>
     <div class="touch-btn" id="btnSkillQ">Q<span class="lbl">CHIÊU</span><div class="cd-overlay">0</div></div>
     <div class="touch-btn" id="btnSkillE">E<span class="lbl">CHIÊU</span><div class="cd-overlay">0</div></div>
     <div class="touch-btn" id="btnSkillR">R<span class="lbl">ULT</span><div class="cd-overlay">0</div></div>
     <div id="mobileShopBtn" onclick="toggleShop()">🛒</div>
   </div>
-
   <button id="shopBtn" style="display:none;" onclick="toggleShop()">
     <span>🛒</span>
     <span class="label">SHOP</span>
   </button>
-
   <div id="trainingPanel">
     <h3>🥋 CHẾ ĐỘ LUYỆN TẬP</h3>
-    <div class="train-row">
-      <span>Vô hạn Skill (CD=0)</span>
-      <div class="train-toggle" id="trainInfiniteCD" onclick="toggleTrainOpt('infiniteCD')"></div>
-    </div>
-    <div class="train-row">
-      <span>Vô hạn Vàng</span>
-      <div class="train-toggle" id="trainInfiniteGold" onclick="toggleTrainOpt('infiniteGold')"></div>
-    </div>
-    <div class="train-row">
-      <span>Dummy tự hồi máu</span>
-      <div class="train-toggle on" id="trainDummyHeal" onclick="toggleTrainOpt('dummyHeal')"></div>
-    </div>
-    <div class="train-row">
-      <span>Hiện Damage dealt</span>
-      <div class="train-toggle on" id="trainShowDamage" onclick="toggleTrainOpt('showDamage')"></div>
-    </div>
+    <div class="train-row"><span>Vô hạn Skill (CD=0)</span><div class="train-toggle" id="trainInfiniteCD" onclick="toggleTrainOpt('infiniteCD')"></div></div>
+    <div class="train-row"><span>Vô hạn Vàng</span><div class="train-toggle" id="trainInfiniteGold" onclick="toggleTrainOpt('infiniteGold')"></div></div>
+    <div class="train-row"><span>Dummy tự hồi máu</span><div class="train-toggle on" id="trainDummyHeal" onclick="toggleTrainOpt('dummyHeal')"></div></div>
+    <div class="train-row"><span>Hiện Damage dealt</span><div class="train-toggle on" id="trainShowDamage" onclick="toggleTrainOpt('showDamage')"></div></div>
     <button class="train-btn" onclick="resetDummy()">🔄 RESET DUMMY</button>
     <button class="train-btn" onclick="resetTrainingStats()">📊 RESET STATS</button>
     <div id="trainingStats">
@@ -411,28 +385,12 @@
     <div id="stage1">
       <div class="stage-label">CHỌN CHẾ ĐỘ</div>
       <div class="mode-select">
-        <button class="mode-btn" id="btnPvPBot">
-          <span class="mode-icon">🤖</span>
-          <div class="mode-name">PVP WITH BOT</div>
-          <div class="mode-desc">6 chiến binh - Sống cuối cùng thắng</div>
-        </button>
-        <button class="mode-btn" id="btnPvPFriend">
-          <span class="mode-icon">👥</span>
-          <div class="mode-name">PVP WITH FRIENDS</div>
-          <div class="mode-desc">Tối đa 5 người chơi</div>
-        </button>
-        <button class="mode-btn" id="btnTraining">
-          <span class="mode-icon">🥋</span>
-          <div class="mode-name">TRAINING MODE</div>
-          <div class="mode-desc">Test skill - Luyện combo</div>
-        </button>
+        <button class="mode-btn" id="btnPvPBot"><span class="mode-icon">🤖</span><div class="mode-name">PVP WITH BOT</div><div class="mode-desc">6 chiến binh - Sống cuối cùng thắng</div></button>
+        <button class="mode-btn" id="btnPvPFriend"><span class="mode-icon">👥</span><div class="mode-name">PVP WITH FRIENDS</div><div class="mode-desc">Tối đa 5 người chơi</div></button>
+        <button class="mode-btn" id="btnTraining"><span class="mode-icon">🥋</span><div class="mode-name">TRAINING MODE</div><div class="mode-desc">Test skill - Luyện combo</div></button>
       </div>
     </div>
-    <div id="stage2" style="display:none;">
-      <div class="stage-label">CHỌN CHIẾN BINH CỦA BẠN</div>
-      <div class="chars" id="charListBot"></div>
-      <button class="back-btn" onclick="backToStage1()">← Quay lại</button>
-    </div>
+    <div id="stage2" style="display:none;"><div class="stage-label">CHỌN CHIẾN BINH CỦA BẠN</div><div class="chars" id="charListBot"></div><button class="back-btn" onclick="backToStage1()">← Quay lại</button></div>
     <div id="stage3" style="display:none;">
       <div class="stage-label">CHỌN CHIẾN BINH CỦA BẠN</div>
       <div class="chars" id="charListFriend"></div>
@@ -461,15 +419,10 @@
     <div id="stage5" style="display:none;">
       <div class="stage-label">🥋 CHẾ ĐỘ LUYỆN TẬP - CHỌN TƯỚNG</div>
       <div class="chars" id="charListTrain"></div>
-      <div style="color:#b8a088;font-size:12px;margin-top:10px;text-align:center;">
-        Test mọi skill · Đo DPS · Luyện combo
-      </div>
+      <div style="color:#b8a088;font-size:12px;margin-top:10px;text-align:center;">Test mọi skill · Đo DPS · Luyện combo</div>
       <button class="back-btn" onclick="backToStage1()">← Quay lại</button>
     </div>
-    <div class="controls">
-      <b>WASD</b> di chuyển &nbsp;|&nbsp; <b>Chuột</b> ngắm &nbsp;|&nbsp; <b>Chuột trái</b> đánh<br>
-      <b>Q</b> · <b>E</b> · <b>R</b> chiêu thức &nbsp;|&nbsp; <b>F</b> nhặt đồ &nbsp;|&nbsp; <b>B</b> mở shop
-    </div>
+    <div class="controls"><b>WASD</b> di chuyển &nbsp;|&nbsp; <b>Chuột</b> ngắm &nbsp;|&nbsp; <b>Chuột trái</b> đánh<br><b>Q</b> · <b>E</b> · <b>R</b> chiêu thức &nbsp;|&nbsp; <b>F</b> nhặt đồ &nbsp;|&nbsp; <b>B</b> mở shop</div>
   </div>
 </div>
 <script src="/socket.io/socket.io.js"></script>
@@ -481,11 +434,9 @@ let W = cv.width, H = cv.height;
 const menu = document.getElementById('menu');
 const uiEl = document.getElementById('ui');
 
-// ===== RESIZE CANVAS THEO MÀN HÌNH =====
 function resizeCanvas() {
   const wrap = document.getElementById('gameWrap');
   const rect = wrap.getBoundingClientRect();
-  const dpr = window.devicePixelRatio || 1;
   cv.width = rect.width;
   cv.height = rect.height;
   cv.style.width = rect.width + 'px';
@@ -496,7 +447,6 @@ resizeCanvas();
 addEventListener('resize', () => { resizeCanvas(); });
 addEventListener('orientationchange', () => { setTimeout(resizeCanvas, 200); });
 
-// ===== TOUCH DETECTION =====
 const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth < 900);
 const touchState = { joyActive: false, joyId: null, joyX: 0, joyY: 0, moveX: 0, moveY: 0, attackHeld: false };
 
@@ -518,171 +468,9 @@ cv.addEventListener('mousemove', e => {
 cv.addEventListener('mousedown', () => { if (shopOpen) return; mouse.down = true; });
 cv.addEventListener('mouseup', () => { mouse.down = false; });
 cv.addEventListener('contextmenu', e => e.preventDefault());
+document.getElementById('shopPanel').addEventListener('click', (e) => { if (e.target.id === 'shopPanel') toggleShop(); });
 
-// ===== TOUCH CONTROLS LOGIC =====
-function setupTouchControls() {
-  const joyBase = document.getElementById('joyBase');
-  const joyKnob = document.getElementById('joyKnob');
-  if (!joyBase || !joyKnob) return;
-
-  function getCenter(el) {
-    const r = el.getBoundingClientRect();
-    return { x: r.left + r.width/2, y: r.top + r.height/2, r: r.width/2 };
-  }
-
-  function onJoyStart(e) {
-    e.preventDefault();
-    const t = e.changedTouches ? e.changedTouches[0] : e;
-    const c = getCenter(joyBase);
-    // Cho phép chạm bất kỳ đâu trong nửa trái màn hình để bật joystick
-    const dx = t.clientX - c.x;
-    const dy = t.clientY - c.y;
-    const d = Math.hypot(dx, dy);
-    if (d > c.r * 1.5 && t.clientX > window.innerWidth * 0.6) return;
-    touchState.joyActive = true;
-    touchState.joyId = t.identifier || 'mouse';
-    onJoyMove(e);
-  }
-  function onJoyMove(e) {
-    if (!touchState.joyActive) return;
-    e.preventDefault();
-    let t = null;
-    if (e.changedTouches) {
-      for (const tc of e.changedTouches) {
-        if (tc.identifier === touchState.joyId) { t = tc; break; }
-      }
-      if (!t) return;
-    } else t = e;
-    const c = getCenter(joyBase);
-    let dx = t.clientX - c.x;
-    let dy = t.clientY - c.y;
-    const d = Math.hypot(dx, dy);
-    const maxR = c.r;
-    if (d > maxR) { dx = dx/d * maxR; dy = dy/d * maxR; }
-    joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
-    const nx = dx / maxR;
-    const ny = dy / maxR;
-    touchState.moveX = nx;
-    touchState.moveY = ny;
-    touchState.joyX = nx;
-    touchState.joyY = ny;
-  }
-  function onJoyEnd(e) {
-    e.preventDefault();
-    touchState.joyActive = false;
-    touchState.joyId = null;
-    touchState.moveX = 0;
-    touchState.moveY = 0;
-    joyKnob.style.transform = 'translate(0, 0)';
-  }
-
-  joyBase.addEventListener('touchstart', onJoyStart, { passive: false });
-  joyBase.addEventListener('touchmove', onJoyMove, { passive: false });
-  joyBase.addEventListener('touchend', onJoyEnd, { passive: false });
-  joyBase.addEventListener('touchcancel', onJoyEnd, { passive: false });
-
-  // Cũng cho phép chạm nửa trái màn hình để di chuyển
-  document.getElementById('touchControls').addEventListener('touchstart', (e) => {
-    if (e.target.id === 'joyBase' || e.target.id === 'joyKnob') return;
-    const t = e.changedTouches[0];
-    if (t.clientX > window.innerWidth * 0.5) return;
-    if (touchState.joyActive) return;
-    const c = getCenter(joyBase);
-    touchState.joyActive = true;
-    touchState.joyId = t.identifier;
-    joyKnob.style.transform = 'translate(0,0)';
-    // Set knob pos directly
-    let dx = t.clientX - c.x;
-    let dy = t.clientY - c.y;
-    const d = Math.hypot(dx, dy);
-    if (d > c.r) { dx = dx/d * c.r; dy = dy/d * c.r; }
-    joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
-    touchState.moveX = dx / c.r;
-    touchState.moveY = dy / c.r;
-  }, { passive: false });
-
-  // Nút đánh
-  const btnAttack = document.getElementById('btnAttack');
-  btnAttack.addEventListener('touchstart', (e) => { e.preventDefault(); btnAttack.classList.add('pressed'); touchState.attackHeld = true; if (typeof onAttackPress === 'function') onAttackPress(); }, { passive: false });
-  btnAttack.addEventListener('touchend', (e) => { e.preventDefault(); btnAttack.classList.remove('pressed'); touchState.attackHeld = false; }, { passive: false });
-  btnAttack.addEventListener('touchcancel', () => { btnAttack.classList.remove('pressed'); touchState.attackHeld = false; });
-
-  // Nút skill
-  const btnQ = document.getElementById('btnSkillQ');
-  const btnE = document.getElementById('btnSkillE');
-  const btnR = document.getElementById('btnSkillR');
-  btnQ.addEventListener('touchstart', (e) => { e.preventDefault(); btnQ.classList.add('pressed'); if (typeof onSkillPress === 'function') onSkillPress(0); }, { passive: false });
-  btnE.addEventListener('touchstart', (e) => { e.preventDefault(); btnE.classList.add('pressed'); if (typeof onSkillPress === 'function') onSkillPress(1); }, { passive: false });
-  btnR.addEventListener('touchstart', (e) => { e.preventDefault(); btnR.classList.add('pressed'); if (typeof onSkillPress === 'function') onSkillPress(2); }, { passive: false });
-  btnQ.addEventListener('touchend', () => btnQ.classList.remove('pressed'));
-  btnE.addEventListener('touchend', () => btnE.classList.remove('pressed'));
-  btnR.addEventListener('touchend', () => btnR.classList.remove('pressed'));
-}
-
-function updateTouchCDUI() {
-  if (!player) return;
-  const btnQ = document.getElementById('btnSkillQ');
-  const btnE = document.getElementById('btnSkillE');
-  const btnR = document.getElementById('btnSkillR');
-  const cds = [btnQ, btnE, btnR];
-  for (let i=0;i<3;i++) {
-    const cd = player.skillCds[i];
-    const maxCd = player.data.skillCd[i];
-    const el = cds[i];
-    if (!el) continue;
-    if (cd > 0) {
-      el.classList.add('cooling');
-      const ov = el.querySelector('.cd-overlay');
-      if (ov) ov.textContent = Math.ceil(cd/60) + 's';
-    } else {
-      el.classList.remove('cooling');
-    }
-  }
-}
-
-// ===== CÁC HÀM GỌI TỪ TOUCH =====
-let pendingTouchAttack = false;
-function onAttackPress() {
-  if (!player || player.dead) return;
-  if (currentMode === 'friend' && !isHost && player.isRemote === false) {
-    if (player.atkCd <= 0 && player.castLock <= 0 && player.buffs.minigun <= 0 && socket) {
-      socket.emit('player_skill', { skill: -1, type: 'attack', angle: player.angle, x: player.x, y: player.y });
-      player.atkCd = player.data.atkCd;
-      player.attackAnim = player.attackAnimMax;
-    }
-  } else {
-    if (player.atkCd <= 0 && player.castLock <= 0 && player.buffs.minigun <= 0) player.attack();
-  }
-}
-function onSkillPress(idx) {
-  if (!player || player.dead) return;
-  if (currentMode === 'friend' && !isHost && player.isRemote === false) {
-    if (player.skillCds[idx] <= 0 && player.castLock <= 0 && socket) {
-      socket.emit('player_skill', { skill: idx, type: 'skill'+idx, angle: player.angle, x: player.x, y: player.y });
-      player.skillCds[idx] = player.data.skillCd[idx];
-    }
-  } else {
-    if (player.skillCds[idx] <= 0 && player.castLock <= 0) player.useSkill(idx);
-  }
-}
-
-if (isTouchDevice) {
-  document.getElementById('touchControls').classList.add('show');
-  document.getElementById('shopBtn').style.display = 'none';
-  document.getElementById('mobileShopBtn').style.display = 'flex';
-  setTimeout(setupTouchControls, 100);
-} else {
-  document.getElementById('mobileShopBtn').style.display = 'none';
-}
-
-// Khi vào trận thì show touch controls
-function showTouchControls() {
-  if (isTouchDevice) document.getElementById('touchControls').classList.add('show');
-}
-function hideTouchControls() {
-  if (isTouchDevice) document.getElementById('touchControls').classList.remove('show');
-}
-
+// ===== FUNCTIONS =====
 const rand = (a,b) => a + Math.random()*(b-a);
 const dist = (a,b) => Math.hypot(a.x-b.x, a.y-b.y);
 const clamp = (v,a,b) => Math.max(a, Math.min(b,v));
@@ -690,7 +478,7 @@ const lerp = (a,b,t) => a + (b-a)*t;
 const easeOut = t => 1 - Math.pow(1-t, 3);
 const easeInOut = t => t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2;
 
-// ===== 7 NHÂN VẬT (NERF) =====
+// ===== CHAR_DATA (KHÔI NGUYÊN SKILL MỚI) =====
 const CHAR_DATA = [
   { name: 'BÌNH AN', color: '#4cc9f0', color2: '#1a5f8a', accent: '#a0e7ff', icon: '🧙',
     hp: 70, speed: 1.65, radius: 16, atkDmg: 4, atkRange: 240, atkCd: 28, melee: false,
@@ -710,8 +498,8 @@ const CHAR_DATA = [
   { name: 'KHÔI NGUYÊN', color: '#ffd700', color2: '#8a6a00', accent: '#fff4b3', icon: '🌟',
     hp: 100, speed: 1.45, radius: 18, atkDmg: 7, atkRange: 70, atkCd: 28, melee: true,
     maxHp: 240, maxAtkDmg: 26, maxSpeed: 2.3,
-    skills: ['Thánh Quang', 'Khiên Chắn', 'Tháp Hủy Diệt'], skillCd: [240, 320, 5400],
-    desc: 'Thánh kỵ sĩ (NERF)<br>Lv15 mới mạnh' },
+    skills: ['Thánh Quang Trói', 'Vòng Xích Thần', 'Thiên Đàng Giam'], skillCd: [280, 380, 720],
+    desc: 'Thánh kỵ sĩ (CC)<br>Khống chế cực mạnh' },
   { name: 'ANNIE NÂU', color: '#c77dff', color2: '#4a1a6a', accent: '#e0c8ff', icon: '🔮',
     hp: 75, speed: 1.6, radius: 16, atkDmg: 5, atkRange: 230, atkCd: 28, melee: false,
     maxHp: 180, maxAtkDmg: 18, maxSpeed: 2.4,
@@ -747,53 +535,38 @@ let dragon = null;
 let dragonTimer = 0;
 let dragonSpawned = false;
 let dragonDrop = null;
-
 let trainingMode = false;
 let trainingDummy = null;
 let trainingOptions = { infiniteCD: false, infiniteGold: false, dummyHeal: true, showDamage: true };
 let trainingStats = { total: 0, hits: 0, maxHit: 0, startTime: 0 };
 
+// ===== MAP =====
 function generateObstacles(seed) {
   obstacles = [];
   let rng = Math.random;
   if (seed !== undefined) {
     let s = seed;
-    rng = () => {
-      s = (s * 9301 + 49297) % 233280;
-      return s / 233280;
-    };
+    rng = () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
   }
   const rnd = (a,b) => a + rng()*(b-a);
-  const laneYTop = H * 0.25;
-  const laneYMid = H * 0.5;
-  const laneYBot = H * 0.75;
+  const laneYTop = H * 0.25, laneYMid = H * 0.5, laneYBot = H * 0.75;
   const wallY1 = (laneYTop + laneYMid) / 2;
   const wallY2 = (laneYMid + laneYBot) / 2;
   for (let x = 200; x < W - 200; x += 200) {
-    if (rng() < 0.65) {
-      obstacles.push({ x: x + rnd(-40, 40), y: wallY1 + rnd(-30, 30), radius: rnd(50, 75), type: 'rock', rotation: rnd(0, Math.PI*2), hp: 99999 });
-    }
-    if (rng() < 0.65) {
-      obstacles.push({ x: x + rnd(-40, 40), y: wallY2 + rnd(-30, 30), radius: rnd(50, 75), type: 'rock', rotation: rnd(0, Math.PI*2), hp: 99999 });
-    }
+    if (rng() < 0.65) obstacles.push({ x: x + rnd(-40, 40), y: wallY1 + rnd(-30, 30), radius: rnd(50, 75), type: 'rock', rotation: rnd(0, Math.PI*2), hp: 99999 });
+    if (rng() < 0.65) obstacles.push({ x: x + rnd(-40, 40), y: wallY2 + rnd(-30, 30), radius: rnd(50, 75), type: 'rock', rotation: rnd(0, Math.PI*2), hp: 99999 });
   }
   for (let i=0;i<15;i++) {
     const lane = Math.floor(rng() * 3);
     const laneY = lane === 0 ? laneYTop : lane === 1 ? laneYMid : laneYBot;
-    const x = rnd(150, W-150);
-    const y = laneY + rnd(-80, 80);
+    const x = rnd(150, W-150); const y = laneY + rnd(-80, 80);
     if (obstacles.some(o => Math.hypot(x-o.x, y-o.y) < o.radius + 60)) continue;
     obstacles.push({ x, y, radius: rnd(22, 32), type: 'cactus', rotation: rnd(0, Math.PI*2), hp: 99999 });
   }
-  const corners = [
-    {x: 150, y: 150}, {x: W-150, y: 150},
-    {x: 150, y: H-150}, {x: W-150, y: H-150}
-  ];
-  corners.forEach(c => {
+  [{x: 150, y: 150}, {x: W-150, y: 150}, {x: 150, y: H-150}, {x: W-150, y: H-150}].forEach(c => {
     obstacles.push({ x: c.x, y: c.y, radius: rnd(55, 75), type: 'rock', rotation: rnd(0, Math.PI*2), hp: 99999 });
   });
 }
-
 function resolveObstacleCollision(entity) {
   for (const o of obstacles) {
     const d = Math.hypot(entity.x - o.x, entity.y - o.y);
@@ -805,58 +578,23 @@ function resolveObstacleCollision(entity) {
     } else if (d === 0) entity.x = o.x + minDist;
   }
 }
-
 function projectileHitObstacle(p) {
-  for (const o of obstacles) {
-    if (Math.hypot(p.x - o.x, p.y - o.y) < p.radius + o.radius) return true;
-  }
+  for (const o of obstacles) if (Math.hypot(p.x - o.x, p.y - o.y) < p.radius + o.radius) return true;
   return false;
 }
-
 function buildCharLists() {
-  const html = CHAR_DATA.map((c, i) => `
-    <div class="card" data-char="${i}">
-      <span class="icon">${c.icon}</span>
-      <div class="name">${c.name}</div>
-      <div class="desc">${c.desc}</div>
-    </div>
-  `).join('');
+  const html = CHAR_DATA.map((c, i) => `<div class="card" data-char="${i}"><span class="icon">${c.icon}</span><div class="name">${c.name}</div><div class="desc">${c.desc}</div></div>`).join('');
   document.getElementById('charListBot').innerHTML = html;
   document.getElementById('charListFriend').innerHTML = html;
   document.getElementById('charListTrain').innerHTML = html;
 }
 buildCharLists();
 
-let player = null;
-let bots = [];
-let allFighters = [];
-let projectiles = [];
-let particles = [];
-let effects = [];
-let damageTexts = [];
-let spiderMinions = [];
-let gameTime = 0;
-let selectedChar = 0;
-let matchState = 'countdown';
-let countdownTimer = 180;
-let gameOver = false;
-let matchOver = false;
-let winner = null;
-let pvpKills = 0;
-let screenShake = 0;
-let hitStop = 0;
-let aliveCount = 6;
-let killFeed = [];
-let currentMode = 'bot';
-let socket = null;
-let myRoomId = null;
-let isHost = false;
-let myPlayerId = null;
-let shopOpen = false;
-let goldCoins = [];
-
-let activeTimeouts = [];
-let activeIntervals = [];
+let player = null, bots = [], allFighters = [], projectiles = [], particles = [], effects = [], damageTexts = [], spiderMinions = [], goldCoins = [];
+let gameTime = 0, selectedChar = 0, matchState = 'countdown', countdownTimer = 180;
+let gameOver = false, matchOver = false, winner = null, pvpKills = 0, screenShake = 0, hitStop = 0, aliveCount = 6;
+let killFeed = [], currentMode = 'bot', socket = null, myRoomId = null, isHost = false, myPlayerId = null, shopOpen = false;
+let activeTimeouts = [], activeIntervals = [];
 function safeSetTimeout(fn, ms) {
   const id = setTimeout(() => { activeTimeouts = activeTimeouts.filter(t => t !== id); if (!matchOver && !gameOver) fn(); }, ms);
   activeTimeouts.push(id); return id;
@@ -871,49 +609,32 @@ function clearAllTimers() {
   activeTimeouts = []; activeIntervals = [];
 }
 
-// ===== ANIMATION STATE CHO NHÂN VẬT =====
-// Mỗi nhân vật có các state: idle, walk, attack, cast, hit, dead
-// Animation frame được tính từ gameTime + phase riêng
-
-// ===== WEAPON DRAWERS (đã cải thiện animation) =====
+// ===== WEAPON DRAWERS =====
 function drawMageGun(c, r, t, ca, aa) {
   c.save();
-  // Recoil khi bắn
   const recoil = aa * 4;
   c.translate(-recoil, 0);
   const g = c.createLinearGradient(0, -8, 0, 8);
   g.addColorStop(0, '#3a3a4a'); g.addColorStop(0.5, '#5a5a6e'); g.addColorStop(1, '#1a1a2a');
   c.fillStyle = g; c.strokeStyle = '#0a0a1a'; c.lineWidth = 1.5;
   c.beginPath(); c.moveTo(r*0.6, -7); c.lineTo(r*1.8, -6); c.lineTo(r*1.8, 6); c.lineTo(r*0.6, 7); c.closePath(); c.fill(); c.stroke();
-  // Nòng súng phát sáng khi cast
   const glow = 0.5 + ca * 0.5;
   c.fillStyle = `rgba(76, 201, 240, ${glow})`;
   c.shadowColor = '#4cc9f0'; c.shadowBlur = 12 + ca * 20;
   c.fillRect(r*0.7, -3, r*1.1, 6);
-  // Tia lửa khi bắn
-  if (aa > 0.5) {
-    c.fillStyle = '#ffd166';
-    c.shadowColor = '#ffd166'; c.shadowBlur = 20;
-    c.beginPath(); c.arc(r*1.9, 0, 4 * (aa-0.5)*2, 0, Math.PI*2); c.fill();
-  }
+  if (aa > 0.5) { c.fillStyle = '#ffd166'; c.shadowColor = '#ffd166'; c.shadowBlur = 20; c.beginPath(); c.arc(r*1.9, 0, 4 * (aa-0.5)*2, 0, Math.PI*2); c.fill(); }
   c.shadowBlur = 0; c.restore();
 }
-
 function drawMinigun(c, r, t, spin, aa) {
   c.save();
   c.fillStyle = '#3a3a4a'; c.strokeStyle = '#0a0a1a'; c.lineWidth = 2;
   c.beginPath(); c.moveTo(r*0.3, -12); c.lineTo(r*1.6, -8); c.lineTo(r*1.6, 8); c.lineTo(r*0.3, 12); c.closePath(); c.fill(); c.stroke();
   const bx = r*1.7;
-  for (let i=0;i<6;i++) {
-    const a = i * Math.PI/3 + spin;
-    c.fillStyle = '#3a3a4a';
-    c.beginPath(); c.ellipse(bx, Math.sin(a)*6, r*0.35, 3, 0, 0, Math.PI*2); c.fill();
-  }
+  for (let i=0;i<6;i++) { const a = i * Math.PI/3 + spin; c.fillStyle = '#3a3a4a'; c.beginPath(); c.ellipse(bx, Math.sin(a)*6, r*0.35, 3, 0, 0, Math.PI*2); c.fill(); }
   c.fillStyle = '#4cc9f0'; c.shadowColor = '#4cc9f0'; c.shadowBlur = 20;
   c.fillRect(r*0.5, -3, r*0.9, 6);
   c.shadowBlur = 0; c.restore();
 }
-
 function drawTankHammer(c, r, t, sw) {
   c.save();
   c.strokeStyle = '#5a3a1a'; c.lineWidth = 6;
@@ -925,7 +646,6 @@ function drawTankHammer(c, r, t, sw) {
   c.beginPath(); c.moveTo(-14, -14); c.lineTo(14, -16); c.lineTo(18, 0); c.lineTo(14, 16); c.lineTo(-14, 14); c.closePath(); c.fill(); c.stroke();
   c.restore(); c.restore();
 }
-
 function drawDualSword(c, r, t, sw, side) {
   c.save(); c.rotate(side * 0.4);
   c.fillStyle = '#1a1a2a'; c.fillRect(r*0.3, -3 + side*8, r*0.35, 6);
@@ -936,7 +656,6 @@ function drawDualSword(c, r, t, sw, side) {
   c.beginPath(); c.moveTo(r*0.67, -3+side*8); c.lineTo(r*1.95, side*8); c.lineTo(r*0.67, 3+side*8); c.closePath(); c.fill();
   c.shadowBlur = 0; c.restore();
 }
-
 function drawHolySword(c, r, t, sw) {
   c.save();
   c.fillStyle = '#ffd700'; c.shadowColor = '#ffd700'; c.shadowBlur = 15;
@@ -945,7 +664,6 @@ function drawHolySword(c, r, t, sw) {
   c.beginPath(); c.moveTo(r*0.74, -3); c.lineTo(r*2.1, 0); c.lineTo(r*0.74, 3); c.closePath(); c.fill();
   c.shadowBlur = 0; c.restore();
 }
-
 function drawShadowStaff(c, r, t, ca) {
   c.save();
   c.strokeStyle = '#3a1a5a'; c.lineWidth = 5;
@@ -956,27 +674,18 @@ function drawShadowStaff(c, r, t, ca) {
   c.beginPath(); c.arc(r*1.75, r*0.05, 8 + ca * 3, 0, Math.PI*2); c.fill();
   c.shadowBlur = 0; c.restore();
 }
-
 function drawSpaceBlade(c, r, t, atkAnim) {
   c.save();
   c.fillStyle = '#0a4a3a'; c.strokeStyle = '#06d6a0'; c.lineWidth = 2;
   c.fillRect(r*0.3, -3, r*0.5, 6);
   const bladeGrd = c.createLinearGradient(r*0.8, -3, r*0.8, 3);
   bladeGrd.addColorStop(0, '#a0ffd6'); bladeGrd.addColorStop(0.5, '#06d6a0'); bladeGrd.addColorStop(1, '#0a4a3a');
-  c.fillStyle = bladeGrd;
-  c.shadowColor = '#06d6a0'; c.shadowBlur = 20;
+  c.fillStyle = bladeGrd; c.shadowColor = '#06d6a0'; c.shadowBlur = 20;
   c.beginPath(); c.moveTo(r*0.8, -4); c.lineTo(r*2.0, -2); c.lineTo(r*2.2, 0); c.lineTo(r*2.0, 2); c.lineTo(r*0.8, 4); c.closePath(); c.fill();
-  c.save();
-  c.globalAlpha = 0.6;
-  c.strokeStyle = '#a0ffd6'; c.lineWidth = 1.5;
-  for (let i=0;i<3;i++) {
-    const a = t*0.2 + i*Math.PI*2/3;
-    c.beginPath(); c.ellipse(r*1.4, 0, 8, 4, a, 0, Math.PI*2); c.stroke();
-  }
-  c.restore();
-  c.shadowBlur = 0; c.restore();
+  c.save(); c.globalAlpha = 0.6; c.strokeStyle = '#a0ffd6'; c.lineWidth = 1.5;
+  for (let i=0;i<3;i++) { const a = t*0.2 + i*Math.PI*2/3; c.beginPath(); c.ellipse(r*1.4, 0, 8, 4, a, 0, Math.PI*2); c.stroke(); }
+  c.restore(); c.shadowBlur = 0; c.restore();
 }
-
 function drawHackerBlade(c, r, t, atkAnim) {
   c.save();
   c.fillStyle = '#0a2a1a'; c.strokeStyle = '#00ff88'; c.lineWidth = 2;
@@ -986,14 +695,11 @@ function drawHackerBlade(c, r, t, atkAnim) {
   c.fillStyle = bladeGrd; c.shadowColor = '#00ff88'; c.shadowBlur = 25;
   c.fillRect(r*0.8, -2, r*1.4, 4);
   c.fillStyle = '#fff'; c.shadowBlur = 15;
-  for (let i=0;i<5;i++) {
-    const px = r*0.9 + i*r*0.25 + (t*2 % r*0.25);
-    c.beginPath(); c.arc(px, 0, 1.5, 0, Math.PI*2); c.fill();
-  }
+  for (let i=0;i<5;i++) { const px = r*0.9 + i*r*0.25 + (t*2 % r*0.25); c.beginPath(); c.arc(px, 0, 1.5, 0, Math.PI*2); c.fill(); }
   c.shadowBlur = 0; c.restore();
 }
 
-// ===== DRAW CHAR BODY — CẢI THIỆN ANIMATION =====
+// ===== DRAW CHAR BODY =====
 function drawCharBody(c, data, scale, animState, extraWings) {
   const r = data.radius * scale;
   const name = data.name;
@@ -1004,24 +710,18 @@ function drawCharBody(c, data, scale, animState, extraWings) {
   const castAnim = animState.castProgress;
   const extra = animState.extra || {};
   const hitFlash = animState.hitFlash || 0;
-  const facing = animState.facing || 1;
 
   if (extraWings && name === 'KHÔI NGUYÊN') drawWings(c, r, t);
 
   c.save();
-  // Hit flash effect
-  if (hitFlash > 0) {
-    c.globalAlpha = 0.6 + Math.random()*0.4;
-  }
+  if (hitFlash > 0) c.globalAlpha = 0.6 + Math.random()*0.4;
 
-  // Legs với secondary motion
   const legBob = Math.sin(walk * Math.PI * 2) * 2;
   const legSwing = Math.sin(walk * Math.PI * 2);
   c.fillStyle = data.color2; c.strokeStyle = '#000'; c.lineWidth = 1;
   c.beginPath(); c.ellipse(-r*0.2 + legSwing*2, r*0.7 + legBob*scale, r*0.3, r*0.45, legSwing*0.2, 0, Math.PI*2); c.fill(); c.stroke();
   c.beginPath(); c.ellipse(-r*0.2 - legSwing*2, r*0.7 - legBob*scale, r*0.3, r*0.45, -legSwing*0.2, 0, Math.PI*2); c.fill(); c.stroke();
 
-  // Body với squash/stretch khi attack
   const squash = atkAnim > 0.7 ? 1.05 : (atkAnim > 0 ? 0.97 : 1);
   const stretch = atkAnim > 0.7 ? 0.95 : (atkAnim > 0 ? 1.03 : 1);
   const grd = c.createRadialGradient(-r*0.3, -r*0.4, 0, 0, 0, r*1.3);
@@ -1029,32 +729,24 @@ function drawCharBody(c, data, scale, animState, extraWings) {
   c.fillStyle = grd; c.strokeStyle = '#1a0a0a'; c.lineWidth = 2;
   const bodyRX = r * stretch;
   const bodyRY = r * 1.05 * squash;
-  if (name === 'BÌNH MINH') {
-    c.beginPath(); c.ellipse(-r*0.1, 0, bodyRX*1.05, bodyRY*1.05, 0, 0, Math.PI*2); c.fill(); c.stroke();
-  } else if (name === 'ANNIE NÂU' || name === 'NHẬT HUY') {
-    c.beginPath(); c.ellipse(0, 0, bodyRX*0.85, bodyRY*1.0, 0, 0, Math.PI*2); c.fill(); c.stroke();
-  } else {
-    c.beginPath(); c.ellipse(0, 0, bodyRX, bodyRY, 0, 0, Math.PI*2); c.fill(); c.stroke();
-  }
+  if (name === 'BÌNH MINH') c.beginPath(), c.ellipse(-r*0.1, 0, bodyRX*1.05, bodyRY*1.05, 0, 0, Math.PI*2), c.fill(), c.stroke();
+  else if (name === 'ANNIE NÂU' || name === 'NHẬT HUY') c.beginPath(), c.ellipse(0, 0, bodyRX*0.85, bodyRY*1.0, 0, 0, Math.PI*2), c.fill(), c.stroke();
+  else c.beginPath(), c.ellipse(0, 0, bodyRX, bodyRY, 0, 0, Math.PI*2), c.fill(), c.stroke();
 
-  // Arm với animation
   const armSwing = atkAnim * 0.8 - castAnim * 0.3;
   c.save();
   c.translate(r*0.15, -r*0.15);
   c.rotate(armSwing);
   c.save();
   c.rotate(atkAnim * 1.2);
-  if (name === 'BÌNH AN') {
-    if (extra.minigunActive) drawMinigun(c, r*0.5, t, extra.minigunSpin || 0, atkAnim);
-    else drawMageGun(c, r*0.5, t, castAnim, atkAnim);
-  } else if (name === 'BÌNH MINH') drawTankHammer(c, r*0.5, t, atkAnim * 1.5);
+  if (name === 'BÌNH AN') { if (extra.minigunActive) drawMinigun(c, r*0.5, t, extra.minigunSpin || 0, atkAnim); else drawMageGun(c, r*0.5, t, castAnim, atkAnim); }
+  else if (name === 'BÌNH MINH') drawTankHammer(c, r*0.5, t, atkAnim * 1.5);
   else if (name === 'KHÔI NGUYÊN') drawHolySword(c, r*0.5, t, atkAnim);
   else if (name === 'ANNIE NÂU') drawShadowStaff(c, r*0.5, t, castAnim);
   else if (name === 'NHẬT HUY') drawSpaceBlade(c, r*0.5, t, atkAnim);
   else if (name === 'QUÂN HACKER') drawHackerBlade(c, r*0.5, t, atkAnim);
   c.restore(); c.restore();
 
-  // Head với bob
   c.save();
   c.translate(-r*0.05, -bob*scale);
   const headR = r*0.7;
@@ -1063,16 +755,12 @@ function drawCharBody(c, data, scale, animState, extraWings) {
   c.fillStyle = hg; c.strokeStyle = '#1a0a0a'; c.lineWidth = 2;
   c.beginPath(); c.arc(0, -r*0.5, headR, 0, Math.PI*2); c.fill(); c.stroke();
 
-  // Vẽ mặt theo từng nhân vật (giữ nguyên)
   if (name === 'BÌNH AN') {
-    c.fillStyle = '#2a1a1a';
-    c.beginPath(); c.arc(-headR*0.2, -r*0.5 - headR*0.3, headR*0.85, Math.PI, Math.PI*2); c.fill();
+    c.fillStyle = '#2a1a1a'; c.beginPath(); c.arc(-headR*0.2, -r*0.5 - headR*0.3, headR*0.85, Math.PI, Math.PI*2); c.fill();
     c.fillStyle = 'rgba(30, 60, 100, 0.7)'; c.strokeStyle = '#ffd166';
     c.beginPath(); c.ellipse(headR*0.15, -r*0.5 - headR*0.15, headR*0.28, headR*0.22, 0, 0, Math.PI*2); c.fill(); c.stroke();
     c.beginPath(); c.ellipse(headR*0.15, -r*0.5 + headR*0.15, headR*0.28, headR*0.22, 0, 0, Math.PI*2); c.fill(); c.stroke();
-    // Eye glare
-    c.fillStyle = '#fff';
-    c.beginPath(); c.arc(headR*0.22, -r*0.5 - headR*0.2, 2, 0, Math.PI*2); c.fill();
+    c.fillStyle = '#fff'; c.beginPath(); c.arc(headR*0.22, -r*0.5 - headR*0.2, 2, 0, Math.PI*2); c.fill();
     c.beginPath(); c.arc(headR*0.22, -r*0.5 + headR*0.1, 2, 0, Math.PI*2); c.fill();
   } else if (name === 'BÌNH MINH') {
     c.fillStyle = '#2a1a1a'; c.beginPath(); c.arc(0, -r*0.55, headR*0.75, 0, Math.PI*2); c.fill();
@@ -1121,7 +809,6 @@ function drawCharBody(c, data, scale, animState, extraWings) {
     c.shadowColor = '#00ff88'; c.shadowBlur = 15;
     c.fillRect(-headR*0.6, -r*0.5 - headR*0.35, headR*1.6, headR*0.7);
     c.strokeRect(-headR*0.6, -r*0.5 - headR*0.35, headR*1.6, headR*0.7);
-    // Scanline effect
     c.fillStyle = 'rgba(0,255,136,0.4)';
     const scanY = -r*0.5 - headR*0.35 + ((gameTime*0.5) % (headR*0.7));
     c.fillRect(-headR*0.6, scanY, headR*1.6, 2);
@@ -1130,7 +817,6 @@ function drawCharBody(c, data, scale, animState, extraWings) {
   c.restore();
   c.restore();
 }
-
 function drawWings(c, r, t) {
   c.save();
   for (let side = -1; side <= 1; side += 2) {
@@ -1154,14 +840,32 @@ function drawWings(c, r, t) {
   c.restore();
 }
 
+// ===== SPAWN LOCAL SKILL EFFECTS (Client visual) =====
+function spawnLocalSkillEffects(p, idx) {
+  if (!p) return;
+  const skillName = p.data.skills[idx];
+  createSkillText(skillName, p.data.color);
+  const color = p.data.color;
+  const cx = p.x + Math.cos(p.angle) * 80;
+  const cy = p.y + Math.sin(p.angle) * 80;
+  if (p.data.name === 'KHÔI NGUYÊN') {
+    if (idx === 0) { effects.push(new ShockwaveEffect(cx, cy, 150, '#ffd700', 40)); effects.push(new HolyEffect(cx, cy, 100, 40)); }
+    else if (idx === 1) { effects.push(new ShockwaveEffect(p.x, p.y, 200, '#ffd700', 50)); effects.push(new HolyEffect(p.x, p.y, 180, 50)); }
+    else { effects.push(new HolyEffect(p.x, p.y, 300, 90)); effects.push(new ShockwaveEffect(p.x, p.y, 300, '#ffd700', 60)); }
+  } else if (p.data.name === 'ANNIE NÂU') effects.push(new ChargeEffect(p.x, p.y, '#c77dff', 20));
+  else if (p.data.name === 'NHẬT HUY') effects.push(new WarpEffect(cx, cy, 120, 40));
+  else if (p.data.name === 'QUÂN HACKER') effects.push(new HackEffect(cx, cy, 40));
+  else if (p.data.name === 'BÌNH AN') effects.push(new ChargeEffect(p.x, p.y, p.data.color, 20));
+  else if (p.data.name === 'BÌNH MINH') effects.push(new ChargeEffect(p.x, p.y, '#ffd166', 20));
+  else if (p.data.name === 'KHẢI KIỆT') effects.push(new SlashEffect(p.x, p.y, p.angle, 120, p.data.color, 15));
+  spawnParticles(p.x, p.y, color, 25, 6);
+}
+
 // ===== PLAYER CLASS =====
 class Player {
   constructor(data, isBot, botIndex, totalFighters, isRemote, remoteId) {
-    this.data = data;
-    this.isBot = isBot || false;
-    this.isRemote = isRemote || false;
-    this.remoteId = remoteId || null;
-    this.botIndex = botIndex || 0;
+    this.data = data; this.isBot = isBot || false; this.isRemote = isRemote || false;
+    this.remoteId = remoteId || null; this.botIndex = botIndex || 0;
     if (totalFighters) {
       const angle = (botIndex + (isBot ? 1 : 0)) / totalFighters * Math.PI * 2;
       const radius = Math.min(W, H) * 0.35;
@@ -1170,42 +874,21 @@ class Player {
       this.spawnAngle = angle;
     } else { this.x = W/2; this.y = H/2; this.spawnAngle = 0; }
     resolveObstacleCollision(this);
-    this.baseMaxHp = data.hp;
-    this.maxHp = data.hp;
-    this.hp = data.hp;
-    this.radius = data.radius;
-    this.angle = 0;
-    this.atkCd = 0;
-    this.skillCds = [0,0,0];
+    this.baseMaxHp = data.hp; this.maxHp = data.hp; this.hp = data.hp;
+    this.radius = data.radius; this.angle = 0; this.atkCd = 0; this.skillCds = [0,0,0];
     this.hitFlash = 0;
-    this.buffs = { rage: 0, lunge: 0, speedBoost: 0, invuln: 0, minigun: 0, shield: 0, wings: 0, dragonRage: 0 };
-    this.iframe = 0;
-    this.dead = false;
-    this.castLock = 0;
-    this.ghosts = [];
-    this.walkPhase = 0;
-    this.bob = 0;
-    this.attackAnim = 0;
-    this.attackAnimMax = 10;
-    this.castAnim = 0;
-    this.castAnimMax = 20;
-    this.minigunSpin = 0;
-    this.minigunTimer = 0;
-    this.target = null;
-    this.aiTimer = 0;
-    this.displayName = '';
-    this.level = 1;
-    this.xp = 0;
-    this.xpNeeded = 60;
-    this.gold = 150;
-    this.kills = 0;
-    this.ownedItems = {};
-    this.bonusDmg = 0;
-    this.bonusSpeed = 0;
-    this.bonusHp = 0;
-    this.cdReduction = 0;
-    this.hasPhoenix = false;
-    this.towerKills = 0;
+    // ✅ Thêm slow, root
+    this.buffs = { rage: 0, lunge: 0, speedBoost: 0, invuln: 0, minigun: 0, shield: 0, wings: 0, dragonRage: 0, slow: 0, root: 0 };
+    this.iframe = 0; this.dead = false; this.castLock = 0; this.ghosts = [];
+    this.walkPhase = 0; this.bob = 0;
+    this.attackAnim = 0; this.attackAnimMax = 10;
+    this.castAnim = 0; this.castAnimMax = 20;
+    this.minigunSpin = 0; this.minigunTimer = 0;
+    this.target = null; this.aiTimer = 0;
+    this.displayName = ''; this.level = 1; this.xp = 0; this.xpNeeded = 60; this.gold = 150;
+    this.kills = 0; this.ownedItems = {};
+    this.bonusDmg = 0; this.bonusSpeed = 0; this.bonusHp = 0; this.cdReduction = 0;
+    this.hasPhoenix = false; this.towerKills = 0;
   }
 
   getLevelScale() { return 0.5 + (this.level - 1) / 14 * 0.5; }
@@ -1226,6 +909,9 @@ class Player {
     if (this.ownedItems.boots) base *= 1.6;
     if (this.buffs.speedBoost > 0) base *= 1.5;
     if (this.buffs.rage > 0) base *= 1.3;
+    // ✅ Slow / Root
+    if (this.buffs.slow > 0) base *= 0.4;
+    if (this.buffs.root > 0) base = 0;
     return base;
   }
   addXP(amount) {
@@ -1251,11 +937,7 @@ class Player {
   update() {
     if (this.dead) return;
     if (this.isRemote) return;
-    if (matchState === 'countdown') {
-      this.bob = Math.sin(gameTime * 0.06) * 0.8;
-      this.angle = this.spawnAngle + Math.PI;
-      return;
-    }
+    if (matchState === 'countdown') { this.bob = Math.sin(gameTime * 0.06) * 0.8; this.angle = this.spawnAngle + Math.PI; return; }
     if (matchState !== 'fighting') return;
     if (shopOpen && this === player) return;
     if (this.atkCd > 0) this.atkCd--;
@@ -1269,59 +951,41 @@ class Player {
     if (this.buffs.shield > 0) this.buffs.shield--;
     if (this.buffs.wings > 0) this.buffs.wings--;
     if (this.buffs.dragonRage > 0) this.buffs.dragonRage--;
+    // ✅ Slow / Root
+    if (this.buffs.slow > 0) this.buffs.slow--;
+    if (this.buffs.root > 0) this.buffs.root--;
     if (this.attackAnim > 0) this.attackAnim--;
     if (this.castAnim > 0) this.castAnim--;
     if (this.buffs.minigun > 0) {
-      this.buffs.minigun--;
-      this.minigunSpin += 0.6;
-      this.minigunTimer++;
+      this.buffs.minigun--; this.minigunSpin += 0.6; this.minigunTimer++;
       if (this.minigunTimer >= 4) { this.minigunTimer = 0; this.fireMinigunBullet(); }
       if (this.buffs.minigun === 0) this.minigunSpin = 0;
     }
-    if (trainingMode && trainingOptions.infiniteCD && this === player) {
-      this.skillCds = [0, 0, 0];
-    } else {
-      for (let i=0;i<3;i++) if (this.skillCds[i] > 0) this.skillCds[i]--;
-    }
+    if (trainingMode && trainingOptions.infiniteCD && this === player) this.skillCds = [0, 0, 0];
+    else for (let i=0;i<3;i++) if (this.skillCds[i] > 0) this.skillCds[i]--;
     if (this.isBot) this.updateAI();
     else {
-      // Player: aim theo chuột HOẶC theo hướng di chuyển (touch)
-      if (touchState.joyActive && Math.hypot(touchState.moveX, touchState.moveY) > 0.3) {
-        this.angle = Math.atan2(touchState.moveY, touchState.moveX);
-      } else {
-        this.angle = Math.atan2(mouse.y - this.y, mouse.x - this.x);
-      }
+      if (touchState.joyActive && Math.hypot(touchState.moveX, touchState.moveY) > 0.3) this.angle = Math.atan2(touchState.moveY, touchState.moveX);
+      else this.angle = Math.atan2(mouse.y - this.y, mouse.x - this.x);
     }
     let mx = 0, my = 0;
-    if (this.castLock <= 0) {
-      if (this.isBot) {
-        if (this.aiMoveX) mx = this.aiMoveX;
-        if (this.aiMoveY) my = this.aiMoveY;
-      } else {
+    if (this.castLock <= 0 && this.buffs.root <= 0) {
+      if (this.isBot) { if (this.aiMoveX) mx = this.aiMoveX; if (this.aiMoveY) my = this.aiMoveY; }
+      else {
         if (keys['w']) my -= 1;
         if (keys['s']) my += 1;
         if (keys['a']) mx -= 1;
         if (keys['d']) mx += 1;
-        // Touch joystick
         if (touchState.joyActive) {
           const jm = Math.hypot(touchState.moveX, touchState.moveY);
-          if (jm > 0.15) {
-            mx += touchState.moveX;
-            my += touchState.moveY;
-          }
+          if (jm > 0.15) { mx += touchState.moveX; my += touchState.moveY; }
         }
       }
     }
     const len = Math.hypot(mx,my);
     const moving = len > 0;
-    if (moving) {
-      this.walkPhase += 0.15;
-      if (this.walkPhase > 1) this.walkPhase -= 1;
-      this.bob = Math.sin(gameTime * 0.2) * 1.5;
-    } else {
-      this.walkPhase *= 0.9;
-      this.bob = Math.sin(gameTime * 0.06) * 0.8;
-    }
+    if (moving) { this.walkPhase += 0.15; if (this.walkPhase > 1) this.walkPhase -= 1; this.bob = Math.sin(gameTime * 0.2) * 1.5; }
+    else { this.walkPhase *= 0.9; this.bob = Math.sin(gameTime * 0.06) * 0.8; }
     let speed = this.getTotalSpeed();
     if (this.buffs.lunge > 0) {
       this.x += Math.cos(this.angle) * 12;
@@ -1337,26 +1001,25 @@ class Player {
     this.y = clamp(this.y, this.radius, H - this.radius);
     this.ghosts.forEach(g => g.life--);
     this.ghosts = this.ghosts.filter(g => g.life > 0);
-    
     if (!this.isBot) {
-      // PVP Friend client: gửi input lên host
       if (currentMode === 'friend' && !isHost && this.isRemote === false) {
         if (mouse.down && this.atkCd <= 0 && this.castLock <= 0 && this.buffs.minigun <= 0 && !shopOpen && socket) {
           socket.emit('player_skill', { skill: -1, type: 'attack', angle: this.angle, x: this.x, y: this.y });
-          this.atkCd = this.data.atkCd;
-          this.attackAnim = this.attackAnimMax;
+          this.atkCd = this.data.atkCd; this.attackAnim = this.attackAnimMax;
+          if (this.data.melee) effects.push(new SlashEffect(this.x, this.y, this.angle, this.data.atkRange, this.data.color, 12));
+          else projectiles.push(new Projectile(this.x + Math.cos(this.angle)*25, this.y + Math.sin(this.angle)*25, this.angle, 6, 0, this, this, this.data.color, 5, 3, 380));
         }
         if (keys['q'] && this.skillCds[0] <= 0 && this.castLock <= 0 && !shopOpen && socket) {
           socket.emit('player_skill', { skill: 0, type: 'skill0', angle: this.angle, x: this.x, y: this.y });
-          this.skillCds[0] = this.data.skillCd[0];
+          this.skillCds[0] = this.data.skillCd[0]; spawnLocalSkillEffects(this, 0);
         }
         if (keys['e'] && this.skillCds[1] <= 0 && this.castLock <= 0 && !shopOpen && socket) {
           socket.emit('player_skill', { skill: 1, type: 'skill1', angle: this.angle, x: this.x, y: this.y });
-          this.skillCds[1] = this.data.skillCd[1];
+          this.skillCds[1] = this.data.skillCd[1]; spawnLocalSkillEffects(this, 1);
         }
         if (keys['r'] && this.skillCds[2] <= 0 && this.castLock <= 0 && !shopOpen && socket) {
           socket.emit('player_skill', { skill: 2, type: 'skill2', angle: this.angle, x: this.x, y: this.y });
-          this.skillCds[2] = this.data.skillCd[2];
+          this.skillCds[2] = this.data.skillCd[2]; spawnLocalSkillEffects(this, 2);
         }
       } else {
         if (mouse.down && this.atkCd <= 0 && this.castLock <= 0 && this.buffs.minigun <= 0 && !shopOpen) this.attack();
@@ -1389,10 +1052,7 @@ class Player {
     const optimalDist = this.data.melee ? 50 : 180;
     if (td > optimalDist + 30) { this.aiMoveX = Math.cos(this.angle); this.aiMoveY = Math.sin(this.angle); }
     else if (td < optimalDist - 30) { this.aiMoveX = -Math.cos(this.angle); this.aiMoveY = -Math.sin(this.angle); }
-    else {
-      const sideAngle = this.angle + Math.PI/2 * (Math.sin(gameTime*0.05) > 0 ? 1 : -1);
-      this.aiMoveX = Math.cos(sideAngle) * 0.5; this.aiMoveY = Math.sin(sideAngle) * 0.5;
-    }
+    else { const sideAngle = this.angle + Math.PI/2 * (Math.sin(gameTime*0.05) > 0 ? 1 : -1); this.aiMoveX = Math.cos(sideAngle) * 0.5; this.aiMoveY = Math.sin(sideAngle) * 0.5; }
     if (this.atkCd <= 0 && this.castLock <= 0 && this.buffs.minigun <= 0 && td < this.data.atkRange + 40) this.attack();
     if (this.gold > 500 && Math.random() < 0.001) {
       const item = SHOP_ITEMS[Math.floor(Math.random() * SHOP_ITEMS.length)];
@@ -1408,12 +1068,12 @@ class Player {
     if (!(trainingMode && trainingOptions.infiniteGold)) this.gold -= item.price;
     if (item.id === 'boots') { this.ownedItems.boots = true; this.bonusSpeed += 0.4; }
     else if (item.id === 'armor') { this.ownedItems.armor = true; this.bonusHp += 40; this.maxHp += 40; this.hp += 40; }
-    else if (item.id === 'sword') { this.ownedItems.sword = true; }
+    else if (item.id === 'sword') this.ownedItems.sword = true;
     else if (item.id === 'ring') { this.ownedItems.ring = true; this.cdReduction = 0.2; }
     else if (item.id === 'gem') { this.ownedItems.gem = true; this.bonusDmg += 15; }
-    else if (item.id === 'dragon_scale') { this.ownedItems.dragon_scale = true; }
-    else if (item.id === 'potion') { this.hp = Math.min(this.maxHp, this.hp + 60); }
-    else if (item.id === 'phoenix') { this.hasPhoenix = true; }
+    else if (item.id === 'dragon_scale') this.ownedItems.dragon_scale = true;
+    else if (item.id === 'potion') this.hp = Math.min(this.maxHp, this.hp + 60);
+    else if (item.id === 'phoenix') this.hasPhoenix = true;
     if (this === player && !isBot) { createSkillText(`MUA ${item.name}!`, '#06d6a0'); spawnParticles(this.x, this.y, '#ffd166', 20, 5); }
     return true;
   }
@@ -1421,8 +1081,7 @@ class Player {
     if (this.dead || matchOver) return;
     const spread = (Math.random() - 0.5) * 0.25;
     const a = this.angle + spread;
-    const sx = this.x + Math.cos(this.angle) * 40;
-    const sy = this.y + Math.sin(this.angle) * 40;
+    const sx = this.x + Math.cos(this.angle) * 40, sy = this.y + Math.sin(this.angle) * 40;
     projectiles.push(new Projectile(sx, sy, a, 4, 5, this, this, '#a0e7ff', 12, 1.5, 500));
   }
   attack() {
@@ -1433,18 +1092,14 @@ class Player {
     if (dragon && !dragon.dead) targets.push(dragon);
     if (trainingMode && trainingDummy && !trainingDummy.dead) targets.push(trainingDummy);
     if (!this.data.melee) {
-      const sx = this.x + Math.cos(this.angle) * 25;
-      const sy = this.y + Math.sin(this.angle) * 25;
+      const sx = this.x + Math.cos(this.angle) * 25, sy = this.y + Math.sin(this.angle) * 25;
       projectiles.push(new Projectile(sx, sy, this.angle, 6, dmg, this, this, this.data.color, 5, 3, 380));
     } else {
-      const range = this.data.atkRange;
-      const arc = 1.4;
+      const range = this.data.atkRange, arc = 1.4;
       let hitAny = false;
       targets.forEach(e => {
-        const d = dist(this, e);
-        const a = Math.atan2(e.y - this.y, e.x - this.x);
-        let diff = Math.abs(a - this.angle);
-        if (diff > Math.PI) diff = 2*Math.PI - diff;
+        const d = dist(this, e), a = Math.atan2(e.y - this.y, e.x - this.x);
+        let diff = Math.abs(a - this.angle); if (diff > Math.PI) diff = 2*Math.PI - diff;
         if (d < range + e.radius && diff < arc/2) { if (e.takeDamage) e.takeDamage(dmg, this.angle, 6, this); hitAny = true; }
       });
       if (this.data.name === 'NHẬT HUY') effects.push(new SpaceSlashEffect(this.x, this.y, this.angle, range + 20, '#06d6a0', 14));
@@ -1467,9 +1122,7 @@ class Player {
     if (this.data.name === 'BÌNH AN') {
       if (idx === 0) {
         this.castLock = 8;
-        const tpDist = 180;
-        const nx = clamp(this.x + Math.cos(this.angle)*tpDist, 30, W-30);
-        const ny = clamp(this.y + Math.sin(this.angle)*tpDist, 30, H-30);
+        const nx = clamp(this.x + Math.cos(this.angle)*180, 30, W-30), ny = clamp(this.y + Math.sin(this.angle)*180, 30, H-30);
         const ox = this.x, oy = this.y;
         for (let i=0;i<=12;i++) spawnParticles(lerp(ox, nx, i/12), lerp(oy, ny, i/12), this.data.color, 4, 2);
         effects.push(new ShockwaveEffect(ox, oy, 70, this.data.color, 25));
@@ -1480,14 +1133,9 @@ class Player {
         this.castLock = 24; this.castAnim = this.castAnimMax;
         effects.push(new ChargeEffect(this.x, this.y, this.data.color, 24));
         const self = this;
-        safeSetTimeout(() => {
-          if (self.dead) return;
-          projectiles.push(new Projectile(self.x + Math.cos(self.angle)*30, self.y + Math.sin(self.angle)*30, self.angle, 14, 28*dmgMult, self, self, '#ff6b35', 4, 3, 380, true));
-        }, 350);
+        safeSetTimeout(() => { if (self.dead) return; projectiles.push(new Projectile(self.x + Math.cos(self.angle)*30, self.y + Math.sin(self.angle)*30, self.angle, 14, 28*dmgMult, self, self, '#ff6b35', 4, 3, 380, true)); }, 350);
       } else {
-        this.castLock = 8;
-        this.buffs.minigun = 180; this.buffs.invuln = 180; this.iframe = 180;
-        this.minigunTimer = 0;
+        this.castLock = 8; this.buffs.minigun = 180; this.buffs.invuln = 180; this.iframe = 180; this.minigunTimer = 0;
         effects.push(new ShockwaveEffect(this.x, this.y, 100, this.data.color, 25));
       }
     } else if (this.data.name === 'BÌNH MINH') {
@@ -1504,20 +1152,15 @@ class Player {
       } else if (idx === 1) {
         this.castLock = 6; this.buffs.lunge = 22;
         const self = this;
-        for (let i=0;i<5;i++) safeSetTimeout(() => {
-          if (self.dead) return;
-          targets.forEach(e => { if (dist(self, e) < self.radius + e.radius + 20) e.takeDamage(22/3*dmgMult, self.angle, 6, self); });
-        }, i*60);
+        for (let i=0;i<5;i++) safeSetTimeout(() => { if (self.dead) return; targets.forEach(e => { if (dist(self, e) < self.radius + e.radius + 20) e.takeDamage(22/3*dmgMult, self.angle, 6, self); }); }, i*60);
       } else {
-        this.castLock = 30;
-        this.buffs.rage = 360; this.buffs.speedBoost = 360;
-        this.hp = Math.min(this.maxHp, this.hp + 30);
+        this.castLock = 30; this.buffs.rage = 360; this.buffs.speedBoost = 360; this.hp = Math.min(this.maxHp, this.hp + 30);
         effects.push(new ShockwaveEffect(this.x, this.y, 120, '#ff4d6d', 30));
       }
     } else if (this.data.name === 'KHẢI KIỆT') {
       if (idx === 0) {
         this.castLock = 15;
-        const radius = 120; const self = this;
+        const radius = 120, self = this;
         for (let i=0;i<3;i++) safeSetTimeout(() => {
           if (self.dead) return;
           targets.forEach(e => { if (dist(self, e) < radius + e.radius) { const a = Math.atan2(e.y-self.y, e.x-self.x); e.takeDamage(13*dmgMult, a, 4, self); } });
@@ -1538,40 +1181,67 @@ class Player {
         }, 90);
       }
     } else if (this.data.name === 'KHÔI NGUYÊN') {
+      // ✅ SKILL MỚI — CC CAO
       if (idx === 0) {
-        this.castLock = 20;
-        const radius = 140;
-        targets.forEach(e => { if (dist(this, e) < radius + e.radius) { const a = Math.atan2(e.y-this.y, e.x-this.x); e.takeDamage(18*dmgMult, a, 8, this); } });
-        this.hp = Math.min(this.maxHp, this.hp + 25);
-        if (!this.isBot) addDamageText(this.x, this.y - this.radius - 20, '+25', '#06d6a0');
-        effects.push(new HolyEffect(this.x, this.y, radius, 40));
-      } else if (idx === 1) {
-        this.castLock = 10; this.buffs.shield = 240; this.iframe = 30;
-        effects.push(new ShieldEffect(this));
-      } else {
-        this.castLock = 10;
-        this.buffs.wings = 120; this.buffs.invuln = 120; this.iframe = 120;
-        effects.push(new ShockwaveEffect(this.x, this.y, 100, '#ffd700', 25));
-        effects.push(new HolyEffect(this.x, this.y, 80, 30));
-      }
-    } else if (this.data.name === 'ANNIE NÂU') {
-      if (idx === 0) {
-        this.castLock = 18;
-        effects.push(new ChargeEffect(this.x, this.y, '#c77dff', 18));
+        // Q: Thánh Quang Trói — bắn tia sáng stun 2s
+        this.castLock = 15; this.castAnim = this.castAnimMax;
+        effects.push(new ChargeEffect(this.x, this.y, '#ffd700', 20));
         const self = this;
         safeSetTimeout(() => {
           if (self.dead) return;
-          projectiles.push(new Projectile(self.x + Math.cos(self.angle)*30, self.y + Math.sin(self.angle)*30, self.angle, 12, 28*dmgMult, self, self, '#c77dff', 5, 3, 420, true));
-        }, 280);
+          const sx = self.x + Math.cos(self.angle) * 30;
+          const sy = self.y + Math.sin(self.angle) * 30;
+          projectiles.push(new Projectile(sx, sy, self.angle, 10, 22 * dmgMult, self, self, '#ffd700', 9, 3, 550, false, false, false, 'stun', 120));
+        }, 250);
       } else if (idx === 1) {
-        this.castLock = 20;
-        const radius = 170;
+        // E: Vòng Xích Thần — kéo tất cả kẻ địch vào tâm + slow
+        this.castLock = 25;
+        const radius = 200;
+        effects.push(new ShockwaveEffect(this.x, this.y, radius, '#ffd700', 50));
+        effects.push(new HolyEffect(this.x, this.y, radius * 0.8, 50));
         targets.forEach(e => {
-          if (dist(this, e) < radius + e.radius) {
-            e.takeDamage(13*dmgMult, Math.atan2(e.y-this.y, e.x-this.x), 0, this);
+          const d = dist(this, e);
+          if (d < radius + e.radius) {
+            const a = Math.atan2(this.y - e.y, this.x - e.x);
+            const pullStrength = 1 - d / radius;
+            e.x += Math.cos(a) * 40 * pullStrength;
+            e.y += Math.sin(a) * 40 * pullStrength;
+            e.takeDamage(15 * dmgMult, a, 0, this);
+            if (e.buffs) e.buffs.slow = 180;
             effects.push(new ChainEffect(this.x, this.y, e.x, e.y, 60));
           }
         });
+        screenShake = 8;
+      } else {
+        // R: Thiên Đàng Giam Cầm — root + damage liên tục
+        this.castLock = 30;
+        const radius = 300;
+        const cx = this.x, cy = this.y;
+        effects.push(new HolyEffect(cx, cy, radius, 90));
+        effects.push(new ShockwaveEffect(cx, cy, radius, '#ffd700', 60));
+        let tick = 0; const self = this;
+        safeSetInterval(() => {
+          if (self.dead || tick > 24) return;
+          targets.forEach(e => {
+            if (dist({x:cx,y:cy}, e) < radius + e.radius) {
+              e.takeDamage(5 * dmgMult, 0, 0, self);
+              if (e.buffs) e.buffs.root = 240;
+              effects.push(new ShockwaveEffect(e.x, e.y, 40, '#ffd700', 20));
+            }
+          });
+          tick++;
+        }, 100);
+        screenShake = 20; hitStop = 5;
+      }
+    } else if (this.data.name === 'ANNIE NÂU') {
+      if (idx === 0) {
+        this.castLock = 18; effects.push(new ChargeEffect(this.x, this.y, '#c77dff', 18));
+        const self = this;
+        safeSetTimeout(() => { if (self.dead) return; projectiles.push(new Projectile(self.x + Math.cos(self.angle)*30, self.y + Math.sin(self.angle)*30, self.angle, 12, 28*dmgMult, self, self, '#c77dff', 5, 3, 420, true)); }, 280);
+      } else if (idx === 1) {
+        this.castLock = 20;
+        const radius = 170;
+        targets.forEach(e => { if (dist(this, e) < radius + e.radius) { e.takeDamage(13*dmgMult, Math.atan2(e.y-this.y, e.x-this.x), 0, this); effects.push(new ChainEffect(this.x, this.y, e.x, e.y, 60)); } });
         effects.push(new ShockwaveEffect(this.x, this.y, radius, '#c77dff', 40));
       } else {
         this.castLock = 15;
@@ -1580,79 +1250,46 @@ class Player {
     } else if (this.data.name === 'NHẬT HUY') {
       if (idx === 0) {
         this.castLock = 15;
-        const cx = this.x + Math.cos(this.angle) * 120;
-        const cy = this.y + Math.sin(this.angle) * 120;
-        const radius = 100; const self = this;
+        const cx = this.x + Math.cos(this.angle) * 120, cy = this.y + Math.sin(this.angle) * 120, radius = 100, self = this;
         effects.push(new WarpEffect(cx, cy, radius, 40));
         safeSetTimeout(() => {
           if (self.dead) return;
-          targets.forEach(e => {
-            if (dist({x:cx, y:cy}, e) < radius + e.radius) {
-              const a = Math.atan2(cy - e.y, cx - e.x);
-              e.vx = (e.vx||0) + Math.cos(a) * 15;
-              e.vy = (e.vy||0) + Math.sin(a) * 15;
-              e.takeDamage(20*dmgMult, a, 5, self);
-            }
-          });
+          targets.forEach(e => { if (dist({x:cx, y:cy}, e) < radius + e.radius) { const a = Math.atan2(cy - e.y, cx - e.x); e.vx = (e.vx||0) + Math.cos(a) * 15; e.vy = (e.vy||0) + Math.sin(a) * 15; e.takeDamage(20*dmgMult, a, 5, self); } });
           effects.push(new ShockwaveEffect(cx, cy, radius, '#06d6a0', 30));
           screenShake = 8;
         }, 300);
       } else if (idx === 1) {
-        this.castLock = 20;
-        effects.push(new ChargeEffect(this.x, this.y, '#a0ffd6', 20));
+        this.castLock = 20; effects.push(new ChargeEffect(this.x, this.y, '#a0ffd6', 20));
         const self = this;
         safeSetTimeout(() => {
           if (self.dead) return;
-          for (let k=-1;k<=1;k++) {
-            const a = self.angle + k * 0.25;
-            projectiles.push(new Projectile(self.x + Math.cos(a)*30, self.y + Math.sin(a)*30, a, 8, 22*dmgMult, self, self, '#06d6a0', 8, 4, 500, false, true));
-          }
+          for (let k=-1;k<=1;k++) { const a = self.angle + k * 0.25; projectiles.push(new Projectile(self.x + Math.cos(a)*30, self.y + Math.sin(a)*30, a, 8, 22*dmgMult, self, self, '#06d6a0', 8, 4, 500, false, true)); }
         }, 300);
       } else {
         this.castLock = 20;
-        const cx = this.x + Math.cos(this.angle) * 140;
-        const cy = this.y + Math.sin(this.angle) * 140;
-        const radius = 140; const self = this;
+        const cx = this.x + Math.cos(this.angle) * 140, cy = this.y + Math.sin(this.angle) * 140, radius = 140, self = this;
         effects.push(new BlackHoleEffect(cx, cy, radius, 60));
         safeSetTimeout(() => {
           if (self.dead) return;
-          targets.forEach(e => {
-            if (dist({x:cx, y:cy}, e) < radius + e.radius) {
-              const a = Math.atan2(cy - e.y, cx - e.x);
-              e.vx = (e.vx||0) + Math.cos(a) * 20;
-              e.vy = (e.vy||0) + Math.sin(a) * 20;
-              e.takeDamage(45*dmgMult, a, 8, self);
-            }
-          });
+          targets.forEach(e => { if (dist({x:cx, y:cy}, e) < radius + e.radius) { const a = Math.atan2(cy - e.y, cx - e.x); e.vx = (e.vx||0) + Math.cos(a) * 20; e.vy = (e.vy||0) + Math.sin(a) * 20; e.takeDamage(45*dmgMult, a, 8, self); } });
           effects.push(new ShockwaveEffect(cx, cy, radius, '#06d6a0', 50));
           screenShake = 18; hitStop = 5;
         }, 500);
       }
     } else if (this.data.name === 'QUÂN HACKER') {
       if (idx === 0) {
-        this.castLock = 12;
-        const a = this.angle;
+        this.castLock = 12; const a = this.angle;
         projectiles.push(new Projectile(this.x + Math.cos(a)*30, this.y + Math.sin(a)*30, a, 10, 18*dmgMult, this, this, '#00ff88', 6, 3, 450, false, false, true));
       } else if (idx === 1) {
         this.castLock = 20;
-        const cx = this.x + Math.cos(this.angle) * 100;
-        const cy = this.y + Math.sin(this.angle) * 100;
+        const cx = this.x + Math.cos(this.angle) * 100, cy = this.y + Math.sin(this.angle) * 100;
         effects.push(new FirewallEffect(cx, cy, this.angle, 60));
         let tick = 0; const self = this;
-        safeSetInterval(() => {
-          if (self.dead || tick > 30) return;
-          targets.forEach(e => { if (Math.hypot(e.x - cx, e.y - cy) < 60) e.takeDamage(2*dmgMult, Math.atan2(e.y-cy, e.x-cx), 0, self); });
-          tick++;
-        }, 100);
+        safeSetInterval(() => { if (self.dead || tick > 30) return; targets.forEach(e => { if (Math.hypot(e.x - cx, e.y - cy) < 60) e.takeDamage(2*dmgMult, Math.atan2(e.y-cy, e.x-cx), 0, self); }); tick++; }, 100);
       } else {
         this.castLock = 20;
         effects.push(new ShockwaveEffect(this.x, this.y, 180, '#00ff88', 40));
-        targets.forEach(e => {
-          if (dist(this, e) < 180 + e.radius) {
-            e.takeDamage(22*dmgMult, Math.atan2(e.y-this.y, e.x-this.x), 5, this);
-            effects.push(new HackEffect(e.x, e.y, 40));
-          }
-        });
+        targets.forEach(e => { if (dist(this, e) < 180 + e.radius) { e.takeDamage(22*dmgMult, Math.atan2(e.y-this.y, e.x-this.x), 5, this); effects.push(new HackEffect(e.x, e.y, 40)); } });
         screenShake = 12;
       }
     }
@@ -1660,15 +1297,12 @@ class Player {
   takeDamage(dmg, angle, kb, attacker) {
     if (this.iframe > 0 || this.dead) return;
     if (this.buffs.shield > 0) dmg *= 0.3;
-    this.hp -= dmg;
-    this.hitFlash = 10;
+    this.hp -= dmg; this.hitFlash = 10;
     screenShake = Math.max(screenShake, this.isBot || this.isRemote ? 3 : 6);
     spawnParticles(this.x, this.y, '#ff4d6d', 8, 3);
     if (this.hp <= 0) {
       if (this.hasPhoenix) {
-        this.hasPhoenix = false;
-        this.hp = this.maxHp * 0.5;
-        this.iframe = 90;
+        this.hasPhoenix = false; this.hp = this.maxHp * 0.5; this.iframe = 90;
         effects.push(new ShockwaveEffect(this.x, this.y, 150, '#ff6b35', 40));
         effects.push(new HolyEffect(this.x, this.y, 100, 40));
         spawnParticles(this.x, this.y, '#ff6b35', 40, 7);
@@ -1681,20 +1315,12 @@ class Player {
       screenShake = 20; hitStop = 5;
       effects.push(new DeathEffect(this.x, this.y, this.data.color));
       const goldDrop = 60 + (this.level - 1) * 25;
-      for (let i=0;i<Math.min(8, Math.floor(goldDrop/20));i++) {
-        goldCoins.push({ x: this.x + rand(-30,30), y: this.y + rand(-30,30), amount: Math.floor(goldDrop/8), life: 900, bob: 0 });
-      }
+      for (let i=0;i<Math.min(8, Math.floor(goldDrop/20));i++) goldCoins.push({ x: this.x + rand(-30,30), y: this.y + rand(-30,30), amount: Math.floor(goldDrop/8), life: 900, bob: 0 });
       if (attacker) {
         attacker.kills = (attacker.kills || 0) + 1;
-        attacker.addXP(40 + this.level * 12);
-        attacker.addGold(120 + this.level * 25);
+        attacker.addXP(40 + this.level * 12); attacker.addGold(120 + this.level * 25);
         if (attacker === player) { pvpKills++; createSkillText(`+1 KILL`, '#06d6a0'); }
-        killFeed.push({
-          killer: attacker.displayName || attacker.data.name,
-          killerColor: attacker.data.color,
-          victim: this.displayName || this.data.name,
-          victimColor: this.data.color, life: 180
-        });
+        killFeed.push({ killer: attacker.displayName || attacker.data.name, killerColor: attacker.data.color, victim: this.displayName || this.data.name, victimColor: this.data.color, life: 180 });
       }
       checkWinCondition();
     }
@@ -1702,50 +1328,59 @@ class Player {
   draw() {
     if (this.dead) return;
     this.ghosts.forEach(g => {
-      ctx.save();
-      ctx.globalAlpha = g.life / 20 * 0.5;
+      ctx.save(); ctx.globalAlpha = g.life / 20 * 0.5;
       ctx.translate(g.x, g.y); ctx.rotate(g.angle);
       const animState = { time: gameTime, walkPhase: this.walkPhase, bob: this.bob, attackProgress: 0, castProgress: 0, extra: {}, hitFlash: 0 };
-      drawCharBody(ctx, this.data, 0.85, animState, false);
-      ctx.restore();
+      drawCharBody(ctx, this.data, 0.85, animState, false); ctx.restore();
     });
     if (this.buffs.wings > 0) {
-      ctx.save();
-      ctx.globalAlpha = 0.4 + Math.sin(gameTime*0.3)*0.15;
+      ctx.save(); ctx.globalAlpha = 0.4 + Math.sin(gameTime*0.3)*0.15;
       const r = this.radius + 40 + Math.sin(gameTime*0.2)*8;
       const ag = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, r);
       ag.addColorStop(0, 'rgba(255,215,0,0.6)'); ag.addColorStop(1, 'rgba(255,215,0,0)');
-      ctx.fillStyle = ag; ctx.beginPath(); ctx.arc(this.x, this.y, r, 0, Math.PI*2); ctx.fill();
-      ctx.restore();
+      ctx.fillStyle = ag; ctx.beginPath(); ctx.arc(this.x, this.y, r, 0, Math.PI*2); ctx.fill(); ctx.restore();
     }
     if (this.buffs.dragonRage > 0) {
-      ctx.save();
-      ctx.globalAlpha = 0.5 + Math.sin(gameTime*0.3)*0.2;
+      ctx.save(); ctx.globalAlpha = 0.5 + Math.sin(gameTime*0.3)*0.2;
       const r = this.radius + 30;
       const dg = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, r);
       dg.addColorStop(0, 'rgba(255,77,109,0.7)'); dg.addColorStop(0.5, 'rgba(255,215,0,0.4)'); dg.addColorStop(1, 'rgba(255,77,109,0)');
       ctx.fillStyle = dg; ctx.beginPath(); ctx.arc(this.x, this.y, r, 0, Math.PI*2); ctx.fill();
-      ctx.strokeStyle = '#ff4d6d'; ctx.lineWidth = 3;
-      ctx.shadowColor = '#ff4d6d'; ctx.shadowBlur = 20;
+      ctx.strokeStyle = '#ff4d6d'; ctx.lineWidth = 3; ctx.shadowColor = '#ff4d6d'; ctx.shadowBlur = 20;
       ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 15, 0, Math.PI*2); ctx.stroke();
-      ctx.shadowBlur = 0;
-      ctx.restore();
+      ctx.shadowBlur = 0; ctx.restore();
     }
     if (this.buffs.minigun > 0) {
-      ctx.save();
-      ctx.globalAlpha = 0.4 + Math.sin(gameTime*0.4)*0.2;
+      ctx.save(); ctx.globalAlpha = 0.4 + Math.sin(gameTime*0.4)*0.2;
       ctx.strokeStyle = '#a0e7ff'; ctx.shadowColor = '#4cc9f0'; ctx.shadowBlur = 20; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 20, 0, Math.PI*2); ctx.stroke();
-      ctx.restore();
+      ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 20, 0, Math.PI*2); ctx.stroke(); ctx.restore();
     }
     if (this.buffs.shield > 0) {
-      ctx.save();
-      ctx.globalAlpha = 0.5 + Math.sin(gameTime*0.3)*0.2;
+      ctx.save(); ctx.globalAlpha = 0.5 + Math.sin(gameTime*0.3)*0.2;
       const r = this.radius + 22;
       const sg = ctx.createRadialGradient(this.x, this.y, r*0.7, this.x, this.y, r);
       sg.addColorStop(0, 'rgba(255,215,0,0)'); sg.addColorStop(0.7, 'rgba(255,215,0,0.4)'); sg.addColorStop(1, 'rgba(255,215,0,0.8)');
-      ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(this.x, this.y, r, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(this.x, this.y, r, 0, Math.PI*2); ctx.fill(); ctx.restore();
+    }
+    // ✅ ROOT visual — dây xích vàng quanh người
+    if (this.buffs.root > 0) {
+      ctx.save(); ctx.globalAlpha = 0.7;
+      ctx.strokeStyle = '#ffd700'; ctx.shadowColor = '#ffd700'; ctx.shadowBlur = 20; ctx.lineWidth = 4;
+      for (let i=0;i<6;i++) {
+        const a = i * Math.PI/3 + gameTime*0.05;
+        const r = this.radius + 15;
+        ctx.beginPath();
+        ctx.moveTo(this.x + Math.cos(a) * r, this.y + Math.sin(a) * r);
+        ctx.lineTo(this.x + Math.cos(a) * (r + 15), this.y + Math.sin(a) * (r + 15));
+        ctx.stroke();
+      }
       ctx.restore();
+    }
+    // ✅ SLOW visual — vòng xanh quanh người
+    if (this.buffs.slow > 0) {
+      ctx.save(); ctx.globalAlpha = 0.4 + Math.sin(gameTime*0.3)*0.2;
+      ctx.strokeStyle = '#06d6a0'; ctx.shadowColor = '#06d6a0'; ctx.shadowBlur = 15; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 12, 0, Math.PI*2); ctx.stroke(); ctx.restore();
     }
     ctx.save();
     ctx.translate(this.x, this.y);
@@ -1754,20 +1389,12 @@ class Player {
     if (this.iframe > 0 && Math.floor(gameTime/4) % 2 === 0 && this.buffs.wings <= 0) ctx.globalAlpha = 0.5;
     ctx.rotate(this.angle);
     if (this.hitFlash > 0) ctx.globalAlpha = 0.5 + Math.random()*0.5;
-    const animState = {
-      time: gameTime, walkPhase: this.walkPhase, bob: this.bob,
-      attackProgress: this.attackAnim / this.attackAnimMax,
-      castProgress: this.castAnim / this.castAnimMax,
-      extra: { minigunActive: this.buffs.minigun > 0, minigunSpin: this.minigunSpin },
-      hitFlash: this.hitFlash
-    };
+    const animState = { time: gameTime, walkPhase: this.walkPhase, bob: this.bob, attackProgress: this.attackAnim / this.attackAnimMax, castProgress: this.castAnim / this.castAnimMax, extra: { minigunActive: this.buffs.minigun > 0, minigunSpin: this.minigunSpin }, hitFlash: this.hitFlash };
     drawCharBody(ctx, this.data, 1, animState, this.buffs.wings > 0);
     ctx.restore();
     if ((this.isBot || this.isRemote) && matchState !== 'countdown') {
       const nm = this.isRemote ? (this.displayName || 'PLAYER') : this.data.name;
-      ctx.save();
-      ctx.font = 'bold 11px Segoe UI';
-      ctx.textAlign = 'center';
+      ctx.save(); ctx.font = 'bold 11px Segoe UI'; ctx.textAlign = 'center';
       ctx.fillStyle = this.isRemote ? '#06d6a0' : this.data.color;
       ctx.strokeStyle = '#000'; ctx.lineWidth = 3;
       ctx.strokeText(`Lv${this.level} ${nm}`, this.x, this.y - this.radius - 42);
@@ -1799,8 +1426,7 @@ class Player {
     for (let i=0;i<3;i++) {
       if (this.skillCds[i] <= 0) {
         const a = gameTime * 0.05 + i * (Math.PI*2/3);
-        ctx.save();
-        ctx.globalAlpha = 0.5 + Math.sin(gameTime*0.1 + i)*0.2;
+        ctx.save(); ctx.globalAlpha = 0.5 + Math.sin(gameTime*0.1 + i)*0.2;
         ctx.strokeStyle = this.data.color; ctx.shadowColor = this.data.color; ctx.shadowBlur = 10; ctx.lineWidth = 2;
         ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 8 + i*4, a, a + 0.7); ctx.stroke();
         ctx.restore();
@@ -1823,25 +1449,15 @@ class Monster {
     this.goldReward = tier === 1 ? 30 : tier === 2 ? 70 : 150;
     this.color = tier === 1 ? '#8a4a2a' : tier === 2 ? '#6a2a8a' : '#a01a1a';
     this.accent = tier === 1 ? '#c78a4a' : tier === 2 ? '#c77dff' : '#ff6b6b';
-    this.angle = 0;
-    this.walkPhase = 0;
-    this.attackCd = 0;
-    this.hitFlash = 0;
-    this.dead = false;
-    this.wanderTimer = 0;
-    this.wanderX = 0; this.wanderY = 0;
-    this.aggro = false;
-    this.aggroTimer = 0;
-    this.aggroTarget = null;
+    this.angle = 0; this.walkPhase = 0; this.attackCd = 0; this.hitFlash = 0;
+    this.dead = false; this.wanderTimer = 0; this.wanderX = 0; this.wanderY = 0;
+    this.aggro = false; this.aggroTimer = 0; this.aggroTarget = null;
   }
   update() {
     if (this.dead) return;
     if (this.hitFlash > 0) this.hitFlash--;
     if (this.attackCd > 0) this.attackCd--;
-    if (this.aggroTimer > 0) {
-      this.aggroTimer--;
-      if (this.aggroTimer <= 0) { this.aggro = false; this.aggroTarget = null; }
-    }
+    if (this.aggroTimer > 0) { this.aggroTimer--; if (this.aggroTimer <= 0) { this.aggro = false; this.aggroTarget = null; } }
     if (this.aggro && this.aggroTarget && !this.aggroTarget.dead) {
       const d = dist(this, this.aggroTarget);
       this.angle = Math.atan2(this.aggroTarget.y - this.y, this.aggroTarget.x - this.x);
@@ -1857,11 +1473,7 @@ class Monster {
       }
     } else {
       this.wanderTimer--;
-      if (this.wanderTimer <= 0) {
-        this.wanderTimer = rand(60, 180);
-        this.wanderX = rand(-1, 1);
-        this.wanderY = rand(-1, 1);
-      }
+      if (this.wanderTimer <= 0) { this.wanderTimer = rand(60, 180); this.wanderX = rand(-1, 1); this.wanderY = rand(-1, 1); }
       this.x += this.wanderX * this.speed * 0.4;
       this.y += this.wanderY * this.speed * 0.4;
       this.x = clamp(this.x, 30, W-30);
@@ -1872,26 +1484,16 @@ class Monster {
   }
   takeDamage(dmg, angle, kb, attacker) {
     if (this.dead) return;
-    this.hp -= dmg;
-    this.hitFlash = 6;
+    this.hp -= dmg; this.hitFlash = 6;
     addDamageText(this.x, this.y - this.radius - 8, Math.round(dmg), '#ffd166');
     spawnParticles(this.x, this.y, this.color, 6, 3);
-    if (attacker) {
-      this.aggro = true;
-      this.aggroTimer = 300;
-      this.aggroTarget = attacker;
-    }
+    if (attacker) { this.aggro = true; this.aggroTimer = 300; this.aggroTarget = attacker; }
     if (this.hp <= 0) {
       this.dead = true;
       spawnParticles(this.x, this.y, this.color, 20, 5);
       spawnParticles(this.x, this.y, '#fff', 10, 3);
-      if (attacker && attacker.addXP) {
-        attacker.addXP(this.xpReward);
-        attacker.addGold(this.goldReward);
-      }
-      for (let i=0;i<3;i++) {
-        goldCoins.push({ x: this.x + rand(-20,20), y: this.y + rand(-20,20), amount: Math.floor(this.goldReward/3), life: 900, bob: 0 });
-      }
+      if (attacker && attacker.addXP) { attacker.addXP(this.xpReward); attacker.addGold(this.goldReward); }
+      for (let i=0;i<3;i++) goldCoins.push({ x: this.x + rand(-20,20), y: this.y + rand(-20,20), amount: Math.floor(this.goldReward/3), life: 900, bob: 0 });
     }
   }
   draw() {
@@ -1930,15 +1532,10 @@ class Monster {
 // ===== TOWER =====
 class Tower {
   constructor(x, y, team) {
-    this.x = x; this.y = y;
-    this.team = team;
+    this.x = x; this.y = y; this.team = team;
     this.maxHp = 500; this.hp = 500;
-    this.radius = 40;
-    this.range = 350;
-    this.dmg = 15;
-    this.attackCd = 0;
-    this.hitFlash = 0;
-    this.dead = false;
+    this.radius = 40; this.range = 350; this.dmg = 15;
+    this.attackCd = 0; this.hitFlash = 0; this.dead = false;
     this.baseColor = team === 1 ? '#4cc9f0' : team === 2 ? '#ff4d6d' : '#ffd166';
     this.accent = team === 1 ? '#a0e7ff' : team === 2 ? '#ff9db1' : '#fff4b3';
     this.respawnTimer = 0;
@@ -1947,9 +1544,7 @@ class Tower {
     if (this.dead) {
       this.respawnTimer--;
       if (this.respawnTimer <= 0) {
-        this.hp = this.maxHp;
-        this.dead = false;
-        this.hitFlash = 0;
+        this.hp = this.maxHp; this.dead = false; this.hitFlash = 0;
         effects.push(new ShockwaveEffect(this.x, this.y, 100, this.baseColor, 40));
         spawnParticles(this.x, this.y, this.baseColor, 30, 6);
       }
@@ -1974,30 +1569,20 @@ class Tower {
   }
   takeDamage(dmg, angle, kb, attacker) {
     if (this.dead) return;
-    this.hp -= dmg;
-    this.hitFlash = 8;
+    this.hp -= dmg; this.hitFlash = 8;
     addDamageText(this.x, this.y - this.radius - 15, Math.round(dmg), '#ffd166');
     spawnParticles(this.x, this.y, this.baseColor, 6, 3);
     if (this.hp <= 0) {
-      this.hp = 0; this.dead = true;
-      this.respawnTimer = 600;
+      this.hp = 0; this.dead = true; this.respawnTimer = 600;
       spawnParticles(this.x, this.y, this.baseColor, 50, 8);
       spawnParticles(this.x, this.y, '#fff', 30, 6);
       screenShake = 20; hitStop = 5;
       effects.push(new ShockwaveEffect(this.x, this.y, 200, this.baseColor, 50));
       effects.push(new HolyEffect(this.x, this.y, 150, 40));
-      if (attacker && attacker.addXP) {
-        attacker.addXP(100);
-        attacker.addGold(250);
-      }
+      if (attacker && attacker.addXP) { attacker.addXP(100); attacker.addGold(250); }
       if (attacker) {
         attacker.towerKills = (attacker.towerKills || 0) + 1;
-        killFeed.push({
-          killer: attacker.displayName || attacker.data.name,
-          killerColor: attacker.data.color,
-          victim: '🏛 TRỤ',
-          victimColor: this.baseColor, life: 180
-        });
+        killFeed.push({ killer: attacker.displayName || attacker.data.name, killerColor: attacker.data.color, victim: '🏛 TRỤ', victimColor: this.baseColor, life: 180 });
       }
     }
   }
@@ -2012,8 +1597,7 @@ class Tower {
       ctx.beginPath(); ctx.arc(0, 0, this.radius * 0.5, 0, Math.PI*2); ctx.stroke();
       const pct = 1 - this.respawnTimer / 600;
       ctx.strokeStyle = this.baseColor;
-      ctx.shadowColor = this.baseColor; ctx.shadowBlur = 15;
-      ctx.lineWidth = 4;
+      ctx.shadowColor = this.baseColor; ctx.shadowBlur = 15; ctx.lineWidth = 4;
       ctx.beginPath(); ctx.arc(0, 0, this.radius + 10, -Math.PI/2, -Math.PI/2 + Math.PI*2*pct); ctx.stroke();
       ctx.restore();
       return;
@@ -2021,9 +1605,7 @@ class Tower {
     ctx.fillStyle = 'rgba(0,0,0,0.5)';
     ctx.beginPath(); ctx.ellipse(0, this.radius*0.8, this.radius*1.2, this.radius*0.5, 0, 0, Math.PI*2); ctx.fill();
     const baseGrd = ctx.createRadialGradient(-this.radius*0.3, -this.radius*0.3, 0, 0, 0, this.radius);
-    baseGrd.addColorStop(0, this.accent);
-    baseGrd.addColorStop(0.6, this.baseColor);
-    baseGrd.addColorStop(1, this.baseColor);
+    baseGrd.addColorStop(0, this.accent); baseGrd.addColorStop(0.6, this.baseColor); baseGrd.addColorStop(1, this.baseColor);
     ctx.fillStyle = baseGrd;
     ctx.strokeStyle = '#000'; ctx.lineWidth = 3;
     ctx.beginPath(); ctx.arc(0, 0, this.radius, 0, Math.PI*2); ctx.fill(); ctx.stroke();
@@ -2079,16 +1661,9 @@ class Dragon {
   constructor(x, y) {
     this.x = x; this.y = y;
     this.maxHp = 600; this.hp = 600;
-    this.radius = 45;
-    this.speed = 1.5;
-    this.dmg = 25;
-    this.angle = 0;
-    this.walkPhase = 0;
-    this.attackCd = 0;
-    this.hitFlash = 0;
-    this.dead = false;
-    this.wingPhase = 0;
-    this.fireCd = 0;
+    this.radius = 45; this.speed = 1.5; this.dmg = 25;
+    this.angle = 0; this.walkPhase = 0; this.attackCd = 0; this.hitFlash = 0;
+    this.dead = false; this.wingPhase = 0; this.fireCd = 0;
   }
   update() {
     if (this.dead) return;
@@ -2098,10 +1673,7 @@ class Dragon {
     this.wingPhase += 0.15;
     const targets = allFighters.filter(p => !p.dead);
     let nearest = null, nd = 500;
-    for (const p of targets) {
-      const d = dist(this, p);
-      if (d < nd) { nd = d; nearest = p; }
-    }
+    for (const p of targets) { const d = dist(this, p); if (d < nd) { nd = d; nearest = p; } }
     if (nearest) {
       this.angle = Math.atan2(nearest.y - this.y, nearest.x - this.x);
       if (nd > 100) {
@@ -2122,8 +1694,7 @@ class Dragon {
   }
   takeDamage(dmg, angle, kb, attacker) {
     if (this.dead) return;
-    this.hp -= dmg;
-    this.hitFlash = 6;
+    this.hp -= dmg; this.hitFlash = 6;
     addDamageText(this.x, this.y - this.radius - 8, Math.round(dmg), '#ffd166');
     spawnParticles(this.x, this.y, '#ff4d1a', 8, 4);
     if (this.hp <= 0) {
@@ -2163,11 +1734,7 @@ class Dragon {
     ctx.fillStyle = g; ctx.strokeStyle = '#2a0a0a'; ctx.lineWidth = 3;
     ctx.beginPath(); ctx.ellipse(0, 0, this.radius, this.radius*0.8, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
     ctx.strokeStyle = '#ffd166'; ctx.lineWidth = 1.5;
-    for (let i=0;i<5;i++) {
-      ctx.beginPath();
-      ctx.arc(-this.radius*0.3 + i*this.radius*0.15, 0, this.radius*0.15, 0, Math.PI*2);
-      ctx.stroke();
-    }
+    for (let i=0;i<5;i++) { ctx.beginPath(); ctx.arc(-this.radius*0.3 + i*this.radius*0.15, 0, this.radius*0.15, 0, Math.PI*2); ctx.stroke(); }
     ctx.fillStyle = '#ffd700'; ctx.shadowColor = '#ffd700'; ctx.shadowBlur = 15;
     ctx.beginPath(); ctx.arc(this.radius*0.5, -this.radius*0.25, this.radius*0.18, 0, Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.arc(this.radius*0.5, this.radius*0.25, this.radius*0.18, 0, Math.PI*2); ctx.fill();
@@ -2178,9 +1745,7 @@ class Dragon {
     ctx.fillStyle = 'rgba(0,0,0,0.9)'; ctx.fillRect(x-2, y-2, w+4, 12);
     ctx.fillStyle = '#2a0a0a'; ctx.fillRect(x, y, w, 8);
     ctx.fillStyle = '#ff4d1a'; ctx.fillRect(x, y, w * (this.hp/this.maxHp), 8);
-    ctx.fillStyle = '#ffd700';
-    ctx.font = 'bold 14px Segoe UI';
-    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffd700'; ctx.font = 'bold 14px Segoe UI'; ctx.textAlign = 'center';
     ctx.strokeStyle = '#000'; ctx.lineWidth = 3;
     ctx.strokeText('🐲 RỒNG 🐲', this.x, y - 8);
     ctx.fillText('🐲 RỒNG 🐲', this.x, y - 8);
@@ -2193,11 +1758,8 @@ class TrainingDummy {
     this.x = x; this.y = y;
     this.radius = 30;
     this.hp = 999999; this.maxHp = 999999;
-    this.hitFlash = 0;
-    this.dead = false;
-    this.angle = 0;
-    this.damageFlash = 0;
-    this.lastHitDamage = 0;
+    this.hitFlash = 0; this.dead = false; this.angle = 0;
+    this.damageFlash = 0; this.lastHitDamage = 0;
   }
   update() {
     if (this.hitFlash > 0) this.hitFlash--;
@@ -2205,11 +1767,9 @@ class TrainingDummy {
     if (trainingOptions.dummyHeal) this.hp = this.maxHp;
   }
   takeDamage(dmg, angle, kb, attacker) {
-    this.hitFlash = 10;
-    this.damageFlash = 20;
+    this.hitFlash = 10; this.damageFlash = 20;
     this.lastHitDamage = Math.round(dmg);
-    trainingStats.total += dmg;
-    trainingStats.hits++;
+    trainingStats.total += dmg; trainingStats.hits++;
     if (dmg > trainingStats.maxHit) trainingStats.maxHit = dmg;
     if (trainingOptions.showDamage) {
       damageTexts.push({
@@ -2247,8 +1807,7 @@ class TrainingDummy {
     }
     ctx.restore();
     ctx.save();
-    ctx.font = 'bold 14px Segoe UI';
-    ctx.textAlign = 'center';
+    ctx.font = 'bold 14px Segoe UI'; ctx.textAlign = 'center';
     ctx.fillStyle = '#ffd166';
     ctx.strokeStyle = '#000'; ctx.lineWidth = 3;
     ctx.strokeText('🎯 BIA TẬP', this.x, this.y - this.radius*1.5);
@@ -2257,14 +1816,16 @@ class TrainingDummy {
   }
 }
 
-// ===== PROJECTILE =====
+// ===== PROJECTILE (CÓ CC) =====
 class Projectile {
-  constructor(x, y, angle, radius, dmg, owner, source, color, speed, kb, range, explosive=false, isWarp=false, isVirus=false) {
+  constructor(x, y, angle, radius, dmg, owner, source, color, speed, kb, range, explosive=false, isWarp=false, isVirus=false, effectType=null, effectDuration=0) {
     this.x = x; this.y = y; this.angle = angle; this.radius = radius;
     this.dmg = dmg; this.owner = owner; this.source = source;
     this.color = color; this.speed = speed; this.kb = kb;
     this.startX = x; this.startY = y; this.range = range;
     this.explosive = explosive; this.isWarp = isWarp; this.isVirus = isVirus;
+    this.effectType = effectType;
+    this.effectDuration = effectDuration;
     this.dead = false; this.life = 120;
   }
   update() {
@@ -2279,6 +1840,10 @@ class Projectile {
     for (const e of targets) {
       if (dist(this, e) < this.radius + e.radius) {
         e.takeDamage(this.dmg, this.angle, this.kb, this.source);
+        // ✅ Apply CC effect — stun = root
+        if (this.effectType === 'stun' && e.buffs) {
+          e.buffs.root = this.effectDuration;
+        }
         if (this.explosive) this.explode();
         else this.dead = true;
         return;
@@ -2317,6 +1882,13 @@ class Projectile {
       ctx.fillRect(-this.radius, -this.radius, this.radius*2, this.radius*2);
       ctx.fillStyle = '#000';
       ctx.fillRect(-this.radius*0.5, -this.radius*0.5, this.radius, this.radius);
+    } else if (this.effectType === 'stun') {
+      // Tia sáng thánh
+      ctx.beginPath(); ctx.ellipse(0, 0, this.radius*2, this.radius*0.6, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.ellipse(0, 0, this.radius*1.4, this.radius*0.3, 0, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(0, 0, this.radius*2.5, 0, Math.PI*2); ctx.stroke();
     } else {
       ctx.beginPath(); ctx.ellipse(0, 0, this.radius*1.5, this.radius*0.85, 0, 0, Math.PI*2); ctx.fill();
       ctx.fillStyle = '#fff';
@@ -2341,50 +1913,18 @@ class DeathEffect {
 }
 class HolyEffect{constructor(x,y,r,l){this.x=x;this.y=y;this.radius=r;this.life=l;this.maxLife=l;}update(){this.life--;}draw(){const t=1-this.life/this.maxLife;ctx.save();ctx.globalAlpha=this.life/this.maxLife;for(let i=0;i<8;i++){const a=i*Math.PI/4+gameTime*0.02;ctx.strokeStyle='#ffd700';ctx.shadowColor='#ffd700';ctx.shadowBlur=20;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(this.x+Math.cos(a)*this.radius*0.3,this.y+Math.sin(a)*this.radius*0.3);ctx.lineTo(this.x+Math.cos(a)*this.radius*(0.7+t*0.3),this.y+Math.sin(a)*this.radius*(0.7+t*0.3));ctx.stroke();}ctx.restore();}get dead(){return this.life<=0;}}
 class ShieldEffect{constructor(t){this.target=t;this.life=30;this.maxLife=30;}update(){this.life--;}draw(){const t=1-this.life/this.maxLife;const r=40+t*40;ctx.save();ctx.globalAlpha=this.life/this.maxLife*0.8;ctx.strokeStyle='#ffd700';ctx.shadowColor='#ffd700';ctx.shadowBlur=30;ctx.lineWidth=4;ctx.beginPath();ctx.arc(this.target.x,this.target.y,r,0,Math.PI*2);ctx.stroke();ctx.restore();}get dead(){return this.life<=0;}}
-class ChainEffect{constructor(x1,y1,x2,y2,l){this.x1=x1;this.y1=y1;this.x2=x2;this.y2=y2;this.life=l;this.maxLife=l;}update(){this.life--;}draw(){const t=this.life/this.maxLife;ctx.save();ctx.globalAlpha=t*0.9;ctx.strokeStyle='#c77dff';ctx.shadowColor='#c77dff';ctx.shadowBlur=15;ctx.lineWidth=3;ctx.beginPath();for(let i=0;i<=12;i++){const tt=i/12;const px=lerp(this.x1,this.x2,tt);const py=lerp(this.y1,this.y2,tt);const wave=Math.sin(gameTime*0.3+i)*5*Math.sin(tt*Math.PI);const pa=Math.atan2(this.y2-this.y1,this.x2-this.x1)+Math.PI/2;if(i===0)ctx.moveTo(px+Math.cos(pa)*wave,py+Math.sin(pa)*wave);else ctx.lineTo(px+Math.cos(pa)*wave,py+Math.sin(pa)*wave);}ctx.stroke();ctx.restore();}get dead(){return this.life<=0;}}
+class ChainEffect{constructor(x1,y1,x2,y2,l){this.x1=x1;this.y1=y1;this.x2=x2;this.y2=y2;this.life=l;this.maxLife=l;}update(){this.life--;}draw(){const t=this.life/this.maxLife;ctx.save();ctx.globalAlpha=t*0.9;ctx.strokeStyle='#ffd700';ctx.shadowColor='#ffd700';ctx.shadowBlur=15;ctx.lineWidth=3;ctx.beginPath();for(let i=0;i<=12;i++){const tt=i/12;const px=lerp(this.x1,this.x2,tt);const py=lerp(this.y1,this.y2,tt);const wave=Math.sin(gameTime*0.3+i)*5*Math.sin(tt*Math.PI);const pa=Math.atan2(this.y2-this.y1,this.x2-this.x1)+Math.PI/2;if(i===0)ctx.moveTo(px+Math.cos(pa)*wave,py+Math.sin(pa)*wave);else ctx.lineTo(px+Math.cos(pa)*wave,py+Math.sin(pa)*wave);}ctx.stroke();ctx.restore();}get dead(){return this.life<=0;}}
 class SlashEffect{constructor(x,y,a,r,c,l){this.x=x;this.y=y;this.angle=a;this.range=r;this.color=c;this.life=l;this.maxLife=l;this.startAngle=a-1;this.endAngle=a+1;}update(){this.life--;}draw(){const t=this.life/this.maxLife;const eased=easeOut(1-t);ctx.save();ctx.globalAlpha=t;const arcA=lerp(this.startAngle,this.endAngle,eased);ctx.strokeStyle=this.color;ctx.lineWidth=6*t;ctx.shadowColor=this.color;ctx.shadowBlur=18;ctx.lineCap='round';ctx.beginPath();ctx.arc(this.x,this.y,this.range*0.85,this.startAngle,arcA);ctx.stroke();ctx.restore();}get dead(){return this.life<=0;}}
 class SpaceSlashEffect {
   constructor(x,y,a,r,c,l){this.x=x;this.y=y;this.angle=a;this.range=r;this.color=c;this.life=l;this.maxLife=l;this.startAngle=a-1.2;this.endAngle=a+1.2;}
   update(){this.life--;}
-  draw(){
-    const t=this.life/this.maxLife; const eased=easeOut(1-t);
-    ctx.save();ctx.globalAlpha=t;
-    const arcA=lerp(this.startAngle,this.endAngle,eased);
-    ctx.strokeStyle=this.color;ctx.lineWidth=8*t;ctx.shadowColor=this.color;ctx.shadowBlur=25;ctx.lineCap='round';
-    ctx.beginPath();ctx.arc(this.x,this.y,this.range*0.85,this.startAngle,arcA);ctx.stroke();
-    ctx.strokeStyle='#fff';ctx.lineWidth=3*t;ctx.shadowBlur=15;
-    ctx.beginPath();ctx.arc(this.x,this.y,this.range*0.85,this.startAngle,arcA);ctx.stroke();
-    ctx.strokeStyle='#a0ffd6';ctx.lineWidth=2;ctx.shadowBlur=20;
-    for (let k=0;k<3;k++){
-      const kt=lerp(this.startAngle,arcA,(k+1)/4);
-      const px=this.x+Math.cos(kt)*this.range*0.85;
-      const py=this.y+Math.sin(kt)*this.range*0.85;
-      ctx.beginPath();ctx.arc(px,py,5+3*t,0,Math.PI*2);ctx.stroke();
-    }
-    ctx.restore();
-  }
+  draw(){const t=this.life/this.maxLife; const eased=easeOut(1-t);ctx.save();ctx.globalAlpha=t;const arcA=lerp(this.startAngle,this.endAngle,eased);ctx.strokeStyle=this.color;ctx.lineWidth=8*t;ctx.shadowColor=this.color;ctx.shadowBlur=25;ctx.lineCap='round';ctx.beginPath();ctx.arc(this.x,this.y,this.range*0.85,this.startAngle,arcA);ctx.stroke();ctx.strokeStyle='#fff';ctx.lineWidth=3*t;ctx.shadowBlur=15;ctx.beginPath();ctx.arc(this.x,this.y,this.range*0.85,this.startAngle,arcA);ctx.stroke();ctx.strokeStyle='#a0ffd6';ctx.lineWidth=2;ctx.shadowBlur=20;for (let k=0;k<3;k++){const kt=lerp(this.startAngle,arcA,(k+1)/4);const px=this.x+Math.cos(kt)*this.range*0.85;const py=this.y+Math.sin(kt)*this.range*0.85;ctx.beginPath();ctx.arc(px,py,5+3*t,0,Math.PI*2);ctx.stroke();}ctx.restore();}
   get dead(){return this.life<=0;}
 }
 class HackerSlashEffect {
   constructor(x,y,a,r,c,l){this.x=x;this.y=y;this.angle=a;this.range=r;this.color=c;this.life=l;this.maxLife=l;this.startAngle=a-1.2;this.endAngle=a+1.2;}
   update(){this.life--;}
-  draw(){
-    const t=this.life/this.maxLife; const eased=easeOut(1-t);
-    ctx.save();ctx.globalAlpha=t;
-    const arcA=lerp(this.startAngle,this.endAngle,eased);
-    ctx.strokeStyle=this.color;ctx.lineWidth=8*t;ctx.shadowColor=this.color;ctx.shadowBlur=25;
-    ctx.beginPath();ctx.arc(this.x,this.y,this.range*0.85,this.startAngle,arcA);ctx.stroke();
-    ctx.strokeStyle='#fff';ctx.lineWidth=3*t;ctx.shadowBlur=15;
-    ctx.beginPath();ctx.arc(this.x,this.y,this.range*0.85,this.startAngle,arcA);ctx.stroke();
-    ctx.fillStyle='#b3ffd9';ctx.shadowBlur=15;
-    for (let k=0;k<5;k++){
-      const kt=lerp(this.startAngle,arcA,(k+1)/6);
-      const px=this.x+Math.cos(kt)*this.range*0.85;
-      const py=this.y+Math.sin(kt)*this.range*0.85;
-      ctx.fillRect(px-2,py-2,4,4);
-    }
-    ctx.restore();
-  }
+  draw(){const t=this.life/this.maxLife; const eased=easeOut(1-t);ctx.save();ctx.globalAlpha=t;const arcA=lerp(this.startAngle,this.endAngle,eased);ctx.strokeStyle=this.color;ctx.lineWidth=8*t;ctx.shadowColor=this.color;ctx.shadowBlur=25;ctx.beginPath();ctx.arc(this.x,this.y,this.range*0.85,this.startAngle,arcA);ctx.stroke();ctx.strokeStyle='#fff';ctx.lineWidth=3*t;ctx.shadowBlur=15;ctx.beginPath();ctx.arc(this.x,this.y,this.range*0.85,this.startAngle,arcA);ctx.stroke();ctx.fillStyle='#b3ffd9';ctx.shadowBlur=15;for (let k=0;k<5;k++){const kt=lerp(this.startAngle,arcA,(k+1)/6);const px=this.x+Math.cos(kt)*this.range*0.85;const py=this.y+Math.sin(kt)*this.range*0.85;ctx.fillRect(px-2,py-2,4,4);}ctx.restore();}
   get dead(){return this.life<=0;}
 }
 class ChargeEffect{constructor(x,y,c,l){this.x=x;this.y=y;this.color=c;this.life=l;this.maxLife=l;}update(){this.life--;}draw(){const t=1-this.life/this.maxLife;ctx.save();ctx.globalAlpha=0.7*(this.life/this.maxLife);ctx.strokeStyle=this.color;ctx.shadowColor=this.color;ctx.shadowBlur=20;ctx.lineWidth=2;for(let i=0;i<3;i++){const r=(25+i*12)*(0.5+t*0.5);const a=gameTime*0.1+i;ctx.beginPath();ctx.arc(this.x,this.y,r,a,a+Math.PI*1.5);ctx.stroke();}ctx.restore();}get dead(){return this.life<=0;}}
@@ -2396,25 +1936,16 @@ class HackEffect{constructor(x,y,l){this.x=x;this.y=y;this.life=l;this.maxLife=l
 // ===== SPIDER MINION =====
 class SpiderMinion {
   constructor(x, y, angle, owner) {
-    this.x = x; this.y = y;
-    this.angle = angle;
-    this.owner = owner;
-    this.speed = 7;
-    this.life = 900;
-    this.dead = false;
-    this.state = 'flying';
-    this.target = null;
-    this.drainTimer = 0;
-    this.wiggle = 0;
-    this.retargetTimer = 0;
+    this.x = x; this.y = y; this.angle = angle; this.owner = owner;
+    this.speed = 7; this.life = 900; this.dead = false;
+    this.state = 'flying'; this.target = null;
+    this.drainTimer = 0; this.wiggle = 0; this.retargetTimer = 0;
   }
   update() {
     if (matchState !== 'fighting' || matchOver) return;
     if (this.owner.dead) { this.dead = true; return; }
-    this.life--;
-    if (this.life <= 0) { this.dead = true; return; }
-    this.wiggle += 0.3;
-    this.retargetTimer--;
+    this.life--; if (this.life <= 0) { this.dead = true; return; }
+    this.wiggle += 0.3; this.retargetTimer--;
     if (this.state === 'flying') {
       if (!this.target || this.target.dead || this.retargetTimer <= 0) {
         this.retargetTimer = 10;
@@ -2423,19 +1954,14 @@ class SpiderMinion {
         if (dragon && !dragon.dead) extras.push(dragon);
         const allTargets = [...targets, ...extras];
         let nearest = null, nd = 9999;
-        for (const p of allTargets) {
-          const d = dist(this, p);
-          if (d < nd) { nd = d; nearest = p; }
-        }
+        for (const p of allTargets) { const d = dist(this, p); if (d < nd) { nd = d; nearest = p; } }
         if (nearest) this.target = nearest;
       }
       if (this.target && !this.target.dead) {
         this.angle = Math.atan2(this.target.y - this.y, this.target.x - this.x);
         this.x += Math.cos(this.angle) * this.speed;
         this.y += Math.sin(this.angle) * this.speed;
-        if (dist(this, this.target) < this.target.radius + 15) {
-          this.state = 'latched';
-        }
+        if (dist(this, this.target) < this.target.radius + 15) this.state = 'latched';
       } else {
         this.x += Math.cos(this.angle) * this.speed * 0.5;
         this.y += Math.sin(this.angle) * this.speed * 0.5;
@@ -2460,14 +1986,12 @@ class SpiderMinion {
   }
   draw() {
     ctx.save();
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.angle);
+    ctx.translate(this.x, this.y); ctx.rotate(this.angle);
     ctx.fillStyle = 'rgba(0,0,0,0.4)';
     ctx.beginPath(); ctx.ellipse(0, 8, 10, 4, 0, 0, Math.PI*2); ctx.fill();
     ctx.strokeStyle = '#5a3a1a'; ctx.lineWidth = 2; ctx.lineCap = 'round';
     for (let i=0;i<8;i++) {
-      const side = i < 4 ? -1 : 1;
-      const idx = i % 4;
+      const side = i < 4 ? -1 : 1, idx = i % 4;
       const wig = Math.sin(this.wiggle + i) * 3;
       const la = (idx - 1.5) * 0.6 + side * 0.3;
       const ll = 13 + idx * 2;
@@ -2478,11 +2002,8 @@ class SpiderMinion {
       ctx.stroke();
     }
     const bg = ctx.createRadialGradient(-3, -3, 0, 0, 0, 12);
-    bg.addColorStop(0, '#d19a5a');
-    bg.addColorStop(0.5, '#a06b1a');
-    bg.addColorStop(1, '#5a3a1a');
-    ctx.fillStyle = bg;
-    ctx.strokeStyle = '#3a2010'; ctx.lineWidth = 2;
+    bg.addColorStop(0, '#d19a5a'); bg.addColorStop(0.5, '#a06b1a'); bg.addColorStop(1, '#5a3a1a');
+    ctx.fillStyle = bg; ctx.strokeStyle = '#3a2010'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.ellipse(0, 0, 12, 9, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
     ctx.fillStyle = '#3a2010';
     ctx.beginPath(); ctx.arc(-9, 0, 5, 0, Math.PI*2); ctx.fill();
@@ -2490,19 +2011,14 @@ class SpiderMinion {
     ctx.shadowColor = '#ff4d6d'; ctx.shadowBlur = 10;
     ctx.beginPath(); ctx.arc(-10, -3, 2, 0, Math.PI*2); ctx.fill();
     ctx.beginPath(); ctx.arc(-10, 3, 2, 0, Math.PI*2); ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.restore();
+    ctx.shadowBlur = 0; ctx.restore();
     if (this.state === 'latched' && this.target) {
       ctx.save();
       ctx.globalAlpha = 0.6 + Math.sin(gameTime*0.3)*0.3;
       ctx.strokeStyle = '#c1121f';
-      ctx.shadowColor = '#c1121f'; ctx.shadowBlur = 12;
-      ctx.lineWidth = 3;
+      ctx.shadowColor = '#c1121f'; ctx.shadowBlur = 12; ctx.lineWidth = 3;
       ctx.setLineDash([6, 4]);
-      ctx.beginPath();
-      ctx.moveTo(this.x, this.y);
-      ctx.lineTo(this.owner.x, this.owner.y);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(this.x, this.y); ctx.lineTo(this.owner.x, this.owner.y); ctx.stroke();
       ctx.setLineDash([]);
       const bloodPct = (gameTime % 30) / 30;
       const bx = lerp(this.x, this.owner.x, bloodPct);
@@ -2542,7 +2058,6 @@ function createSkillText(skill, color) {
     }
   });
 }
-
 function checkWinCondition() {
   const alive = allFighters.filter(p => !p.dead);
   aliveCount = alive.length;
@@ -2554,7 +2069,6 @@ function checkWinCondition() {
   }
   if (alive.length === 0) { matchOver = true; matchState = 'over'; gameOver = true; winner = 'HÒA'; clearAllTimers(); }
 }
-
 function spawnAllFighters(playerCharIndex) {
   const availableIndices = [0,1,2,3,4,5,6].filter(i => i !== playerCharIndex);
   const shuffled = [...availableIndices].sort(() => Math.random() - 0.5);
@@ -2567,33 +2081,27 @@ function spawnAllFighters(playerCharIndex) {
   allFighters = [player, ...bots];
   aliveCount = total;
 }
-
 function spawnMonsters() {
   monsters = [];
-  const laneYTop = H * 0.25;
-  const laneYMid = H * 0.5;
-  const laneYBot = H * 0.75;
+  const laneYTop = H * 0.25, laneYMid = H * 0.5, laneYBot = H * 0.75;
   const positions = [
     {x: W*0.2, y: laneYTop, tier: 1},
     {x: W*0.8, y: laneYMid, tier: 2},
     {x: W*0.3, y: laneYBot, tier: 1},
     {x: W*0.7, y: laneYTop + 100, tier: 2}
   ];
-  positions.forEach(p => { monsters.push(new Monster(p.x, p.y, p.tier)); });
+  positions.forEach(p => monsters.push(new Monster(p.x, p.y, p.tier)));
 }
-
 function tryPickupDragon() {
   if (!player || player.dead) return;
   if (dragonDrop && dist(player, dragonDrop) < 60) {
-    player.buffs.dragonRage = 1800;
-    player.bonusDmg += 5;
+    player.buffs.dragonRage = 1800; player.bonusDmg += 5;
     dragonDrop = null;
     createSkillText('🐲 SỨC MẠNH RỒNG! X2 DMG 🐲', '#ff4d1a');
     effects.push(new ShockwaveEffect(player.x, player.y, 150, '#ff4d1a', 40));
     spawnParticles(player.x, player.y, '#ff4d1a', 40, 8);
   }
 }
-
 function spawnDragon() {
   if (dragon && !dragon.dead) return;
   dragon = new Dragon(rand(300, W-300), rand(300, H-300));
@@ -2632,8 +2140,6 @@ function buyItemUI(itemId) {
     document.getElementById('shopGold').textContent = trainingMode && trainingOptions.infiniteGold ? '∞' : player.gold;
   }
 }
-
-// ===== TRAINING MODE =====
 function toggleTrainOpt(opt) {
   trainingOptions[opt] = !trainingOptions[opt];
   document.getElementById('train' + opt.charAt(0).toUpperCase() + opt.slice(1)).classList.toggle('on', trainingOptions[opt]);
@@ -2644,8 +2150,7 @@ function toggleTrainOpt(opt) {
 }
 function resetDummy() {
   if (!trainingDummy) return;
-  trainingDummy.hp = trainingDummy.maxHp;
-  trainingDummy.hitFlash = 20;
+  trainingDummy.hp = trainingDummy.maxHp; trainingDummy.hitFlash = 20;
   effects.push(new ShockwaveEffect(trainingDummy.x, trainingDummy.y, 100, '#ffd166', 30));
 }
 function resetTrainingStats() {
@@ -2695,15 +2200,14 @@ function connectSocket() {
     obstacles = mapData.obstacles;
     monsters = mapData.monsters.map(m => new Monster(m.x, m.y, m.tier));
   });
-  // Host nhận skill từ client
+  // ✅ Host nhận skill từ client
   socket.on('remote_skill', (data) => {
     if (!isHost) return;
     const rp = allFighters.find(f => f.remoteId === data.playerId);
     if (!rp || rp.dead) return;
     rp.x = data.x; rp.y = data.y; rp.angle = data.angle;
     if (data.type === 'attack') {
-      rp.atkCd = rp.data.atkCd;
-      rp.attackAnim = rp.attackAnimMax;
+      rp.atkCd = rp.data.atkCd; rp.attackAnim = rp.attackAnimMax;
       rp.attack();
     } else {
       const idx = data.skill;
@@ -2747,7 +2251,7 @@ function broadcastState() {
       level: f.level, xp: f.xp, gold: f.gold,
       attackAnim: Math.round(f.attackAnim), castAnim: Math.round(f.castAnim),
       hitFlash: f.hitFlash > 0,
-      buffs: { wings: f.buffs.wings > 0, minigun: f.buffs.minigun > 0, shield: f.buffs.shield > 0, rage: f.buffs.rage > 0, dragonRage: f.buffs.dragonRage > 0 }
+      buffs: { wings: f.buffs.wings > 0, minigun: f.buffs.minigun > 0, shield: f.buffs.shield > 0, rage: f.buffs.rage > 0, dragonRage: f.buffs.dragonRage > 0, slow: f.buffs.slow > 0, root: f.buffs.root > 0 }
     }))
   };
   socket.emit('state_update', state);
@@ -2766,8 +2270,7 @@ function applyStateFromHost(state) {
         monsters[i].aggro = ms.aggro;
       } else {
         const m = new Monster(ms.x, ms.y, ms.tier);
-        m.hp = ms.hp; m.maxHp = ms.maxHp; m.angle = ms.angle; m.walkPhase = ms.walkPhase;
-        m.aggro = ms.aggro;
+        m.hp = ms.hp; m.maxHp = ms.maxHp; m.angle = ms.angle; m.walkPhase = ms.walkPhase; m.aggro = ms.aggro;
         monsters.push(m);
       }
     });
@@ -2780,15 +2283,16 @@ function applyStateFromHost(state) {
       return p;
     });
   }
-  if (state.damageTexts) {
-    damageTexts = state.damageTexts.map(d => ({ ...d }));
-  }
+  if (state.damageTexts) damageTexts = state.damageTexts.map(d => ({ ...d }));
   state.players.forEach(ps => {
     const f = allFighters.find(x => x.remoteId === ps.id);
     if (!f) return;
     if (f === player) {
       f.hp = ps.hp; f.maxHp = ps.maxHp; f.dead = ps.dead;
       f.level = ps.level; f.xp = ps.xp; f.gold = ps.gold;
+      // Sync CC buffs cho player local
+      f.buffs.slow = ps.buffs.slow ? 30 : 0;
+      f.buffs.root = ps.buffs.root ? 30 : 0;
       return;
     }
     f.x = lerp(f.x, ps.x, 0.6); f.y = lerp(f.y, ps.y, 0.6);
@@ -2802,6 +2306,8 @@ function applyStateFromHost(state) {
     f.buffs.shield = ps.buffs.shield ? 30 : 0;
     f.buffs.rage = ps.buffs.rage ? 30 : 0;
     f.buffs.dragonRage = ps.buffs.dragonRage ? 30 : 0;
+    f.buffs.slow = ps.buffs.slow ? 30 : 0;
+    f.buffs.root = ps.buffs.root ? 30 : 0;
   });
   aliveCount = allFighters.filter(x => !x.dead).length;
 }
@@ -2829,6 +2335,125 @@ function showStage(stageId) { ['stage1','stage2','stage3','stage4','stage5'].for
 function copyRoomId() { const id = document.getElementById('roomIdDisplay').textContent; if (id === '------') return; navigator.clipboard.writeText(id).then(() => { const el = document.getElementById('roomIdDisplay'); const orig = el.textContent; el.textContent = '✓ ĐÃ COPY'; setTimeout(() => el.textContent = orig, 1000); }); }
 function leaveRoom() { if (socket) { socket.disconnect(); socket = null; } isHost = false; myRoomId = null; backToStage1(); }
 function backToStage1() { if (socket) { socket.disconnect(); socket = null; } isHost = false; myRoomId = null; showStage('stage1'); }
+
+// ===== TOUCH CONTROLS SETUP =====
+function setupTouchControls() {
+  const joyBase = document.getElementById('joyBase');
+  const joyKnob = document.getElementById('joyKnob');
+  if (!joyBase || !joyKnob) return;
+  function getCenter(el) { const r = el.getBoundingClientRect(); return { x: r.left + r.width/2, y: r.top + r.height/2, r: r.width/2 }; }
+  function onJoyStart(e) {
+    e.preventDefault();
+    const t = e.changedTouches ? e.changedTouches[0] : e;
+    const c = getCenter(joyBase);
+    const dx = t.clientX - c.x, dy = t.clientY - c.y;
+    const d = Math.hypot(dx, dy);
+    if (d > c.r * 1.5 && t.clientX > window.innerWidth * 0.6) return;
+    touchState.joyActive = true;
+    touchState.joyId = t.identifier || 'mouse';
+    onJoyMove(e);
+  }
+  function onJoyMove(e) {
+    if (!touchState.joyActive) return;
+    e.preventDefault();
+    let t = null;
+    if (e.changedTouches) { for (const tc of e.changedTouches) if (tc.identifier === touchState.joyId) { t = tc; break; } if (!t) return; }
+    else t = e;
+    const c = getCenter(joyBase);
+    let dx = t.clientX - c.x, dy = t.clientY - c.y;
+    const d = Math.hypot(dx, dy);
+    const maxR = c.r;
+    if (d > maxR) { dx = dx/d * maxR; dy = dy/d * maxR; }
+    joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+    touchState.moveX = dx / maxR; touchState.moveY = dy / maxR;
+    touchState.joyX = dx/maxR; touchState.joyY = dy/maxR;
+  }
+  function onJoyEnd(e) { e.preventDefault(); touchState.joyActive = false; touchState.joyId = null; touchState.moveX = 0; touchState.moveY = 0; joyKnob.style.transform = 'translate(0, 0)'; }
+  joyBase.addEventListener('touchstart', onJoyStart, { passive: false });
+  joyBase.addEventListener('touchmove', onJoyMove, { passive: false });
+  joyBase.addEventListener('touchend', onJoyEnd, { passive: false });
+  joyBase.addEventListener('touchcancel', onJoyEnd, { passive: false });
+  document.getElementById('touchControls').addEventListener('touchstart', (e) => {
+    if (e.target.id === 'joyBase' || e.target.id === 'joyKnob') return;
+    const t = e.changedTouches[0];
+    if (t.clientX > window.innerWidth * 0.5) return;
+    if (touchState.joyActive) return;
+    const c = getCenter(joyBase);
+    touchState.joyActive = true;
+    touchState.joyId = t.identifier;
+    let dx = t.clientX - c.x, dy = t.clientY - c.y;
+    const d = Math.hypot(dx, dy);
+    if (d > c.r) { dx = dx/d * c.r; dy = dy/d * c.r; }
+    joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+    touchState.moveX = dx / c.r; touchState.moveY = dy / c.r;
+  }, { passive: false });
+
+  const btnAttack = document.getElementById('btnAttack');
+  btnAttack.addEventListener('touchstart', (e) => { e.preventDefault(); btnAttack.classList.add('pressed'); touchState.attackHeld = true; onAttackPress(); }, { passive: false });
+  btnAttack.addEventListener('touchend', (e) => { e.preventDefault(); btnAttack.classList.remove('pressed'); touchState.attackHeld = false; }, { passive: false });
+  btnAttack.addEventListener('touchcancel', () => { btnAttack.classList.remove('pressed'); touchState.attackHeld = false; });
+
+  const btnQ = document.getElementById('btnSkillQ');
+  const btnE = document.getElementById('btnSkillE');
+  const btnR = document.getElementById('btnSkillR');
+  btnQ.addEventListener('touchstart', (e) => { e.preventDefault(); btnQ.classList.add('pressed'); onSkillPress(0); }, { passive: false });
+  btnE.addEventListener('touchstart', (e) => { e.preventDefault(); btnE.classList.add('pressed'); onSkillPress(1); }, { passive: false });
+  btnR.addEventListener('touchstart', (e) => { e.preventDefault(); btnR.classList.add('pressed'); onSkillPress(2); }, { passive: false });
+  btnQ.addEventListener('touchend', () => btnQ.classList.remove('pressed'));
+  btnE.addEventListener('touchend', () => btnE.classList.remove('pressed'));
+  btnR.addEventListener('touchend', () => btnR.classList.remove('pressed'));
+}
+
+function updateTouchCDUI() {
+  if (!player) return;
+  const btns = [document.getElementById('btnSkillQ'), document.getElementById('btnSkillE'), document.getElementById('btnSkillR')];
+  for (let i=0;i<3;i++) {
+    const cd = player.skillCds[i];
+    const el = btns[i];
+    if (!el) continue;
+    if (cd > 0) {
+      el.classList.add('cooling');
+      const ov = el.querySelector('.cd-overlay');
+      if (ov) ov.textContent = Math.ceil(cd/60) + 's';
+    } else el.classList.remove('cooling');
+  }
+}
+
+function onAttackPress() {
+  if (!player || player.dead) return;
+  if (currentMode === 'friend' && !isHost && player.isRemote === false) {
+    if (player.atkCd <= 0 && player.castLock <= 0 && player.buffs.minigun <= 0 && socket) {
+      socket.emit('player_skill', { skill: -1, type: 'attack', angle: player.angle, x: player.x, y: player.y });
+      player.atkCd = player.data.atkCd;
+      player.attackAnim = player.attackAnimMax;
+      if (player.data.melee) effects.push(new SlashEffect(player.x, player.y, player.angle, player.data.atkRange, player.data.color, 12));
+      else projectiles.push(new Projectile(player.x + Math.cos(player.angle)*25, player.y + Math.sin(player.angle)*25, player.angle, 6, 0, player, player, player.data.color, 5, 3, 380));
+    }
+  } else {
+    if (player.atkCd <= 0 && player.castLock <= 0 && player.buffs.minigun <= 0) player.attack();
+  }
+}
+function onSkillPress(idx) {
+  if (!player || player.dead) return;
+  if (currentMode === 'friend' && !isHost && player.isRemote === false) {
+    if (player.skillCds[idx] <= 0 && player.castLock <= 0 && socket) {
+      socket.emit('player_skill', { skill: idx, type: 'skill'+idx, angle: player.angle, x: player.x, y: player.y });
+      player.skillCds[idx] = player.data.skillCd[idx];
+      spawnLocalSkillEffects(player, idx);
+    }
+  } else {
+    if (player.skillCds[idx] <= 0 && player.castLock <= 0) player.useSkill(idx);
+  }
+}
+
+if (isTouchDevice) {
+  document.getElementById('touchControls').classList.add('show');
+  document.getElementById('shopBtn').style.display = 'none';
+  document.getElementById('mobileShopBtn').style.display = 'flex';
+  setTimeout(setupTouchControls, 100);
+} else {
+  document.getElementById('mobileShopBtn').style.display = 'none';
+}
 
 // ===== MENU EVENTS =====
 document.getElementById('btnPvPBot').addEventListener('click', () => { currentMode = 'bot'; showStage('stage2'); });
@@ -2870,18 +2495,14 @@ function startBotGame() {
   document.getElementById('trainingPanel').classList.remove('show');
   projectiles = []; particles = []; effects = []; damageTexts = []; spiderMinions = []; goldCoins = [];
   monsters = []; dragon = null; dragonTimer = 0; dragonDrop = null; dragonSpawned = false;
-  trainingDummy = null;
-  killFeed = [];
+  trainingDummy = null; killFeed = [];
   gameTime = 0; matchOver = false; gameOver = false; winner = null;
   screenShake = 0; hitStop = 0; pvpKills = 0; shopOpen = false;
   countdownTimer = 180; matchState = 'countdown';
   generateObstacles(Math.floor(Math.random() * 1000000));
-  spawnMonsters();
-  spawnTowers();
-  spawnAllFighters(selectedChar);
+  spawnMonsters(); spawnTowers(); spawnAllFighters(selectedChar);
   requestAnimationFrame(loop);
 }
-
 function startTrainingMode() {
   clearAllTimers();
   menu.style.display = 'none';
@@ -2890,25 +2511,20 @@ function startTrainingMode() {
   document.getElementById('trainingPanel').classList.add('show');
   projectiles = []; particles = []; effects = []; damageTexts = []; spiderMinions = []; goldCoins = [];
   monsters = []; dragon = null; dragonTimer = 0; dragonDrop = null; dragonSpawned = false;
-  towers = [];
-  killFeed = [];
+  towers = []; killFeed = [];
   gameTime = 0; matchOver = false; gameOver = false; winner = null;
   screenShake = 0; hitStop = 0; pvpKills = 0; shopOpen = false;
   countdownTimer = 1; matchState = 'fighting';
   generateObstacles(Math.floor(Math.random() * 1000000));
   const charData = CHAR_DATA[selectedChar];
   player = new Player(charData, false, 0, 1);
-  player.x = W/2;
-  player.y = H * 0.7;
-  player.level = 1;
+  player.x = W/2; player.y = H * 0.7; player.level = 1;
   trainingDummy = new TrainingDummy(W/2, H * 0.3);
-  allFighters = [player];
-  bots = [];
+  allFighters = [player]; bots = [];
   trainingStats = { total: 0, hits: 0, maxHit: 0, startTime: 0 };
   updateTrainingStatsUI();
   requestAnimationFrame(loop);
 }
-
 function startFriendMatchFromServer(playersData) {
   clearAllTimers();
   trainingMode = false;
@@ -2928,32 +2544,21 @@ function startFriendMatchFromServer(playersData) {
   bots = []; aliveCount = total;
   projectiles = []; particles = []; effects = []; damageTexts = []; spiderMinions = []; goldCoins = [];
   monsters = []; dragon = null; dragonTimer = 0; dragonDrop = null; dragonSpawned = false;
-  towers = [];
-  killFeed = [];
+  towers = []; killFeed = [];
   matchState = 'countdown'; countdownTimer = 180;
   matchOver = false; gameOver = false; winner = null;
   pvpKills = 0; gameTime = 0; shopOpen = false;
-
   if (isHost) {
     const mapSeed = Math.floor(Math.random() * 1000000);
-    generateObstacles(mapSeed);
-    spawnMonsters();
-    spawnTowers();
+    generateObstacles(mapSeed); spawnMonsters(); spawnTowers();
     if (socket) {
-      const mapData = {
-        seed: mapSeed,
-        obstacles: obstacles,
-        monsters: monsters.map(m => ({ x: m.x, y: m.y, tier: m.tier }))
-      };
+      const mapData = { seed: mapSeed, obstacles: obstacles, monsters: monsters.map(m => ({ x: m.x, y: m.y, tier: m.tier })) };
       socket.emit('sync_map', mapData);
       setTimeout(() => { if (socket) socket.emit('sync_map', mapData); }, 500);
     }
   } else {
-    generateObstacles(0);
-    monsters = [];
-    spawnTowers();
+    generateObstacles(0); monsters = []; spawnTowers();
   }
-
   menu.style.display = 'none';
   document.getElementById('shopBtn').style.display = 'flex';
   requestAnimationFrame(loop);
@@ -2965,7 +2570,6 @@ function loop(now) {
   requestAnimationFrame(loop);
   lastTime = now;
   if (!player) return;
-
   if (trainingMode) {
     gameTime++;
     player.update();
@@ -2975,12 +2579,9 @@ function loop(now) {
     updateAllEffects();
     if (gameTime % 10 === 0) updateTrainingStatsUI();
     if (screenShake > 0) screenShake *= 0.9;
-    render();
-    drawUI();
-    updateTouchCDUI();
+    render(); drawUI(); updateTouchCDUI();
     return;
   }
-
   if (matchState === 'countdown') {
     countdownTimer--;
     if (countdownTimer <= 0) {
@@ -2993,8 +2594,7 @@ function loop(now) {
     monsters.forEach(m => m.update());
     towers.forEach(t => t.update());
     updateAllEffects();
-    render(); drawUI(); drawCountdown();
-    updateTouchCDUI();
+    render(); drawUI(); drawCountdown(); updateTouchCDUI();
     return;
   }
   if (matchOver) { updateAllEffects(); render(); drawUI(); drawMatchOver(); return; }
@@ -3004,10 +2604,8 @@ function loop(now) {
   gameTime++;
   allFighters.forEach(f => f.update());
 
-  // CLIENT trong PVP friend: KHÔNG tự update monsters/towers/projectiles
   const isFriendClient = (currentMode === 'friend' && !isHost);
   if (isFriendClient) {
-    // Chỉ update particles + effects local
     particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.vx *= 0.95; p.vy *= 0.95; p.vy += 0.05; p.life--; });
     particles = particles.filter(p => p.life > 0);
     effects.forEach(e => { if (e.update) e.update(); });
@@ -3024,36 +2622,25 @@ function loop(now) {
     projectiles.forEach(p => p.update());
     projectiles = projectiles.filter(p => !p.dead);
     updateAllEffects();
-
     if (monsters.length < 4 && gameTime % 600 === 0) {
       const lanes = [H * 0.25, H * 0.5, H * 0.75];
       const laneY = lanes[Math.floor(Math.random() * 3)];
       const x = rand(200, W-200);
       monsters.push(new Monster(x, laneY, Math.random() < 0.6 ? 1 : 2));
     }
-
     dragonTimer++;
-    if (!dragonSpawned && dragonTimer >= 10800) {
-      dragonSpawned = true; spawnDragon();
-    }
-    if (dragon && dragon.dead && dragonTimer >= 10800 + 10800) {
-      spawnDragon(); dragonTimer = 10800;
-    }
-
+    if (!dragonSpawned && dragonTimer >= 10800) { dragonSpawned = true; spawnDragon(); }
+    if (dragon && dragon.dead && dragonTimer >= 10800 + 10800) { spawnDragon(); dragonTimer = 10800; }
     goldCoins.forEach(g => {
       g.life--; g.bob += 0.1;
-      if (player && !player.dead && dist(player, g) < player.radius + 15) {
-        player.addGold(g.amount); g.life = 0;
-      }
+      if (player && !player.dead && dist(player, g) < player.radius + 15) { player.addGold(g.amount); g.life = 0; }
     });
     goldCoins = goldCoins.filter(g => g.life > 0);
     if (dragonDrop) dragonDrop.life--;
   }
-
   killFeed.forEach(k => k.life--);
   killFeed = killFeed.filter(k => k.life > 0);
   if (screenShake > 0) screenShake *= 0.9;
-
   if (currentMode === 'friend' && isHost && socket && gameTime % 3 === 0) broadcastState();
   if (currentMode === 'friend' && !isHost && player && !player.dead && gameTime % 2 === 0 && socket) {
     socket.emit('player_action', {
@@ -3062,11 +2649,8 @@ function loop(now) {
       walkPhase: Math.round(player.walkPhase*100)/100, dead: player.dead
     });
   }
-
-  render();
-  drawUI();
-  updateTouchCDUI();
-  if (shopOpen) { document.getElementById('shopGold').textContent = player.gold; }
+  render(); drawUI(); updateTouchCDUI();
+  if (shopOpen) document.getElementById('shopGold').textContent = player.gold;
 }
 
 function updateAllEffects() {
@@ -3081,8 +2665,7 @@ function updateAllEffects() {
 function render() {
   ctx.save();
   if (screenShake > 0.5) ctx.translate(rand(-screenShake, screenShake), rand(-screenShake, screenShake));
-  drawBackground();
-  drawLanes();
+  drawBackground(); drawLanes();
   obstacles.forEach(o => drawObstacle(o));
   towers.forEach(t => { if (!t.dead || t.respawnTimer > 0) t.draw(); });
   goldCoins.forEach(g => drawGoldCoin(g));
@@ -3110,45 +2693,28 @@ function render() {
   });
   ctx.restore();
 }
-
 function drawLanes() {
-  ctx.save();
-  ctx.globalAlpha = 0.08;
+  ctx.save(); ctx.globalAlpha = 0.08;
   const laneH = H / 3;
-  for (let i=0;i<3;i++) {
-    ctx.fillStyle = i === 0 ? '#4cc9f0' : i === 1 ? '#ffd166' : '#ff4d6d';
-    ctx.fillRect(0, i * laneH, W, laneH);
-  }
+  for (let i=0;i<3;i++) { ctx.fillStyle = i === 0 ? '#4cc9f0' : i === 1 ? '#ffd166' : '#ff4d6d'; ctx.fillRect(0, i * laneH, W, laneH); }
   ctx.restore();
-  ctx.save();
-  ctx.globalAlpha = 0.15;
-  ctx.strokeStyle = '#fff';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([20, 20]);
+  ctx.save(); ctx.globalAlpha = 0.15; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.setLineDash([20, 20]);
   ctx.beginPath(); ctx.moveTo(0, H/3); ctx.lineTo(W, H/3); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(0, H*2/3); ctx.lineTo(W, H*2/3); ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.restore();
+  ctx.setLineDash([]); ctx.restore();
 }
-
 function drawGoldCoin(g) {
-  ctx.save();
-  ctx.translate(g.x, g.y + Math.sin(g.bob) * 3);
-  ctx.fillStyle = 'rgba(0,0,0,0.4)';
-  ctx.beginPath(); ctx.ellipse(0, 10, 8, 3, 0, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#ffd166';
-  ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 15;
+  ctx.save(); ctx.translate(g.x, g.y + Math.sin(g.bob) * 3);
+  ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(0, 10, 8, 3, 0, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#ffd166'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 15;
   ctx.beginPath(); ctx.arc(0, 0, 8, 0, Math.PI*2); ctx.fill();
-  ctx.fillStyle = '#fff';
-  ctx.beginPath(); ctx.arc(-2, -2, 2.5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(-2, -2, 2.5, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = '#a06b1a'; ctx.font = 'bold 10px Segoe UI'; ctx.textAlign = 'center';
   ctx.fillText('$', 0, 4);
   ctx.shadowBlur = 0; ctx.restore();
 }
-
 function drawDragonDrop(d) {
-  ctx.save();
-  ctx.translate(d.x, d.y + Math.sin(gameTime*0.1)*5);
+  ctx.save(); ctx.translate(d.x, d.y + Math.sin(gameTime*0.1)*5);
   const g = ctx.createRadialGradient(0, 0, 0, 0, 0, 50);
   g.addColorStop(0, 'rgba(255,77,26,0.8)'); g.addColorStop(0.5, 'rgba(255,215,0,0.4)'); g.addColorStop(1, 'rgba(255,77,26,0)');
   ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, 50, 0, Math.PI*2); ctx.fill();
@@ -3161,10 +2727,8 @@ function drawDragonDrop(d) {
   ctx.strokeText('NHẤN F', 0, -30); ctx.fillText('NHẤN F', 0, -30);
   ctx.restore();
 }
-
 function drawObstacle(o) {
-  ctx.save();
-  ctx.translate(o.x, o.y);
+  ctx.save(); ctx.translate(o.x, o.y);
   ctx.fillStyle = 'rgba(0,0,0,0.5)';
   ctx.beginPath(); ctx.ellipse(0, o.radius*0.8, o.radius*1.1, o.radius*0.5, 0, 0, Math.PI*2); ctx.fill();
   if (o.type === 'rock') {
@@ -3177,8 +2741,7 @@ function drawObstacle(o) {
     for (let i=0;i<points;i++) {
       const a = i * Math.PI*2/points;
       const rr = o.radius * (0.85 + Math.sin(i*2.3) * 0.15);
-      const px = Math.cos(a) * rr;
-      const py = Math.sin(a) * rr;
+      const px = Math.cos(a) * rr, py = Math.sin(a) * rr;
       if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
     }
     ctx.closePath(); ctx.fill(); ctx.stroke();
@@ -3202,13 +2765,11 @@ function drawObstacle(o) {
   }
   ctx.restore();
 }
-
 function drawBackground() {
   const grd = ctx.createLinearGradient(0, 0, 0, H);
   grd.addColorStop(0, '#d4a574'); grd.addColorStop(0.4, '#c69c6d'); grd.addColorStop(1, '#8a6a4a');
   ctx.fillStyle = grd; ctx.fillRect(0, 0, W, H);
-  ctx.save();
-  ctx.globalAlpha = 0.15;
+  ctx.save(); ctx.globalAlpha = 0.15;
   for (let i=0;i<100;i++) {
     const x = (i * 97 + gameTime * 0.3) % W;
     const y = (i * 131) % H;
@@ -3222,7 +2783,6 @@ function drawBackground() {
   ctx.strokeStyle = 'rgba(255,180,80,0.4)'; ctx.lineWidth = 3;
   ctx.strokeRect(2, 2, W-4, H-4);
 }
-
 function drawUI() {
   if (!player) return;
   const lvlPct = (player.xp / player.xpNeeded * 100).toFixed(0);
@@ -3231,10 +2791,10 @@ function drawUI() {
   if (!trainingMode) txt += ` · <span style="color:#ffb347">👥 ${aliveCount}/${allFighters.length}</span>`;
   txt += ` · <span style="color:#4cc9f0">XP: ${lvlPct}%</span>`;
   if (player.buffs.dragonRage > 0) txt += `<br><span style="color:#ff4d1a;font-weight:bold">🐲 SỨC MẠNH RỒNG (${Math.ceil(player.buffs.dragonRage/60)}s)</span>`;
+  if (player.buffs.root > 0) txt += `<br><span style="color:#ffd700;font-weight:bold">⚡ BỊ GIAM CẦM (${Math.ceil(player.buffs.root/60)}s)</span>`;
+  if (player.buffs.slow > 0) txt += `<br><span style="color:#06d6a0;font-weight:bold">🐌 BỊ LÀM CHẬM (${Math.ceil(player.buffs.slow/60)}s)</span>`;
   if (trainingMode) txt += `<br><span style="color:#06d6a0;font-weight:bold">🥋 TRAINING MODE</span>`;
   uiEl.innerHTML = txt;
-
-  // Chỉ vẽ skill bar ở desktop
   if (!isTouchDevice) {
     const sx = W - 220, sy = H - 70;
     for (let i=0;i<3;i++) {
@@ -3258,7 +2818,6 @@ function drawUI() {
       ctx.restore();
     }
   }
-
   ctx.save();
   killFeed.forEach((k, i) => {
     const alpha = Math.min(1, k.life / 60);
@@ -3276,7 +2835,6 @@ function drawUI() {
     ctx.fillText(k.victim, W - 20, y);
   });
   ctx.restore();
-
   if (!trainingMode && !dragonSpawned && dragonTimer < 10800) {
     const remain = Math.ceil((10800 - dragonTimer) / 60);
     ctx.save();
@@ -3288,7 +2846,6 @@ function drawUI() {
     ctx.restore();
   }
 }
-
 function drawCountdown() {
   const seconds = Math.ceil(countdownTimer / 60);
   const sub = (countdownTimer % 60) / 60;
@@ -3304,7 +2861,6 @@ function drawCountdown() {
   ctx.strokeText(seconds, 0, 0); ctx.fillText(seconds, 0, 0);
   ctx.restore();
 }
-
 function drawMatchOver() {
   ctx.save();
   ctx.fillStyle = 'rgba(0,0,0,0.85)'; ctx.fillRect(0, 0, W, H);
