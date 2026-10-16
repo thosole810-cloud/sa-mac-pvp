@@ -2255,7 +2255,14 @@ function connectSocket() {
     showStage('stage4'); updateLobby(data.players);
     setStatus('lobbyStatus', '✓ Phòng đã tạo. Chờ người chơi...', 'success');
   });
-  socket.on('lobby_update', (data) => updateLobby(data.players));
+  socket.on('lobby_update', (data) => {
+  updateLobby(data.players);
+  // Nếu client vừa join phòng thành công → chuyển sang lobby
+  if (!isHost && myRoomId && document.getElementById('stage3').style.display !== 'none') {
+    showStage('stage4');
+    setStatus('lobbyStatus', '✓ Đã vào phòng. Chờ host bắt đầu...', 'success');
+  }
+});
   socket.on('join_error', (data) => { setStatus('friendStatus', '❌ ' + data.message, 'error'); setStatus('lobbyStatus', '❌ ' + data.message, 'error'); });
   socket.on('start_error', (data) => setStatus('lobbyStatus', '⚠ ' + data.message, 'error'));
   socket.on('match_start', (data) => startFriendMatchFromServer(data.players));
