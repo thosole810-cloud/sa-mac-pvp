@@ -68,6 +68,7 @@ io.on('connection', (socket) => {
     console.log('Phong ' + roomId + ' bat dau!');
   });
 
+  // Host gửi map xuống client
   socket.on('sync_map', (mapData) => {
     const roomId = socket.roomId;
     const room = rooms[roomId];
@@ -75,6 +76,7 @@ io.on('connection', (socket) => {
     socket.to(roomId).emit('receive_map', mapData);
   });
 
+  // Host gửi state (vị trí, HP, effects, projectiles, damage texts)
   socket.on('state_update', (state) => {
     const roomId = socket.roomId;
     const room = rooms[roomId];
@@ -82,6 +84,7 @@ io.on('connection', (socket) => {
     socket.to(roomId).emit('state_sync', state);
   });
 
+  // Client gửi input (vị trí)
   socket.on('player_action', (action) => {
     const roomId = socket.roomId;
     const room = rooms[roomId];
@@ -90,6 +93,24 @@ io.on('connection', (socket) => {
       playerId: socket.id,
       action
     });
+  });
+
+  // ✅ MỚI: Client gửi skill/attack lên host để host apply damage
+  socket.on('player_skill', (data) => {
+    const roomId = socket.roomId;
+    const room = rooms[roomId];
+    if (!room) return;
+    // Chỉ forward nếu người gửi KHÔNG phải host
+    if (room.hostId !== socket.id) {
+      io.to(room.hostId).emit('remote_skill', {
+        playerId: socket.id,
+        skill: data.skill,
+        type: data.type,
+        angle: data.angle,
+        x: data.x,
+        y: data.y
+      });
+    }
   });
 
   socket.on('game_over', (data) => {
