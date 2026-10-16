@@ -2255,14 +2255,20 @@ function connectSocket() {
     showStage('stage4'); updateLobby(data.players);
     setStatus('lobbyStatus', '✓ Phòng đã tạo. Chờ người chơi...', 'success');
   });
+  // ✅ FIX: Client join phòng thành công → chuyển sang Lobby
   socket.on('lobby_update', (data) => {
-  updateLobby(data.players);
-  // Nếu client vừa join phòng thành công → chuyển sang lobby
-  if (!isHost && myRoomId && document.getElementById('stage3').style.display !== 'none') {
-    showStage('stage4');
-    setStatus('lobbyStatus', '✓ Đã vào phòng. Chờ host bắt đầu...', 'success');
-  }
-});
+    updateLobby(data.players);
+    if (!isHost) {
+      const stage3El = document.getElementById('stage3');
+      if (stage3El && stage3El.style.display !== 'none') {
+        const id = document.getElementById('roomIdInput').value.trim().toUpperCase();
+        myRoomId = id;
+        document.getElementById('roomIdDisplay').textContent = id;
+        showStage('stage4');
+        setStatus('lobbyStatus', '✓ Đã vào phòng ' + id + '. Chờ host bắt đầu...', 'success');
+      }
+    }
+  });
   socket.on('join_error', (data) => { setStatus('friendStatus', '❌ ' + data.message, 'error'); setStatus('lobbyStatus', '❌ ' + data.message, 'error'); });
   socket.on('start_error', (data) => setStatus('lobbyStatus', '⚠ ' + data.message, 'error'));
   socket.on('match_start', (data) => startFriendMatchFromServer(data.players));
