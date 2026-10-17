@@ -56,6 +56,8 @@
   }
   .card:hover, .card:active { transform: translateY(-6px) scale(1.04); border-color: #ffb347; box-shadow: 0 12px 35px rgba(255,180,80,0.5); }
   .card.selected { border-color: #ffb347; box-shadow: 0 0 20px rgba(255,180,80,0.6); }
+  .card.locked { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); border-color: #444; }
+  .card.locked:hover { transform: none; box-shadow: none; border-color: #444; }
   .card .icon { font-size: 28px; margin-bottom: 4px; display: block; }
   .card .name { font-size: 12px; font-weight: bold; margin-bottom: 3px; letter-spacing: 1px; }
   .card .desc { font-size: 9px; color: #b8a088; line-height: 1.4; }
@@ -483,7 +485,6 @@ cv.addEventListener('mouseup', () => { mouse.down = false; });
 cv.addEventListener('contextmenu', e => e.preventDefault());
 document.getElementById('shopPanel').addEventListener('click', (e) => { if (e.target.id === 'shopPanel') toggleShop(); });
 
-// ===== FUNCTIONS =====
 const rand = (a,b) => a + Math.random()*(b-a);
 const dist = (a,b) => Math.hypot(a.x-b.x, a.y-b.y);
 const clamp = (v,a,b) => Math.max(a, Math.min(b,v));
@@ -491,7 +492,7 @@ const lerp = (a,b,t) => a + (b-a)*t;
 const easeOut = t => 1 - Math.pow(1-t, 3);
 const easeInOut = t => t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2;
 
-// ===== CHAR_DATA =====
+// ===== CHAR_DATA — ANNIE NÂU ĐÃ KHÓA =====
 const CHAR_DATA = [
   { name: 'BÌNH AN', color: '#4cc9f0', color2: '#1a5f8a', accent: '#a0e7ff', icon: '🧙',
     hp: 70, speed: 1.65, radius: 16, atkDmg: 4, atkRange: 240, atkCd: 28, melee: false,
@@ -517,7 +518,7 @@ const CHAR_DATA = [
     hp: 75, speed: 1.6, radius: 16, atkDmg: 5, atkRange: 230, atkCd: 28, melee: false,
     maxHp: 180, maxAtkDmg: 18, maxSpeed: 2.4,
     skills: ['Hắc Cầu', 'Trói Hồn', 'Triệu Hồi Nhện'], skillCd: [200, 260, 840],
-    desc: 'Pháp sư (NERF)<br>Lv15 mới mạnh' },
+    desc: 'Pháp sư (NERF)<br>Lv15 mới mạnh', locked: true },
   { name: 'NHẬT HUY', color: '#06d6a0', color2: '#0a4a3a', accent: '#a0ffd6', icon: '🌀',
     hp: 90, speed: 1.6, radius: 16, atkDmg: 6, atkRange: 70, atkCd: 24, melee: true,
     maxHp: 200, maxAtkDmg: 22, maxSpeed: 2.6,
@@ -553,16 +554,13 @@ let trainingDummy = null;
 let trainingOptions = { infiniteCD: false, infiniteGold: false, dummyHeal: true, showDamage: true };
 let trainingStats = { total: 0, hits: 0, maxHit: 0, startTime: 0 };
 
-// ===== BIẾN TÊN PLAYER =====
 let playerName = '';
 let pendingRoomAction = null;
 
 function normalizeForFilter(str) {
   return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
 }
-function containsBadWord(name) {
-  return null; // Đã tắt lọc từ bậy
-}
+function containsBadWord(name) { return null; }
 function validateName(name) {
   const trimmed = name.trim();
   if (trimmed.length < 3) return { ok: false, msg: '❌ Tên phải có ít nhất 3 ký tự' };
@@ -573,7 +571,6 @@ function validateName(name) {
   return { ok: true };
 }
 
-// ===== MAP =====
 function generateObstacles(seed) {
   obstacles = [];
   let rng = Math.random;
@@ -616,7 +613,13 @@ function projectileHitObstacle(p) {
   return false;
 }
 function buildCharLists() {
-  const html = CHAR_DATA.map((c, i) => `<div class="card" data-char="${i}"><span class="icon">${c.icon}</span><div class="name">${c.name}</div><div class="desc">${c.desc}</div></div>`).join('');
+  const html = CHAR_DATA.map((c, i) => `
+    <div class="card ${c.locked ? 'locked' : ''}" data-char="${i}">
+      <span class="icon">${c.locked ? '🔒' : c.icon}</span>
+      <div class="name">${c.name}</div>
+      <div class="desc">${c.locked ? '<span style="color:#ff4d6d;">ĐÃ KHÓA</span>' : c.desc}</div>
+    </div>
+  `).join('');
   document.getElementById('charListBot').innerHTML = html;
   document.getElementById('charListFriend').innerHTML = html;
   document.getElementById('charListTrain').innerHTML = html;
@@ -628,8 +631,6 @@ let gameTime = 0, selectedChar = 0, matchState = 'countdown', countdownTimer = 1
 let gameOver = false, matchOver = false, winner = null, pvpKills = 0, screenShake = 0, hitStop = 0, aliveCount = 6;
 let killFeed = [], currentMode = 'bot', socket = null, myRoomId = null, isHost = false, myPlayerId = null, shopOpen = false;
 let activeTimeouts = [], activeIntervals = [];
-
-// ===== COMBAT FEEL VARIABLES =====
 let screenFlash = 0;
 let screenFlashColor = '#fff';
 let slowMotion = 0;
@@ -872,7 +873,7 @@ function drawWings(c, r, t) {
   c.restore();
 }
 
-// ===== COMBAT FEEL HELPERS =====
+// ===== COMBAT FEEL =====
 function triggerScreenFlash(color = '#fff', intensity = 0.5) {
   screenFlash = Math.max(screenFlash, intensity);
   screenFlashColor = color;
@@ -894,10 +895,7 @@ function triggerLaunch(target, force = 15) {
   effects.push(new LaunchTrailEffect(target, target.data?.color || '#fff'));
   if (target.buffs) target.buffs.root = Math.max(target.buffs.root || 0, 20);
 }
-function addComboHit() {
-  comboCount++;
-  comboTimer = 120;
-}
+function addComboHit() { comboCount++; comboTimer = 120; }
 function createHitImpact(x, y, angle, color, intensity = 1) {
   effects.push(new HitSparkEffect(x, y, angle, color, intensity));
   effects.push(new ImpactRingEffect(x, y, color, 40 + 30 * intensity, 20));
@@ -906,12 +904,9 @@ function createHitImpact(x, y, angle, color, intensity = 1) {
     triggerCameraShake(15 * intensity);
     triggerScreenFlash(color, 0.2 * intensity);
   }
-  if (intensity >= 2.5) {
-    triggerSlowMotion(8, 0.4);
-  }
+  if (intensity >= 2.5) triggerSlowMotion(8, 0.4);
 }
 
-// ===== SPAWN LOCAL SKILL EFFECTS =====
 function spawnLocalSkillEffects(p, idx) {
   if (!p) return;
   const skillName = p.data.skills[idx];
@@ -959,7 +954,6 @@ class Player {
     this.kills = 0; this.ownedItems = {};
     this.bonusDmg = 0; this.bonusSpeed = 0; this.bonusHp = 0; this.cdReduction = 0;
     this.hasPhoenix = false; this.towerKills = 0;
-    // Launch
     this.launching = false;
     this.launchVelY = 0;
     this.launchVelX = 0;
@@ -1030,8 +1024,6 @@ class Player {
     if (this.buffs.root > 0) this.buffs.root--;
     if (this.attackAnim > 0) this.attackAnim--;
     if (this.castAnim > 0) this.castAnim--;
-
-    // ✅ LAUNCH PHYSICS
     if (this.launching) {
       this.launchOffsetY += this.launchVelY;
       this.x += this.launchVelX;
@@ -1046,7 +1038,6 @@ class Player {
         triggerCameraShake(10);
       }
     }
-
     if (this.buffs.minigun > 0) {
       this.buffs.minigun--; this.minigunSpin += 0.6; this.minigunTimer++;
       if (this.minigunTimer >= 4) { this.minigunTimer = 0; this.fireMinigunBullet(); }
@@ -1399,26 +1390,19 @@ class Player {
     if (this.iframe > 0 || this.dead) return;
     if (this.buffs.shield > 0) dmg *= 0.3;
     this.hp -= dmg; this.hitFlash = 10;
-
-    // ✅ COMBAT FEEL
     const intensity = Math.min(2.5, dmg / 8);
     const hitColor = attacker?.data?.color || '#ff4d6d';
     createHitImpact(this.x, this.y, angle, hitColor, intensity);
     screenShake = Math.max(screenShake, (this.isBot || this.isRemote ? 4 : 8) * intensity);
     spawnParticles(this.x, this.y, '#ff4d6d', 8 + Math.floor(intensity * 5), 3 + intensity);
-
-    // Hất tung khi damage lớn hoặc kb mạnh
     if (dmg >= 20 || (kb && kb >= 10)) {
       triggerLaunch(this, 8 + Math.min(15, dmg * 0.4));
       createHitImpact(this.x, this.y, angle, '#fff', 2);
     }
     if (attacker === player) {
       addComboHit();
-      if (comboCount >= 3 && comboCount % 3 === 0) {
-        triggerScreenFlash(attacker.data.color, 0.15);
-      }
+      if (comboCount >= 3 && comboCount % 3 === 0) triggerScreenFlash(attacker.data.color, 0.15);
     }
-
     if (this.hp <= 0) {
       if (this.hasPhoenix) {
         this.hasPhoenix = false; this.hp = this.maxHp * 0.5; this.iframe = 90;
@@ -1507,7 +1491,6 @@ class Player {
       ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 12, 0, Math.PI*2); ctx.stroke(); ctx.restore();
     }
     ctx.save();
-    // ✅ LAUNCH OFFSET
     ctx.translate(this.x, this.y + (this.launchOffsetY || 0));
     ctx.save();
     ctx.translate(0, -(this.launchOffsetY || 0));
@@ -1521,7 +1504,6 @@ class Player {
     const animState = { time: gameTime, walkPhase: this.walkPhase, bob: this.bob, attackProgress: this.attackAnim / this.attackAnimMax, castProgress: this.castAnim / this.castAnimMax, extra: { minigunActive: this.buffs.minigun > 0, minigunSpin: this.minigunSpin }, hitFlash: this.hitFlash };
     drawCharBody(ctx, this.data, 1, animState, this.buffs.wings > 0);
     ctx.restore();
-    // Hiển thị tên
     if (matchState !== 'countdown' && (this.isBot || this.isRemote || (this === player && currentMode === 'friend'))) {
       let nm;
       if (this.isBot) nm = this.data.name;
@@ -1656,71 +1638,14 @@ class Monster {
   }
 }
 
-// ===== TOWER (đã tắt spawn) =====
+// ===== TOWER (ĐÃ TẮT) =====
 class Tower {
-  constructor(x, y, team) {
-    this.x = x; this.y = y; this.team = team;
-    this.maxHp = 500; this.hp = 500; this.radius = 40;
-    this.range = 350; this.dmg = 15; this.attackCd = 0; this.hitFlash = 0; this.dead = false;
-    this.baseColor = team === 1 ? '#4cc9f0' : team === 2 ? '#ff4d6d' : '#ffd166';
-    this.accent = team === 1 ? '#a0e7ff' : team === 2 ? '#ff9db1' : '#fff4b3';
-    this.respawnTimer = 0;
-  }
-  update() {
-    if (this.dead) {
-      this.respawnTimer--;
-      if (this.respawnTimer <= 0) {
-        this.hp = this.maxHp; this.dead = false; this.hitFlash = 0;
-        effects.push(new ShockwaveEffect(this.x, this.y, 100, this.baseColor, 40));
-        spawnParticles(this.x, this.y, this.baseColor, 30, 6);
-      }
-      return;
-    }
-    if (this.hitFlash > 0) this.hitFlash--;
-    if (this.attackCd > 0) this.attackCd--;
-    const targets = [...allFighters.filter(p => !p.dead), ...monsters.filter(m => !m.dead)];
-    if (dragon && !dragon.dead) targets.push(dragon);
-    let nearest = null, nd = this.range;
-    for (const t of targets) {
-      if (this.team === 1 && t.data && t.data.isAlly) continue;
-      const d = dist(this, t);
-      if (d < nd) { nd = d; nearest = t; }
-    }
-    if (nearest && this.attackCd <= 0) {
-      this.attackCd = 40;
-      const angle = Math.atan2(nearest.y - this.y, nearest.x - this.x);
-      projectiles.push(new Projectile(this.x, this.y, angle, 8, this.dmg, null, this, this.baseColor, 8, 2, this.range, false));
-      spawnParticles(this.x + Math.cos(angle) * 40, this.y + Math.sin(angle) * 40, this.accent, 6, 3);
-    }
-  }
-  takeDamage(dmg, angle, kb, attacker) {
-    if (this.dead) return;
-    this.hp -= dmg; this.hitFlash = 8;
-    addDamageText(this.x, this.y - this.radius - 15, Math.round(dmg), '#ffd166');
-    spawnParticles(this.x, this.y, this.baseColor, 6, 3);
-    if (this.hp <= 0) {
-      this.hp = 0; this.dead = true; this.respawnTimer = 600;
-      spawnParticles(this.x, this.y, this.baseColor, 50, 8);
-      spawnParticles(this.x, this.y, '#fff', 30, 6);
-      screenShake = 20; hitStop = 5;
-      effects.push(new ShockwaveEffect(this.x, this.y, 200, this.baseColor, 50));
-      effects.push(new HolyEffect(this.x, this.y, 150, 40));
-      if (attacker && attacker.addXP) { attacker.addXP(100); attacker.addGold(250); }
-      if (attacker) {
-        attacker.towerKills = (attacker.towerKills || 0) + 1;
-        killFeed.push({ killer: attacker.displayName || attacker.data.name, killerColor: attacker.data.color, victim: '🏛 TRỤ', victimColor: this.baseColor, life: 180 });
-      }
-    }
-  }
-  draw() {
-    ctx.save(); ctx.translate(this.x, this.y);
-    if (this.dead) { ctx.restore(); return; }
-    ctx.restore();
-  }
+  constructor(x, y, team) { this.x=x; this.y=y; this.team=team; this.dead=true; }
+  update() {}
+  draw() {}
+  takeDamage() {}
 }
-function spawnTowers() {
-  towers = []; // ✅ Đã tắt trụ
-}
+function spawnTowers() { towers = []; }
 
 // ===== DRAGON =====
 class Dragon {
@@ -1874,7 +1799,7 @@ class TrainingDummy {
   }
 }
 
-// ===== PROJECTILE (CÓ CC) =====
+// ===== PROJECTILE =====
 class Projectile {
   constructor(x, y, angle, radius, dmg, owner, source, color, speed, kb, range, explosive=false, isWarp=false, isVirus=false, effectType=null, effectDuration=0) {
     this.x = x; this.y = y; this.angle = angle; this.radius = radius;
@@ -1951,7 +1876,7 @@ class Projectile {
   }
 }
 
-// ===== COMBAT FEEL EFFECTS =====
+// ===== COMBAT EFFECTS =====
 class HitSparkEffect {
   constructor(x, y, angle, color, intensity = 1) {
     this.x = x; this.y = y; this.angle = angle;
@@ -1964,10 +1889,8 @@ class HitSparkEffect {
       const speed = (3 + Math.random() * 8) * intensity;
       this.sparks.push({
         x: 0, y: 0,
-        vx: Math.cos(a) * speed,
-        vy: Math.sin(a) * speed,
-        life: 10 + Math.random() * 10,
-        maxLife: 20,
+        vx: Math.cos(a) * speed, vy: Math.sin(a) * speed,
+        life: 10 + Math.random() * 10, maxLife: 20,
         size: (2 + Math.random() * 3) * intensity,
         color: color
       });
@@ -1975,81 +1898,53 @@ class HitSparkEffect {
   }
   update() {
     this.life--;
-    this.sparks.forEach(s => {
-      s.x += s.vx; s.y += s.vy;
-      s.vx *= 0.9; s.vy *= 0.9; s.vy += 0.3;
-      s.life--;
-    });
+    this.sparks.forEach(s => { s.x += s.vx; s.y += s.vy; s.vx *= 0.9; s.vy *= 0.9; s.vy += 0.3; s.life--; });
     this.sparks = this.sparks.filter(s => s.life > 0);
   }
   draw() {
-    ctx.save();
-    ctx.translate(this.x, this.y);
+    ctx.save(); ctx.translate(this.x, this.y);
     this.sparks.forEach(s => {
       const t = s.life / s.maxLife;
       ctx.globalAlpha = t;
-      ctx.fillStyle = s.color;
-      ctx.shadowColor = s.color; ctx.shadowBlur = 12;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.size * t, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.fillStyle = s.color; ctx.shadowColor = s.color; ctx.shadowBlur = 12;
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.size * t, 0, Math.PI * 2); ctx.fill();
     });
     if (this.life > this.maxLife - 3) {
       ctx.globalAlpha = (this.life / this.maxLife) * 0.9;
       const g = ctx.createRadialGradient(0, 0, 0, 0, 0, 40 * this.intensity);
-      g.addColorStop(0, '#fff');
-      g.addColorStop(0.3, this.color);
-      g.addColorStop(1, 'rgba(255,255,255,0)');
+      g.addColorStop(0, '#fff'); g.addColorStop(0.3, this.color); g.addColorStop(1, 'rgba(255,255,255,0)');
       ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(0, 0, 40 * this.intensity, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.beginPath(); ctx.arc(0, 0, 40 * this.intensity, 0, Math.PI * 2); ctx.fill();
     }
     ctx.restore();
   }
   get dead() { return this.life <= 0; }
 }
-
 class ImpactRingEffect {
   constructor(x, y, color, maxR, life) {
-    this.x = x; this.y = y;
-    this.color = color; this.maxR = maxR;
-    this.life = life; this.maxLife = life;
-    this.r = 0;
+    this.x = x; this.y = y; this.color = color; this.maxR = maxR;
+    this.life = life; this.maxLife = life; this.r = 0;
     this.angle = Math.random() * Math.PI * 2;
   }
-  update() {
-    this.life--;
-    this.r = this.maxR * (1 - this.life / this.maxLife);
-  }
+  update() { this.life--; this.r = this.maxR * (1 - this.life / this.maxLife); }
   draw() {
     const t = this.life / this.maxLife;
-    ctx.save();
-    ctx.globalAlpha = t;
-    ctx.strokeStyle = this.color;
-    ctx.lineWidth = 8 * t;
-    ctx.shadowColor = this.color;
-    ctx.shadowBlur = 30;
-    ctx.beginPath();
-    ctx.ellipse(this.x, this.y, this.r, this.r * 0.4, this.angle, 0, Math.PI * 2);
-    ctx.stroke();
+    ctx.save(); ctx.globalAlpha = t;
+    ctx.strokeStyle = this.color; ctx.lineWidth = 8 * t; ctx.shadowColor = this.color; ctx.shadowBlur = 30;
+    ctx.beginPath(); ctx.ellipse(this.x, this.y, this.r, this.r * 0.4, this.angle, 0, Math.PI * 2); ctx.stroke();
     ctx.restore();
   }
   get dead() { return this.life <= 0; }
 }
-
 class GroundCrackEffect {
   constructor(x, y, color, size = 1) {
-    this.x = x; this.y = y;
-    this.color = color; this.size = size;
-    this.life = 60; this.maxLife = 60;
-    this.lines = [];
+    this.x = x; this.y = y; this.color = color; this.size = size;
+    this.life = 60; this.maxLife = 60; this.lines = [];
     const count = 5 + Math.floor(size * 3);
     for (let i = 0; i < count; i++) {
       const a = (i / count) * Math.PI * 2 + Math.random() * 0.5;
       const len = (20 + Math.random() * 40) * size;
-      const segments = [];
-      let px = 0, py = 0;
+      const segments = []; let px = 0, py = 0;
       const steps = 3 + Math.floor(Math.random() * 3);
       for (let j = 0; j < steps; j++) {
         px += Math.cos(a + (Math.random() - 0.5) * 0.5) * (len / steps);
@@ -2062,17 +1957,12 @@ class GroundCrackEffect {
   update() { this.life--; }
   draw() {
     const t = this.life / this.maxLife;
-    ctx.save();
-    ctx.translate(this.x, this.y);
+    ctx.save(); ctx.translate(this.x, this.y);
     ctx.globalAlpha = t * 0.8;
-    ctx.strokeStyle = this.color;
-    ctx.shadowColor = this.color;
-    ctx.shadowBlur = 15;
-    ctx.lineWidth = 2 + (1 - t) * 2;
-    ctx.lineCap = 'round';
+    ctx.strokeStyle = this.color; ctx.shadowColor = this.color; ctx.shadowBlur = 15;
+    ctx.lineWidth = 2 + (1 - t) * 2; ctx.lineCap = 'round';
     this.lines.forEach(segments => {
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
+      ctx.beginPath(); ctx.moveTo(0, 0);
       segments.forEach(s => ctx.lineTo(s.x, s.y));
       ctx.stroke();
     });
@@ -2080,19 +1970,14 @@ class GroundCrackEffect {
   }
   get dead() { return this.life <= 0; }
 }
-
 class LaunchTrailEffect {
   constructor(target, color) {
-    this.target = target;
-    this.color = color;
-    this.life = 30; this.maxLife = 30;
-    this.trails = [];
+    this.target = target; this.color = color;
+    this.life = 30; this.maxLife = 30; this.trails = [];
   }
   update() {
     this.life--;
-    if (this.target) {
-      this.trails.push({ x: this.target.x, y: this.target.y + (this.target.launchOffsetY || 0), life: 15 });
-    }
+    if (this.target) this.trails.push({ x: this.target.x, y: this.target.y + (this.target.launchOffsetY || 0), life: 15 });
     this.trails.forEach(t => t.life--);
     this.trails = this.trails.filter(t => t.life > 0);
   }
@@ -2102,19 +1987,15 @@ class LaunchTrailEffect {
       const a = t.life / 15;
       ctx.globalAlpha = a * 0.6;
       const g = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, 25);
-      g.addColorStop(0, this.color);
-      g.addColorStop(1, 'rgba(255,255,255,0)');
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(t.x, t.y, 25, 0, Math.PI * 2);
-      ctx.fill();
+      g.addColorStop(0, this.color); g.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(t.x, t.y, 25, 0, Math.PI * 2); ctx.fill();
     });
     ctx.restore();
   }
   get dead() { return this.life <= 0; }
 }
 
-// ===== EFFECTS (CŨ) =====
+// ===== EFFECTS (cũ) =====
 class ShockwaveEffect {
   constructor(x, y, maxR, color, life) { this.x=x; this.y=y; this.maxR=maxR; this.color=color; this.life=life; this.maxLife=life; this.r=0; }
   update() { this.life--; this.r = this.maxR * (1 - this.life/this.maxLife); }
@@ -2244,7 +2125,7 @@ class SpiderMinion {
   }
 }
 
-// ===== PARTICLES & TEXT =====
+// ===== HELPERS =====
 function spawnParticles(x, y, color, count, speed) {
   if (particles.length > 500) return;
   for (let i=0;i<count;i++) {
@@ -2261,14 +2142,11 @@ function addDamageText(x, y, val, color) {
     x, y,
     val: typeof val === 'number' ? Math.round(val) : val,
     color: isHuge ? '#ff0044' : isBig ? '#ffd166' : color,
-    life: isBig ? 60 : 45,
-    maxLife: isBig ? 60 : 45,
-    vy: isBig ? -3 : -1.5,
-    vx: rand(-0.6, 0.6),
+    life: isBig ? 60 : 45, maxLife: isBig ? 60 : 45,
+    vy: isBig ? -3 : -1.5, vx: rand(-0.6, 0.6),
     scale: isBig ? 2.2 : 1.2,
     targetScale: isBig ? 1.6 : 1,
-    bounce: isBig ? 1 : 0,
-    bouncePhase: 0
+    bounce: isBig ? 1 : 0, bouncePhase: 0
   });
 }
 function createSkillText(skill, color) {
@@ -2276,8 +2154,7 @@ function createSkillText(skill, color) {
     draw() {
       const t = this.life / this.maxLife;
       const appear = easeOut(1-t);
-      ctx.save();
-      ctx.globalAlpha = Math.min(1, t*3);
+      ctx.save(); ctx.globalAlpha = Math.min(1, t*3);
       ctx.font = 'bold 28px Segoe UI'; ctx.textAlign = 'center';
       ctx.translate(W/2, 120 - (1-t) * 40); ctx.scale(appear, appear);
       ctx.fillStyle = color; ctx.strokeStyle = '#000'; ctx.lineWidth = 4;
@@ -2286,7 +2163,7 @@ function createSkillText(skill, color) {
     }
   });
 }
- 
+
 // ===== GAME FUNCTIONS =====
 function checkWinCondition() {
   const alive = allFighters.filter(p => !p.dead);
@@ -2396,7 +2273,7 @@ function updateTrainingStatsUI() {
   document.getElementById('tStatDPS').textContent = Math.round(dps);
 }
 
-// ===== NETWORK =====
+// ===== NETWORK MỚI — ĐƠN GIẢN =====
 function connectSocket() {
   if (socket && socket.connected) return;
   socket = io();
@@ -2427,7 +2304,11 @@ function connectSocket() {
   socket.on('receive_map', (mapData) => {
     if (isHost) return;
     obstacles = mapData.obstacles;
-    monsters = mapData.monsters.map(m => new Monster(m.x, m.y, m.tier));
+    monsters = mapData.monsters.map(m => {
+      const mon = new Monster(m.x, m.y, m.tier);
+      mon.hp = m.hp; mon.maxHp = m.maxHp;
+      return mon;
+    });
   });
   socket.on('remote_skill', (data) => {
     if (!isHost) return;
@@ -2437,7 +2318,7 @@ function connectSocket() {
     if (data.type === 'attack') {
       rp.atkCd = rp.data.atkCd; rp.attackAnim = rp.attackAnimMax;
       rp.attack();
-    } else {
+    } else if (data.type && data.type.startsWith('skill')) {
       const idx = data.skill;
       if (idx >= 0 && idx <= 2) { rp.skillCds[idx] = rp.data.skillCd[idx]; rp.useSkill(idx); }
     }
@@ -2445,9 +2326,11 @@ function connectSocket() {
   socket.on('remote_action', (data) => {
     if (!isHost) return;
     const rp = allFighters.find(f => f.remoteId === data.playerId);
-    if (rp && data.action && data.action.type === 'pos') {
-      rp.x = lerp(rp.x, data.action.x, 0.5); rp.y = lerp(rp.y, data.action.y, 0.5);
-      rp.angle = data.action.angle; rp.hp = data.action.hp;
+    if (!rp || !data.action) return;
+    if (data.action.type === 'pos') {
+      rp.x = lerp(rp.x, data.action.x, 0.5);
+      rp.y = lerp(rp.y, data.action.y, 0.5);
+      rp.angle = data.action.angle;
       rp.walkPhase = data.action.walkPhase;
       if (data.action.dead && !rp.dead) rp.takeDamage(9999, 0, 0, null);
     }
@@ -2462,11 +2345,12 @@ function connectSocket() {
 function broadcastState() {
   if (!isHost || !socket) return;
   const state = {
-    gameTime, matchState,
+    gameTime, matchState, countdownTimer,
     obstacles: obstacles.map(o => ({ x: o.x, y: o.y, radius: o.radius, type: o.type, rotation: o.rotation })),
     monsters: monsters.map(m => ({ x: m.x, y: m.y, tier: m.tier, hp: m.hp, maxHp: m.maxHp, angle: m.angle, walkPhase: m.walkPhase, aggro: m.aggro })),
     projectiles: projectiles.map(p => ({ x: p.x, y: p.y, angle: p.angle, radius: p.radius, color: p.color, isWarp: p.isWarp, isVirus: p.isVirus })),
     damageTexts: damageTexts.slice(-15).map(d => ({ x: d.x, y: d.y, val: d.val, color: d.color, life: d.life, maxLife: d.maxLife, scale: d.scale })),
+    dragon: dragon ? { x: dragon.x, y: dragon.y, hp: dragon.hp, maxHp: dragon.maxHp, angle: dragon.angle, dead: dragon.dead } : null,
     players: allFighters.map(f => ({
       id: f.remoteId || myPlayerId,
       name: f.displayName || (f === player ? (playerName || f.data.name) : f.data.name),
@@ -2477,29 +2361,28 @@ function broadcastState() {
       attackAnim: Math.round(f.attackAnim), castAnim: Math.round(f.castAnim),
       hitFlash: f.hitFlash > 0,
       launchOffsetY: Math.round(f.launchOffsetY || 0),
-      buffs: { wings: f.buffs.wings > 0, minigun: f.buffs.minigun > 0, shield: f.buffs.shield > 0, rage: f.buffs.rage > 0, dragonRage: f.buffs.dragonRage > 0, slow: f.buffs.slow > 0, root: f.buffs.root > 0 }
+      buffs: {
+        wings: f.buffs.wings > 0, minigun: f.buffs.minigun > 0, shield: f.buffs.shield > 0,
+        rage: f.buffs.rage > 0, dragonRage: f.buffs.dragonRage > 0,
+        slow: f.buffs.slow > 0, root: f.buffs.root > 0
+      }
     }))
   };
   socket.emit('state_update', state);
 }
 function applyStateFromHost(state) {
+  if (isHost) return;
   gameTime = state.gameTime;
   matchState = state.matchState;
+  if (state.countdownTimer !== undefined) countdownTimer = state.countdownTimer;
   if (state.obstacles) obstacles = state.obstacles;
   if (state.monsters) {
-    state.monsters.forEach((ms, i) => {
-      if (monsters[i]) {
-        monsters[i].x = ms.x; monsters[i].y = ms.y;
-        monsters[i].hp = ms.hp; monsters[i].maxHp = ms.maxHp;
-        monsters[i].angle = ms.angle; monsters[i].walkPhase = ms.walkPhase;
-        monsters[i].aggro = ms.aggro;
-      } else {
-        const m = new Monster(ms.x, ms.y, ms.tier);
-        m.hp = ms.hp; m.maxHp = ms.maxHp; m.angle = ms.angle; m.walkPhase = ms.walkPhase; m.aggro = ms.aggro;
-        monsters.push(m);
-      }
+    monsters = state.monsters.map(ms => {
+      const m = new Monster(ms.x, ms.y, ms.tier);
+      m.hp = ms.hp; m.maxHp = ms.maxHp;
+      m.angle = ms.angle; m.walkPhase = ms.walkPhase; m.aggro = ms.aggro;
+      return m;
     });
-    monsters = monsters.slice(0, state.monsters.length);
   }
   if (state.projectiles) {
     projectiles = state.projectiles.map(ps => {
@@ -2509,8 +2392,18 @@ function applyStateFromHost(state) {
     });
   }
   if (state.damageTexts) damageTexts = state.damageTexts.map(d => ({ ...d }));
+  if (state.dragon !== undefined) {
+    if (state.dragon === null) dragon = null;
+    else {
+      if (!dragon) dragon = new Dragon(state.dragon.x, state.dragon.y);
+      dragon.x = state.dragon.x; dragon.y = state.dragon.y;
+      dragon.hp = state.dragon.hp; dragon.maxHp = state.dragon.maxHp;
+      dragon.angle = state.dragon.angle; dragon.dead = state.dragon.dead;
+    }
+  }
   state.players.forEach(ps => {
-    const f = allFighters.find(x => x.remoteId === ps.id);
+    let f = allFighters.find(x => x.remoteId === ps.id);
+    if (!f && ps.id === myPlayerId) f = player;
     if (!f) return;
     if (ps.name) f.displayName = ps.name;
     if (f === player) {
@@ -2597,26 +2490,9 @@ function setupTouchControls() {
   joyBase.addEventListener('touchmove', onJoyMove, { passive: false });
   joyBase.addEventListener('touchend', onJoyEnd, { passive: false });
   joyBase.addEventListener('touchcancel', onJoyEnd, { passive: false });
-  document.getElementById('touchControls').addEventListener('touchstart', (e) => {
-    if (e.target.id === 'joyBase' || e.target.id === 'joyKnob') return;
-    const t = e.changedTouches[0];
-    if (t.clientX > window.innerWidth * 0.5) return;
-    if (touchState.joyActive) return;
-    const c = getCenter(joyBase);
-    touchState.joyActive = true;
-    touchState.joyId = t.identifier;
-    let dx = t.clientX - c.x, dy = t.clientY - c.y;
-    const d = Math.hypot(dx, dy);
-    if (d > c.r) { dx = dx/d * c.r; dy = dy/d * c.r; }
-    joyKnob.style.transform = `translate(${dx}px, ${dy}px)`;
-    touchState.moveX = dx / c.r; touchState.moveY = dy / c.r;
-  }, { passive: false });
-
   const btnAttack = document.getElementById('btnAttack');
   btnAttack.addEventListener('touchstart', (e) => { e.preventDefault(); btnAttack.classList.add('pressed'); touchState.attackHeld = true; onAttackPress(); }, { passive: false });
   btnAttack.addEventListener('touchend', (e) => { e.preventDefault(); btnAttack.classList.remove('pressed'); touchState.attackHeld = false; }, { passive: false });
-  btnAttack.addEventListener('touchcancel', () => { btnAttack.classList.remove('pressed'); touchState.attackHeld = false; });
-
   const btnQ = document.getElementById('btnSkillQ');
   const btnE = document.getElementById('btnSkillE');
   const btnR = document.getElementById('btnSkillR');
@@ -2672,7 +2548,7 @@ if (isTouchDevice) {
   document.getElementById('mobileShopBtn').style.display = 'none';
 }
 
-// ===== NAME INPUT EVENTS =====
+// ===== NAME INPUT =====
 document.getElementById('playerNameInput').addEventListener('input', (e) => {
   const name = e.target.value;
   const statusEl = document.getElementById('nameStatus');
@@ -2699,9 +2575,31 @@ document.getElementById('btnConfirmName').addEventListener('click', () => {
 document.getElementById('btnPvPBot').addEventListener('click', () => { currentMode = 'bot'; showStage('stage2'); });
 document.getElementById('btnPvPFriend').addEventListener('click', () => { currentMode = 'friend'; showStage('stage3'); });
 document.getElementById('btnTraining').addEventListener('click', () => { currentMode = 'training'; showStage('stage5'); });
-document.querySelectorAll('#charListBot .card').forEach(card => { card.addEventListener('click', () => { selectedChar = parseInt(card.dataset.char); startBotGame(); }); });
-document.querySelectorAll('#charListFriend .card').forEach(card => { card.addEventListener('click', () => { selectedChar = parseInt(card.dataset.char); document.querySelectorAll('#charListFriend .card').forEach(c => c.classList.remove('selected')); card.classList.add('selected'); }); });
-document.querySelectorAll('#charListTrain .card').forEach(card => { card.addEventListener('click', () => { selectedChar = parseInt(card.dataset.char); startTrainingMode(); }); });
+document.querySelectorAll('#charListBot .card').forEach(card => {
+  card.addEventListener('click', () => {
+    const idx = parseInt(card.dataset.char);
+    if (CHAR_DATA[idx].locked) return;
+    selectedChar = idx;
+    startBotGame();
+  });
+});
+document.querySelectorAll('#charListFriend .card').forEach(card => {
+  card.addEventListener('click', () => {
+    const idx = parseInt(card.dataset.char);
+    if (CHAR_DATA[idx].locked) return;
+    selectedChar = idx;
+    document.querySelectorAll('#charListFriend .card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+  });
+});
+document.querySelectorAll('#charListTrain .card').forEach(card => {
+  card.addEventListener('click', () => {
+    const idx = parseInt(card.dataset.char);
+    if (CHAR_DATA[idx].locked) return;
+    selectedChar = idx;
+    startTrainingMode();
+  });
+});
 document.getElementById('btnCreateRoom').addEventListener('click', () => {
   if (!document.querySelector('#charListFriend .card.selected')) { setStatus('friendStatus', '⚠ Vui lòng chọn nhân vật trước!', 'error'); return; }
   pendingRoomAction = 'create';
@@ -2733,10 +2631,8 @@ function executeCreateRoom() {
   if (!socket) connectSocket();
   let attempts = 0;
   const waitConnect = () => {
-    if (socket && socket.connected) {
-      setStatus('friendStatus', 'Đang tạo phòng...', '');
-      socket.emit('create_room', { name: playerName || 'HOST', charIndex: selectedChar });
-    } else if (attempts < 25) { attempts++; setTimeout(waitConnect, 200); }
+    if (socket && socket.connected) { setStatus('friendStatus', 'Đang tạo phòng...', ''); socket.emit('create_room', { name: playerName || 'HOST', charIndex: selectedChar }); }
+    else if (attempts < 25) { attempts++; setTimeout(waitConnect, 200); }
     else { setStatus('friendStatus', '❌ Timeout!', 'error'); showStage('stage3'); }
   };
   waitConnect();
@@ -2747,10 +2643,8 @@ function executeJoinRoom() {
   if (!socket) connectSocket();
   let attempts = 0;
   const waitConnect = () => {
-    if (socket && socket.connected) {
-      setStatus('friendStatus', 'Đang vào phòng ' + id + '...', '');
-      socket.emit('join_room', { roomId: id, name: playerName || 'PLAYER', charIndex: selectedChar });
-    } else if (attempts < 25) { attempts++; setTimeout(waitConnect, 200); }
+    if (socket && socket.connected) { setStatus('friendStatus', 'Đang vào phòng ' + id + '...', ''); socket.emit('join_room', { roomId: id, name: playerName || 'PLAYER', charIndex: selectedChar }); }
+    else if (attempts < 25) { attempts++; setTimeout(waitConnect, 200); }
     else { setStatus('friendStatus', '❌ Timeout!', 'error'); showStage('stage3'); }
   };
   waitConnect();
@@ -2823,14 +2717,16 @@ function startFriendMatchFromServer(playersData) {
   screenFlash = 0; slowMotion = 0; comboCount = 0; comboTimer = 0;
   if (isHost) {
     const mapSeed = Math.floor(Math.random() * 1000000);
-    generateObstacles(mapSeed); spawnMonsters(); spawnTowers();
+    generateObstacles(mapSeed);
+    spawnMonsters(); spawnTowers();
     if (socket) {
-      const mapData = { seed: mapSeed, obstacles: obstacles, monsters: monsters.map(m => ({ x: m.x, y: m.y, tier: m.tier })) };
+      const mapData = { seed: mapSeed, obstacles: obstacles.map(o => ({ x: o.x, y: o.y, radius: o.radius, type: o.type, rotation: o.rotation })), monsters: monsters.map(m => ({ x: m.x, y: m.y, tier: m.tier, hp: m.hp, maxHp: m.maxHp })) };
       socket.emit('sync_map', mapData);
-      setTimeout(() => { if (socket) socket.emit('sync_map', mapData); }, 500);
+      setTimeout(() => { if (socket) socket.emit('sync_map', mapData); }, 300);
+      setTimeout(() => { if (socket) socket.emit('sync_map', mapData); }, 800);
     }
   } else {
-    generateObstacles(0); monsters = []; spawnTowers();
+    obstacles = []; monsters = []; spawnTowers();
   }
   menu.style.display = 'none';
   document.getElementById('shopBtn').style.display = 'flex';
@@ -2838,12 +2734,9 @@ function startFriendMatchFromServer(playersData) {
 }
 
 // ===== MAIN LOOP =====
-let lastTime = 0;
 function loop(now) {
   requestAnimationFrame(loop);
-  lastTime = now;
   if (!player) return;
-
   if (trainingMode) {
     gameTime++;
     player.update();
@@ -2867,7 +2760,6 @@ function loop(now) {
     }
     allFighters.forEach(f => f.update());
     monsters.forEach(m => m.update());
-    towers.forEach(t => t.update());
     updateAllEffects();
     render(); drawUI(); drawCountdown(); updateTouchCDUI();
     return;
@@ -2875,15 +2767,12 @@ function loop(now) {
   if (matchOver) { updateAllEffects(); render(); drawUI(); drawMatchOver(); return; }
   if (hitStop > 0) { hitStop--; updateAllEffects(); if (screenShake > 0) screenShake *= 0.9; render(); drawUI(); return; }
   if (shopOpen) { updateAllEffects(); render(); drawUI(); return; }
-
-  // SLOW MOTION: skip update 2/3 frames
   if (slowMotion > 0 && gameTime % 3 !== 0) {
     updateAllEffects();
     if (screenShake > 0) screenShake *= 0.9;
     render(); drawUI(); updateTouchCDUI();
     return;
   }
-
   gameTime++;
   allFighters.forEach(f => f.update());
   const isFriendClient = (currentMode === 'friend' && !isHost);
@@ -2897,7 +2786,6 @@ function loop(now) {
   } else {
     monsters.forEach(m => m.update());
     monsters = monsters.filter(m => !m.dead);
-    towers.forEach(t => t.update());
     if (dragon && !dragon.dead) dragon.update();
     spiderMinions.forEach(s => s.update());
     spiderMinions = spiderMinions.filter(s => !s.dead);
@@ -2923,7 +2811,7 @@ function loop(now) {
   killFeed.forEach(k => k.life--);
   killFeed = killFeed.filter(k => k.life > 0);
   if (screenShake > 0) screenShake *= 0.9;
-  if (currentMode === 'friend' && isHost && socket && gameTime % 3 === 0) broadcastState();
+  if (currentMode === 'friend' && isHost && socket && gameTime % 2 === 0) broadcastState();
   if (currentMode === 'friend' && !isHost && player && !player.dead && gameTime % 2 === 0 && socket) {
     socket.emit('player_action', {
       type: 'pos', x: Math.round(player.x), y: Math.round(player.y),
@@ -2943,11 +2831,7 @@ function updateAllEffects() {
   damageTexts.forEach(d => {
     d.x += d.vx; d.y += d.vy; d.vy *= 0.93;
     d.scale = lerp(d.scale, d.targetScale || 1, 0.1);
-    if (d.bounce > 0) {
-      d.bouncePhase += 0.3;
-      d.bounce *= 0.92;
-      d.vy += Math.sin(d.bouncePhase) * 0.3;
-    }
+    if (d.bounce > 0) { d.bouncePhase += 0.3; d.bounce *= 0.92; d.vy += Math.sin(d.bouncePhase) * 0.3; }
     d.life--;
   });
   damageTexts = damageTexts.filter(d => d.life > 0);
@@ -2962,7 +2846,6 @@ function render() {
   if (screenShake > 0.5) ctx.translate(rand(-screenShake, screenShake), rand(-screenShake, screenShake));
   drawBackground(); drawLanes();
   obstacles.forEach(o => drawObstacle(o));
-  towers.forEach(t => { if (!t.dead || t.respawnTimer > 0) t.draw(); });
   goldCoins.forEach(g => drawGoldCoin(g));
   if (dragonDrop) drawDragonDrop(dragonDrop);
   const entities = [];
@@ -2985,32 +2868,20 @@ function render() {
     ctx.globalAlpha = d.life / d.maxLife;
     ctx.font = `bold ${16 * d.scale}px Segoe UI`;
     ctx.textAlign = 'center';
-    ctx.fillStyle = d.color;
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 4;
+    ctx.fillStyle = d.color; ctx.strokeStyle = '#000'; ctx.lineWidth = 4;
     if (d.scale > 1.5) { ctx.shadowColor = d.color; ctx.shadowBlur = 20; }
-    ctx.strokeText(d.val, d.x, d.y);
-    ctx.fillText(d.val, d.x, d.y);
+    ctx.strokeText(d.val, d.x, d.y); ctx.fillText(d.val, d.x, d.y);
     ctx.restore();
   });
-  // Screen flash
   if (screenFlash > 0) {
-    ctx.save();
-    ctx.globalAlpha = screenFlash * 0.6;
-    ctx.fillStyle = screenFlashColor;
-    ctx.fillRect(0, 0, W, H);
-    ctx.restore();
+    ctx.save(); ctx.globalAlpha = screenFlash * 0.6;
+    ctx.fillStyle = screenFlashColor; ctx.fillRect(0, 0, W, H); ctx.restore();
   }
-  // Slow motion vignette
   if (slowMotion > 0) {
-    ctx.save();
-    ctx.globalAlpha = 0.3;
+    ctx.save(); ctx.globalAlpha = 0.3;
     const vg = ctx.createRadialGradient(W/2, H/2, H*0.2, W/2, H/2, H*0.9);
-    vg.addColorStop(0, 'rgba(0,0,0,0)');
-    vg.addColorStop(1, 'rgba(255,215,0,0.8)');
-    ctx.fillStyle = vg;
-    ctx.fillRect(0, 0, W, H);
-    ctx.restore();
+    vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(255,215,0,0.8)');
+    ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H); ctx.restore();
   }
   ctx.restore();
 }
@@ -3075,10 +2946,8 @@ function drawObstacle(o) {
     for (let i=0;i<8;i++) {
       const a = i * Math.PI/4 + o.rotation;
       const rr = o.radius * 0.9;
-      ctx.beginPath();
-      ctx.moveTo(Math.cos(a)*rr*0.7, Math.sin(a)*rr*0.7);
-      ctx.lineTo(Math.cos(a)*rr*1.1, Math.sin(a)*rr*1.1);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(Math.cos(a)*rr*0.7, Math.sin(a)*rr*0.7);
+      ctx.lineTo(Math.cos(a)*rr*1.1, Math.sin(a)*rr*1.1); ctx.stroke();
     }
     ctx.fillStyle = '#ff4d6d'; ctx.shadowColor = '#ff4d6d'; ctx.shadowBlur = 8;
     ctx.beginPath(); ctx.arc(0, -o.radius*0.9, 4, 0, Math.PI*2); ctx.fill();
@@ -3166,7 +3035,6 @@ function drawUI() {
     ctx.fillText(`🐲 Rồng xuất hiện sau ${remain}s`, W/2, 32);
     ctx.restore();
   }
-  // Combo counter
   if (comboCount > 1) {
     ctx.save();
     const comboAlpha = Math.min(1, comboTimer / 30);
@@ -3174,17 +3042,11 @@ function drawUI() {
     const comboScale = 1 + Math.min(0.5, comboCount * 0.05);
     ctx.translate(W - 150, H/2);
     ctx.scale(comboScale, comboScale);
-    ctx.font = 'bold 48px Segoe UI';
-    ctx.textAlign = 'center';
-    ctx.fillStyle = '#ffd166';
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth = 6;
-    ctx.shadowColor = '#ffd166';
-    ctx.shadowBlur = 25;
-    ctx.strokeText(`${comboCount}x`, 0, 0);
-    ctx.fillText(`${comboCount}x`, 0, 0);
-    ctx.font = 'bold 16px Segoe UI';
-    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 48px Segoe UI'; ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffd166'; ctx.strokeStyle = '#000'; ctx.lineWidth = 6;
+    ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 25;
+    ctx.strokeText(`${comboCount}x`, 0, 0); ctx.fillText(`${comboCount}x`, 0, 0);
+    ctx.font = 'bold 16px Segoe UI'; ctx.fillStyle = '#fff';
     ctx.fillText('COMBO', 0, 25);
     ctx.restore();
   }
