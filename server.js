@@ -140,7 +140,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000; // Render/heroku… tự cấp PORT qua biến môi trường
 server.listen(PORT, () => {
   console.log('===========================================');
   console.log('  SA MAC CHIEN KY - SERVER DANG CHAY');

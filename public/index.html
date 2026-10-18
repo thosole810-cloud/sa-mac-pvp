@@ -445,6 +445,7 @@
 // ============ SETUP ============
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
+ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
 let W = cv.width, H = cv.height;
 const menu = document.getElementById('menu');
 const uiEl = document.getElementById('ui');
@@ -542,6 +543,43 @@ const SHOP_ITEMS = [
   { id: 'phoenix', icon: '🔥', name: 'Lông Phượng', desc: 'Hồi sinh 1 lần', price: 2200, consumable: true }
 ];
 
+// ===== ASSET MANAGER (SPRITE) =====
+// Sprite sinh tự động bởi tools/generate-sprites.js — thiếu ảnh nào sẽ tự dùng fallback vẽ code cũ.
+const ASSET_VER = 'v1'; // tăng lên v2... khi thay ảnh mới để phá cache trình duyệt
+const SPRITE_FILES = {
+  'BÌNH AN': 'assets/sprites/chars/binh_an.png',
+  'BÌNH MINH': 'assets/sprites/chars/binh_minh.png',
+  'KHẢI KIỆT': 'assets/sprites/chars/khai_kiet.png',
+  'KHÔI NGUYÊN': 'assets/sprites/chars/khoi_nguyen.png',
+  'ANNIE NÂU': 'assets/sprites/chars/annie_nau.png',
+  'NHẬT HUY': 'assets/sprites/chars/nhat_huy.png',
+  'QUÂN HACKER': 'assets/sprites/chars/quan_hacker.png',
+  monster1: 'assets/sprites/monsters/monster_t1.png',
+  monster2: 'assets/sprites/monsters/monster_t2.png',
+  monster3: 'assets/sprites/monsters/monster_t3.png',
+  dragon: 'assets/sprites/monsters/dragon.png',
+  spider: 'assets/sprites/monsters/spider.png',
+  dummy: 'assets/sprites/monsters/dummy.png',
+  rock0: 'assets/sprites/env/rock0.png',
+  rock1: 'assets/sprites/env/rock1.png',
+  rock2: 'assets/sprites/env/rock2.png',
+  rock3: 'assets/sprites/env/rock3.png',
+  cactus: 'assets/sprites/env/cactus.png',
+  coin: 'assets/sprites/env/coin.png',
+  meat: 'assets/sprites/env/meat.png',
+  bg: 'assets/sprites/env/bg_desert.png'
+};
+const IMG = {};
+function preloadAssets() {
+  Promise.all(Object.entries(SPRITE_FILES).map(([key, src]) => new Promise(res => {
+    const img = new Image();
+    img.onload = () => { IMG[key] = img; res(); };
+    img.onerror = () => { console.warn('[Asset] Thiếu', src, '→ fallback procedural'); res(); };
+    img.src = src + '?' + ASSET_VER;
+  })));
+}
+preloadAssets();
+
 let obstacles = [];
 let monsters = [];
 let towers = [];
@@ -583,8 +621,8 @@ function generateObstacles(seed) {
   const wallY1 = (laneYTop + laneYMid) / 2;
   const wallY2 = (laneYMid + laneYBot) / 2;
   for (let x = 200; x < W - 200; x += 200) {
-    if (rng() < 0.65) obstacles.push({ x: x + rnd(-40, 40), y: wallY1 + rnd(-30, 30), radius: rnd(50, 75), type: 'rock', rotation: rnd(0, Math.PI*2), hp: 99999 });
-    if (rng() < 0.65) obstacles.push({ x: x + rnd(-40, 40), y: wallY2 + rnd(-30, 30), radius: rnd(50, 75), type: 'rock', rotation: rnd(0, Math.PI*2), hp: 99999 });
+    if (rng() < 0.65) obstacles.push({ x: x + rnd(-40, 40), y: wallY1 + rnd(-30, 30), radius: rnd(50, 75), type: 'rock', rotation: rnd(0, Math.PI*2), variant: Math.floor(Math.random()*4), hp: 99999 });
+    if (rng() < 0.65) obstacles.push({ x: x + rnd(-40, 40), y: wallY2 + rnd(-30, 30), radius: rnd(50, 75), type: 'rock', rotation: rnd(0, Math.PI*2), variant: Math.floor(Math.random()*4), hp: 99999 });
   }
   for (let i=0;i<15;i++) {
     const lane = Math.floor(rng() * 3);
@@ -594,7 +632,7 @@ function generateObstacles(seed) {
     obstacles.push({ x, y, radius: rnd(22, 32), type: 'cactus', rotation: rnd(0, Math.PI*2), hp: 99999 });
   }
   [{x: 150, y: 150}, {x: W-150, y: 150}, {x: 150, y: H-150}, {x: W-150, y: H-150}].forEach(c => {
-    obstacles.push({ x: c.x, y: c.y, radius: rnd(55, 75), type: 'rock', rotation: rnd(0, Math.PI*2), hp: 99999 });
+    obstacles.push({ x: c.x, y: c.y, radius: rnd(55, 75), type: 'rock', rotation: rnd(0, Math.PI*2), variant: Math.floor(Math.random()*4), hp: 99999 });
   });
 }
 function resolveObstacleCollision(entity) {
@@ -849,6 +887,53 @@ function drawCharBody(c, data, scale, animState, extraWings) {
   }
   c.restore();
   c.restore();
+}
+
+// ===== SPRITE DRAW HELPERS =====
+// Sheet nhân vật 2x2: hàng 0 = idle (2 frame), hàng 1 = chạy (2 frame).
+// GỌI khi ctx ĐÃ translate tới tâm nhân vật và rotate(angle) xong.
+const CHAR_SPRITE_SCALE = {}; // 'BÌNH MINH': 4.8 — tinh chỉnh size từng tướng nếu cần
+
+// BILLBOARD chống lộn ngược: gọi khi ctx ĐÃ rotate(angle).
+// - Nhắm nửa phải màn hình (kể cả lên/xuống) → giữ quay theo góc nhắm như cũ.
+// - Nhắm nửa trái → hủy quay, LẬT NGANG sprite (scale -1) + góc phản chiếu
+//   PI - angle → sprite "nhìn" đúng hướng nhắm nhưng ĐẦU LUÔN HƯỚNG LÊN TRỜI.
+function billboardFlip(angle) {
+  ctx.rotate(-angle); // hủy quay tổng (về hệ đã translate)
+  if (Math.cos(angle) < 0) {
+    ctx.scale(-1, 1);
+    ctx.rotate(Math.PI - angle);
+  } else {
+    ctx.rotate(angle);
+  }
+}
+
+function drawCharSprite(charName, radius, animState, isMoving, aimAngle) {
+  const img = IMG[charName];
+  if (!img) return false;
+  const fw = img.width / 2, fh = img.height / 2;
+  const row = isMoving ? 1 : 0;
+  const col = Math.floor(gameTime / (isMoving ? 8 : 40)) % 2;
+  const size = radius * (CHAR_SPRITE_SCALE[charName] || 4.6);
+  if (aimAngle !== undefined) billboardFlip(aimAngle);
+  ctx.save();
+  ctx.translate((animState.attackProgress || 0) * 10, 0); // lao nhẹ tới trước khi đánh (đúng hướng nhắm cả khi lật ngang)
+  ctx.drawImage(img, col * fw, row * fh, fw, fh, -size / 2, -size / 2, size, size);
+  ctx.restore();
+  return true;
+}
+// Entity đơn (quái/rồng/nhện/dummy/đá...). GỌI khi ctx đã translate (+rotate nếu cần).
+// opts: { flap } phập phồng, { angle } bật billboard chống lộn ngược.
+function drawEntitySprite(key, radius, mult, opts) {
+  const img = IMG[key];
+  if (!img) return false;
+  const size = radius * mult;
+  ctx.save();
+  if (opts && opts.angle !== undefined) billboardFlip(opts.angle);
+  if (opts && opts.flap !== undefined) ctx.scale(1, 1 + Math.sin(opts.flap) * 0.05);
+  ctx.drawImage(img, -size / 2, -size / 2, size, size);
+  ctx.restore();
+  return true;
 }
 function drawWings(c, r, t) {
   c.save();
@@ -1502,7 +1587,19 @@ class Player {
     ctx.rotate(this.angle);
     if (this.hitFlash > 0) ctx.globalAlpha = 0.5 + Math.random()*0.5;
     const animState = { time: gameTime, walkPhase: this.walkPhase, bob: this.bob, attackProgress: this.attackAnim / this.attackAnimMax, castProgress: this.castAnim / this.castAnimMax, extra: { minigunActive: this.buffs.minigun > 0, minigunSpin: this.minigunSpin }, hitFlash: this.hitFlash };
-    drawCharBody(ctx, this.data, 1, animState, this.buffs.wings > 0);
+    // Chuyển động thật = vị trí có đổi (chính xác cho cả bot & người chơi mạng).
+    // walkPhase *= 0.9 khi đứng im không bao giờ về đúng 0 → animation chạy bị "kẹt",
+    // nên phải đo theo vị trí + grace 8 frame để người chơi mạng không nhấp nháy.
+    const mdx = this.x - (this._px === undefined ? this.x : this._px);
+    const mdy = this.y - (this._py === undefined ? this.y : this._py);
+    if (mdx * mdx + mdy * mdy > 0.04) this._mvGrace = 8; else if (this._mvGrace > 0) this._mvGrace--;
+    const isMoving = this._mvGrace > 0;
+    this._px = this.x; this._py = this.y;
+    this._sprMoving = isMoving;
+    if (this.buffs.wings > 0 && IMG[this.data.name]) { ctx.save(); billboardFlip(this.angle); drawWings(ctx, this.data.radius, gameTime); ctx.restore(); }
+    if (!drawCharSprite(this.data.name, this.data.radius, animState, isMoving, this.angle)) {
+      drawCharBody(ctx, this.data, 1, animState, this.buffs.wings > 0);
+    }
     ctx.restore();
     if (matchState !== 'countdown' && (this.isBot || this.isRemote || (this === player && currentMode === 'friend'))) {
       let nm;
@@ -1615,6 +1712,7 @@ class Monster {
     ctx.beginPath(); ctx.ellipse(0, this.radius*0.8, this.radius*1.1, this.radius*0.45, 0, 0, Math.PI*2); ctx.fill();
     ctx.rotate(this.angle);
     if (this.hitFlash > 0) ctx.globalAlpha = 0.6 + Math.random()*0.4;
+    if (drawEntitySprite('monster' + this.tier, this.radius, 3.4, { angle: this.angle })) { ctx.restore(); return; }
     const legBob = Math.sin(this.walkPhase * Math.PI * 2) * 2;
     ctx.fillStyle = '#1a0a0a';
     ctx.beginPath(); ctx.ellipse(-this.radius*0.3, this.radius*0.6 + legBob, this.radius*0.3, this.radius*0.4, 0, 0, Math.PI*2); ctx.fill();
@@ -1706,6 +1804,7 @@ class Dragon {
     ctx.beginPath(); ctx.ellipse(0, this.radius*0.8, this.radius*1.2, this.radius*0.5, 0, 0, Math.PI*2); ctx.fill();
     ctx.rotate(this.angle);
     if (this.hitFlash > 0) ctx.globalAlpha = 0.6 + Math.random()*0.4;
+    if (drawEntitySprite('dragon', this.radius, 3.8, { flap: this.wingPhase, angle: this.angle })) { ctx.restore(); return; }
     const flap = Math.sin(this.wingPhase) * 0.3;
     for (let side = -1; side <= 1; side += 2) {
       ctx.save();
@@ -1772,6 +1871,26 @@ class TrainingDummy {
     ctx.save(); ctx.translate(this.x, this.y);
     ctx.fillStyle = 'rgba(0,0,0,0.5)';
     ctx.beginPath(); ctx.ellipse(0, this.radius*0.8, this.radius*1.2, this.radius*0.5, 0, 0, Math.PI*2); ctx.fill();
+    if (IMG.dummy) {
+      const s = this.radius * 3.2, pulse = 1 + this.hitFlash * 0.02;
+      ctx.save(); ctx.scale(pulse, pulse);
+      ctx.drawImage(IMG.dummy, -s/2, -s/2, s, s);
+      if (this.hitFlash > 0) { try { ctx.filter = 'brightness(2.2)'; ctx.drawImage(IMG.dummy, -s/2, -s/2, s, s); } catch (e) {} }
+      ctx.restore();
+      if (this.damageFlash > 0) {
+        ctx.globalAlpha = this.damageFlash / 20;
+        ctx.strokeStyle = '#ff0044'; ctx.shadowColor = '#ff0044'; ctx.shadowBlur = 25; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.arc(0, 0, this.radius + 10 + (20 - this.damageFlash), 0, Math.PI*2); ctx.stroke();
+        ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+      }
+      ctx.restore();
+      ctx.save(); ctx.font = 'bold 14px Segoe UI'; ctx.textAlign = 'center';
+      ctx.fillStyle = '#ffd166'; ctx.strokeStyle = '#000'; ctx.lineWidth = 3;
+      ctx.strokeText('🎯 BIA TẬP', this.x, this.y - this.radius*1.5);
+      ctx.fillText('🎯 BIA TẬP', this.x, this.y - this.radius*1.5);
+      ctx.restore();
+      return;
+    }
     const g = ctx.createRadialGradient(-this.radius*0.3, -this.radius*0.3, 0, 0, 0, this.radius);
     g.addColorStop(0, this.hitFlash > 0 ? '#fff' : '#c9a58a');
     g.addColorStop(0.5, this.hitFlash > 0 ? '#ffd166' : '#8a6a4a');
@@ -2085,6 +2204,7 @@ class SpiderMinion {
     ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle);
     ctx.fillStyle = 'rgba(0,0,0,0.4)';
     ctx.beginPath(); ctx.ellipse(0, 8, 10, 4, 0, 0, Math.PI*2); ctx.fill();
+    if (drawEntitySprite('spider', 12, 3.6, { flap: this.wiggle, angle: this.angle })) { ctx.restore(); return; }
     ctx.strokeStyle = '#5a3a1a'; ctx.lineWidth = 2; ctx.lineCap = 'round';
     for (let i=0;i<8;i++) {
       const side = i < 4 ? -1 : 1, idx = i % 4;
@@ -2898,6 +3018,7 @@ function drawLanes() {
 function drawGoldCoin(g) {
   ctx.save(); ctx.translate(g.x, g.y + Math.sin(g.bob) * 3);
   ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(0, 10, 8, 3, 0, 0, Math.PI*2); ctx.fill();
+  if (IMG.coin) { const s = 26 + Math.abs(Math.sin(g.bob*0.5))*5; ctx.drawImage(IMG.coin, -s/2, -s/2, s, s); ctx.restore(); return; }
   ctx.fillStyle = '#ffd166'; ctx.shadowColor = '#ffd166'; ctx.shadowBlur = 15;
   ctx.beginPath(); ctx.arc(0, 0, 8, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(-2, -2, 2.5, 0, Math.PI*2); ctx.fill();
@@ -2907,6 +3028,16 @@ function drawGoldCoin(g) {
 }
 function drawDragonDrop(d) {
   ctx.save(); ctx.translate(d.x, d.y + Math.sin(gameTime*0.1)*5);
+  if (IMG.meat) {
+    const g2 = ctx.createRadialGradient(0, 0, 0, 0, 0, 50);
+    g2.addColorStop(0, 'rgba(255,77,26,0.8)'); g2.addColorStop(0.5, 'rgba(255,215,0,0.4)'); g2.addColorStop(1, 'rgba(255,77,26,0)');
+    ctx.fillStyle = g2; ctx.beginPath(); ctx.arc(0, 0, 50, 0, Math.PI*2); ctx.fill();
+    ctx.drawImage(IMG.meat, -30, -30, 60, 60);
+    ctx.fillStyle = '#ffd700'; ctx.font = 'bold 12px Segoe UI'; ctx.textAlign = 'center';
+    ctx.strokeStyle = '#000'; ctx.lineWidth = 3;
+    ctx.strokeText('NHẤN F', 0, -34); ctx.fillText('NHẤN F', 0, -34);
+    ctx.restore(); return;
+  }
   const g = ctx.createRadialGradient(0, 0, 0, 0, 0, 50);
   g.addColorStop(0, 'rgba(255,77,26,0.8)'); g.addColorStop(0.5, 'rgba(255,215,0,0.4)'); g.addColorStop(1, 'rgba(255,77,26,0)');
   ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, 50, 0, Math.PI*2); ctx.fill();
@@ -2923,6 +3054,9 @@ function drawObstacle(o) {
   ctx.save(); ctx.translate(o.x, o.y);
   ctx.fillStyle = 'rgba(0,0,0,0.5)';
   ctx.beginPath(); ctx.ellipse(0, o.radius*0.8, o.radius*1.1, o.radius*0.5, 0, 0, Math.PI*2); ctx.fill();
+  const rk = 'rock' + ((o.variant || 0) % 4);
+  if (o.type === 'rock' && IMG[rk]) { ctx.rotate(o.rotation); const s = o.radius*2.6; ctx.drawImage(IMG[rk], -s/2, -s/2, s, s); ctx.restore(); return; }
+  if (o.type === 'cactus' && IMG.cactus) { const s = o.radius*2.4; ctx.drawImage(IMG.cactus, -s/2, -s/2, s, s); ctx.restore(); return; }
   if (o.type === 'rock') {
     ctx.rotate(o.rotation);
     const g = ctx.createRadialGradient(-o.radius*0.3, -o.radius*0.3, 0, 0, 0, o.radius);
@@ -2956,9 +3090,13 @@ function drawObstacle(o) {
   ctx.restore();
 }
 function drawBackground() {
-  const grd = ctx.createLinearGradient(0, 0, 0, H);
-  grd.addColorStop(0, '#d4a574'); grd.addColorStop(0.4, '#c69c6d'); grd.addColorStop(1, '#8a6a4a');
-  ctx.fillStyle = grd; ctx.fillRect(0, 0, W, H);
+  if (IMG.bg) {
+    ctx.drawImage(IMG.bg, 0, 0, W, H);
+  } else {
+    const grd = ctx.createLinearGradient(0, 0, 0, H);
+    grd.addColorStop(0, '#d4a574'); grd.addColorStop(0.4, '#c69c6d'); grd.addColorStop(1, '#8a6a4a');
+    ctx.fillStyle = grd; ctx.fillRect(0, 0, W, H);
+  }
   ctx.save(); ctx.globalAlpha = 0.15;
   for (let i=0;i<100;i++) {
     const x = (i * 97 + gameTime * 0.3) % W;
