@@ -1508,6 +1508,10 @@ function roundRect(ctx, x, y, w, h, r) {
     World.initSeed = 12345;
     Net.initUI();
 
+    // khai báo sớm để tránh lỗi TDZ khi callback SPR.load chạy đồng bộ
+    const formBar = document.getElementById('formBar');
+    let binhanCard = null;
+
     // ---- nạp sprite sheets ----
     SPR.load(function (loaded, total) {
         Game.state = 'menu';
@@ -1573,9 +1577,6 @@ function roundRect(ctx, x, y, w, h, r) {
             }
         } catch (e) { }
     }
-    // khai báo trước buildMenuCards để tránh lỗi TDZ khi callback nạp sprite chạy đồng bộ
-    const formBar = document.getElementById('formBar');
-    let binhanCard = null;
     function buildMenuCards() {
         const grid = document.getElementById('heroGrid');
         grid.innerHTML = '';
