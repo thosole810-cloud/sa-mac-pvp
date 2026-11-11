@@ -1573,6 +1573,9 @@ function roundRect(ctx, x, y, w, h, r) {
             }
         } catch (e) { }
     }
+    // khai báo trước buildMenuCards để tránh lỗi TDZ khi callback nạp sprite chạy đồng bộ
+    const formBar = document.getElementById('formBar');
+    let binhanCard = null;
     function buildMenuCards() {
         const grid = document.getElementById('heroGrid');
         grid.innerHTML = '';
@@ -1627,8 +1630,6 @@ function roundRect(ctx, x, y, w, h, r) {
     }
 
     // ---- chọn dạng V1 / V2 cho Bình An ----
-    const formBar = document.getElementById('formBar');
-    let binhanCard = null;
     function updateFormPreview() {
         if (!binhanCard) return;
         const cv = binhanCard.querySelector('canvas');

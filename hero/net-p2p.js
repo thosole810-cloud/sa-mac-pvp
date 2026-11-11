@@ -25,13 +25,15 @@ const NetP2P = {
         this.leave();
         const room = lib.joinRoom({
             appId: 'sa-mac-sinh-tu',
-            relayUrls: [
-                'wss://relay.damus.io',
-                'wss://nos.lol',
-                'wss://relay.primal.net',
-                'wss://relay.nostr.band',
-                'wss://nostr.mom',
-            ],
+            relayConfig: {
+                urls: [
+                    'wss://relay.damus.io',
+                    'wss://nos.lol',
+                    'wss://relay.primal.net',
+                    'wss://relay.nostr.band',
+                    'wss://nostr.mom',
+                ],
+            },
         }, roomId);
         this.room = room;
         const act = room.makeAction('msg');
