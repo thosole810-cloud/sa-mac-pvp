@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SA MẠC SINH TỬ — Battle Royale 4 Tướng</title>
+<title>SA Máº C SINH Tá»¬ â€” Battle Royale 4 TÆ°á»›ng</title>
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; }
     html, body { width: 100%; height: 100%; overflow: hidden; background: #101010; font-family: 'Segoe UI', Roboto, Verdana, sans-serif; }
@@ -46,7 +46,7 @@
     .heroCard canvas { width: 92px; height: 96px; }
     .heroName { color: #f5ede0; font-weight: 800; font-size: 1.02rem; margin-top: 6px; letter-spacing: 0.04em; }
     .heroRole { color: #9c8a68; font-size: 0.72rem; letter-spacing: 0.14em; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    /* thanh chỉ số lớp: ST / HP / CĐ */
+    /* thanh chá»‰ sá»‘ lá»›p: ST / HP / CÄ */
     .heroStats { display: flex; flex-direction: column; gap: 2px; margin-top: 6px; padding: 0 2px; }
     .heroStats .hs { display: flex; align-items: center; gap: 4px; }
     .heroStats .hs b { width: 15px; font-size: 0.56rem; color: #7d6c50; text-align: right; letter-spacing: 0.04em; }
@@ -61,7 +61,7 @@
                  box-shadow: 0 0 12px rgba(255,200,90,0.6); animation: badgePulse 2.2s ease-in-out infinite; }
     @keyframes badgePulse { 0%,100% { box-shadow: 0 0 8px rgba(255,200,90,0.45); } 50% { box-shadow: 0 0 18px rgba(255,210,110,0.9); } }
 
-    /* ---------- BÌNH AN: CHỌN DẠNG V1 / V2 ---------- */
+    /* ---------- BÃŒNH AN: CHá»ŒN Dáº NG V1 / V2 ---------- */
     .formBar { width: min(680px, 94vw); margin: 0 auto 18px; padding: 12px 14px 14px; border-radius: 18px;
                background: linear-gradient(180deg, rgba(44,32,16,0.9), rgba(24,17,9,0.92));
                border: 1px solid rgba(255,210,120,0.28); box-shadow: 0 0 26px rgba(255,190,80,0.1) inset; }
@@ -150,7 +150,7 @@
     .statRow b { color: #ffd93d; }
     .endActions { display: flex; gap: 10px; justify-content: center; }
 
-    /* ---------- TRANG BỊ TRONG TRẬN ---------- */
+    /* ---------- TRANG Bá»Š TRONG TRáº¬N ---------- */
     .bagBtn { display: none; position: fixed; top: 154px; right: 12px; z-index: 35; padding: 9px 13px; border-radius: 12px;
               border: 1.5px solid rgba(255,210,120,0.55); background: rgba(18,14,10,0.86); color: #ffe066;
               font-weight: 800; font-size: 0.78rem; letter-spacing: 0.05em; cursor: pointer; backdrop-filter: blur(4px);
@@ -186,111 +186,111 @@
 <body>
 
 <canvas id="game"></canvas>
-<button class="bagBtn" id="bagBtn">🎒 TRANG BỊ <span style="opacity:.6">(B)</span></button>
+<button class="bagBtn" id="bagBtn">ðŸŽ’ TRANG Bá»Š <span style="opacity:.6">(B)</span></button>
 
 <!-- LOADING -->
 <div class="screen" id="loadScreen">
-    <div class="loadTitle">SA MẠC SINH TỬ</div>
-    <div class="loadSub">DESERT ROYALE · 6 CHIẾN BINH · 1 KẺ SỐNG SÓT</div>
+    <div class="loadTitle">SA Máº C SINH Tá»¬</div>
+    <div class="loadSub">DESERT ROYALE Â· 6 CHIáº¾N BINH Â· 1 Káºº Sá»NG SÃ“T</div>
     <div class="barWrap"><div id="loadBar"></div></div>
-    <div id="loadText">NẠP SPRITE...</div>
+    <div id="loadText">Náº P SPRITE...</div>
 </div>
 
 <!-- MENU -->
 <div class="screen hidden" id="menu">
-    <div class="logo">SA MẠC SINH TỬ</div>
+    <div class="logo">SA Máº C SINH Tá»¬</div>
     <div class="sub">TOP-DOWN BATTLE ROYALE</div>
 
     <div class="modeRow">
-        <div class="modeBtn sel" data-mode="pvp">⚔️ PVP vs 5 BOT</div>
-        <div class="modeBtn" data-mode="training">🎯 TRAINING</div>
-        <div class="modeBtn" data-mode="online">🌐 PVP ONLINE</div>
+        <div class="modeBtn sel" data-mode="pvp">âš”ï¸ PVP vs 5 BOT</div>
+        <div class="modeBtn" data-mode="training">ðŸŽ¯ TRAINING</div>
+        <div class="modeBtn" data-mode="online">ðŸŒ PVP ONLINE</div>
     </div>
 
     <div class="heroGrid" id="heroGrid"></div>
 
     <div class="formBar hidden" id="formBar">
-        <div class="formTitle">BÌNH AN — CHỌN DẠNG CHIẾN ĐẤU</div>
+        <div class="formTitle">BÃŒNH AN â€” CHá»ŒN Dáº NG CHIáº¾N Äáº¤U</div>
         <div class="formOpts">
             <div class="formOpt sel" data-form="v1">
-                <div class="formIcon">🔫</div>
-                <div class="formText"><b>V1 · XẠ THỦ</b><span>Súng máy, lướt né, mưa đạn làm chậm, minigun cuồng nộ</span></div>
+                <div class="formIcon">ðŸ”«</div>
+                <div class="formText"><b>V1 Â· Xáº  THá»¦</b><span>SÃºng mÃ¡y, lÆ°á»›t nÃ©, mÆ°a Ä‘áº¡n lÃ m cháº­m, minigun cuá»“ng ná»™</span></div>
             </div>
             <div class="formOpt" data-form="v2">
-                <div class="formIcon">⛓️</div>
-                <div class="formText"><b>V2 · XÍCH VẠN NĂNG</b><span>Xích móc kéo, xích trói, thiên la địa võng siết kẻ địch</span></div>
+                <div class="formIcon">â›“ï¸</div>
+                <div class="formText"><b>V2 Â· XÃCH Váº N NÄ‚NG</b><span>XÃ­ch mÃ³c kÃ©o, xÃ­ch trÃ³i, thiÃªn la Ä‘á»‹a vÃµng siáº¿t káº» Ä‘á»‹ch</span></div>
             </div>
         </div>
     </div>
 
     <div class="menuActions">
-        <button class="bigBtn" id="startBtn">VÀO TRẬN</button>
-        <button class="ghostBtn" id="helpBtn">HƯỚNG DẪN</button>
+        <button class="bigBtn" id="startBtn">VÃ€O TRáº¬N</button>
+        <button class="ghostBtn" id="helpBtn">HÆ¯á»šNG DáºªN</button>
     </div>
     <div class="hint">
-        Di chuyển <span class="kbd">WASD</span> · Nút <span class="kbd">Q</span> <span class="kbd">E</span> <span class="kbd">R</span> dùng kỹ năng ·
-        <span class="kbd">Chuột trái</span>/<span class="kbd">Space</span> tấn công <br>
-        Trên điện thoại: joystick bên trái + các nút bên phải · <span class="kbd">B</span> mở trang bị · <span class="kbd">ESC</span> tạm dừng · <span class="kbd">M</span> tắt/bật tiếng
+        Di chuyá»ƒn <span class="kbd">WASD</span> Â· NÃºt <span class="kbd">Q</span> <span class="kbd">E</span> <span class="kbd">R</span> dÃ¹ng ká»¹ nÄƒng Â·
+        <span class="kbd">Chuá»™t trÃ¡i</span>/<span class="kbd">Space</span> táº¥n cÃ´ng <br>
+        TrÃªn Ä‘iá»‡n thoáº¡i: joystick bÃªn trÃ¡i + cÃ¡c nÃºt bÃªn pháº£i Â· <span class="kbd">B</span> má»Ÿ trang bá»‹ Â· <span class="kbd">ESC</span> táº¡m dá»«ng Â· <span class="kbd">M</span> táº¯t/báº­t tiáº¿ng
     </div>
 </div>
 
 <!-- PVP ONLINE -->
 <div class="screen hidden" id="onlineModal">
     <div class="onlineCard">
-        <h3>🌐 PVP ONLINE</h3>
-        <div class="netSub">Tạo phòng, gửi mã/link cho bạn bè. Phòng tối đa 6 người — thiếu slot sẽ bù bot để trận đấu đông vui.</div>
+        <h3>ðŸŒ PVP ONLINE</h3>
+        <div class="netSub">Táº¡o phÃ²ng, gá»­i mÃ£/link cho báº¡n bÃ¨. PhÃ²ng tá»‘i Ä‘a 6 ngÆ°á»i â€” thiáº¿u slot sáº½ bÃ¹ bot Ä‘á»ƒ tráº­n Ä‘áº¥u Ä‘Ã´ng vui.</div>
         <div class="netRow">
-            <label>TÊN</label>
-            <input id="netName" maxlength="16" placeholder="Tên của bạn" autocomplete="off">
+            <label>TÃŠN</label>
+            <input id="netName" maxlength="16" placeholder="TÃªn cá»§a báº¡n" autocomplete="off">
         </div>
         <div class="netRow">
-            <button class="bigBtn" id="netCreate">TẠO PHÒNG</button>
+            <button class="bigBtn" id="netCreate">Táº O PHÃ’NG</button>
             <div class="joinBox">
-                <input id="netCode" maxlength="4" placeholder="MÃ" autocomplete="off">
-                <button class="ghostBtn" id="netJoin">VÀO</button>
+                <input id="netCode" maxlength="4" placeholder="MÃƒ" autocomplete="off">
+                <button class="ghostBtn" id="netJoin">VÃ€O</button>
             </div>
         </div>
         <div id="netStatus"></div>
         <div id="netLobby" class="hidden">
-            <div class="roomLine">MÃ PHÒNG: <b id="roomCode">----</b> <button class="miniBtn" id="netCopy">COPY LINK MỜI</button></div>
+            <div class="roomLine">MÃƒ PHÃ’NG: <b id="roomCode">----</b> <button class="miniBtn" id="netCopy">COPY LINK Má»œI</button></div>
             <div id="netPlayers"></div>
-            <div id="netWait" class="hidden">Chờ chủ phòng bắt đầu trận...</div>
+            <div id="netWait" class="hidden">Chá» chá»§ phÃ²ng báº¯t Ä‘áº§u tráº­n...</div>
             <div class="netActions">
-                <button class="bigBtn hidden" id="netStart">BẮT ĐẦU TRẬN</button>
-                <button class="ghostBtn" id="netLeave">RỜI PHÒNG</button>
+                <button class="bigBtn hidden" id="netStart">Báº®T Äáº¦U TRáº¬N</button>
+                <button class="ghostBtn" id="netLeave">Rá»œI PHÃ’NG</button>
             </div>
         </div>
-        <div class="netHint" id="netHint">Bạn bè cùng mạng LAN mở địa chỉ IP của máy chủ (dạng http://192.168.x.x:8790/hero.html) và nhập mã phòng.</div>
-        <div style="text-align:center"><button class="ghostBtn" id="netClose">ĐÓNG</button></div>
+        <div class="netHint" id="netHint">Báº¡n bÃ¨ cÃ¹ng máº¡ng LAN má»Ÿ Ä‘á»‹a chá»‰ IP cá»§a mÃ¡y chá»§ (dáº¡ng http://192.168.x.x:8790/hero.html) vÃ  nháº­p mÃ£ phÃ²ng.</div>
+        <div style="text-align:center"><button class="ghostBtn" id="netClose">ÄÃ“NG</button></div>
     </div>
 </div>
 
 <!-- HELP -->
 <div class="screen hidden" id="helpModal">
     <div class="helpCard">
-        <h3>HƯỚNG DẪN NHANH</h3>
+        <h3>HÆ¯á»šNG DáºªN NHANH</h3>
         <table>
-            <tr><td>WASD / Arrow</td><td>Di chuyển</td></tr>
-            <tr><td>Chuột trái / Space</td><td>Tấn công thường (giữ để bắn/đấm liên tục)</td></tr>
-            <tr><td>Q / E / R</td><td>Kỹ năng (R là CHIÊU CUỐI — hiệu ứng điện ảnh, chỉ làm chậm kẻ địch trong vùng đánh)</td></tr>
-            <tr><td>B</td><td>Mở <b>TRANG BỊ</b> trong trận: giày, giáp, kiếm, trượng phép, hút máu, kháng khống chế</td></tr>
-            <tr><td>ESC</td><td>Tạm dừng (PVP) / Thoát về menu (Training)</td></tr>
-            <tr><td>M</td><td>Bật / tắt âm thanh</td></tr>
-            <tr><td>Bình An</td><td>Có <b>2 DẠNG</b>: V1 Xạ Thủ (súng/đạn) và V2 Xích Vạn Năng (xích móc, trói, thiên la địa võng) — chọn ở menu.</td></tr>
+            <tr><td>WASD / Arrow</td><td>Di chuyá»ƒn</td></tr>
+            <tr><td>Chuá»™t trÃ¡i / Space</td><td>Táº¥n cÃ´ng thÆ°á»ng (giá»¯ Ä‘á»ƒ báº¯n/Ä‘áº¥m liÃªn tá»¥c)</td></tr>
+            <tr><td>Q / E / R</td><td>Ká»¹ nÄƒng (R lÃ  CHIÃŠU CUá»I â€” hiá»‡u á»©ng Ä‘iá»‡n áº£nh, chá»‰ lÃ m cháº­m káº» Ä‘á»‹ch trong vÃ¹ng Ä‘Ã¡nh)</td></tr>
+            <tr><td>B</td><td>Má»Ÿ <b>TRANG Bá»Š</b> trong tráº­n: giÃ y, giÃ¡p, kiáº¿m, trÆ°á»£ng phÃ©p, hÃºt mÃ¡u, khÃ¡ng khá»‘ng cháº¿</td></tr>
+            <tr><td>ESC</td><td>Táº¡m dá»«ng (PVP) / ThoÃ¡t vá» menu (Training)</td></tr>
+            <tr><td>M</td><td>Báº­t / táº¯t Ã¢m thanh</td></tr>
+            <tr><td>BÃ¬nh An</td><td>CÃ³ <b>2 Dáº NG</b>: V1 Xáº¡ Thá»§ (sÃºng/Ä‘áº¡n) vÃ  V2 XÃ­ch Váº¡n NÄƒng (xÃ­ch mÃ³c, trÃ³i, thiÃªn la Ä‘á»‹a vÃµng) â€” chá»n á»Ÿ menu.</td></tr>
         </table>
-        <h3 style="margin-top:16px">LUẬT CHƠI</h3>
+        <h3 style="margin-top:16px">LUáº¬T CHÆ I</h3>
         <table>
-            <tr><td>Trận PVP</td><td>6 chiến binh (bạn + 5 bot) — ai sống sót cuối cùng thắng. Vòng BÃO CÁT co dần dồn cả 6 về một chỗ!</td></tr>
-            <tr><td>Training</td><td>Không bão, không bot — đánh quái + giác nguyện để tập kỹ năng, được hồi sinh vô hạn.</td></tr>
-            <tr><td>PVP Online</td><td>Chọn <b>🌐 PVP ONLINE</b> ở menu: tạo phòng rồi gửi mã 4 ký tự/link cho bạn bè. Host chạy trận; thiếu người sẽ bù bot. Cần server <b>node dev-server.js</b> đang chạy.</td></tr>
-            <tr><td>Quái</td><td>Hạ <b>Bọ Cát</b> (thường) và <b>Quái Tinh Anh</b> (đá lớn) để nhận XP + VÀNG — Lên cấp tăng máu &amp; sát thương.</td></tr>
-            <tr><td>Lớp tướng</td><td><b>Xạ Thủ / Sát Thủ / Pháp Sư</b>: sát thương lớn nhưng máu giấy (92–108 HP). <b>Đấu Sĩ</b>: trâu hơn (185 HP), sát thương vừa phải. Sát thủ có tốc chạy cao nhất.</td></tr>
-            <tr><td>Trang bị</td><td>Bấm <span class="kbd">B</span> để mua giày (tốc chạy), giáp (máu + giảm sát thương), kiếm/trượng (sát thương), huyết kiếm (hút máu), khiên (kháng khống chế). Mua bằng vàng kiếm từ hạ gục.</td></tr>
-            <tr><td>Tướng mới</td><td><b>Quân, Nhật Huy, Trường An, Đạt, Lê Anh</b> đang trong khung “SẮP RA MẮT” — sẽ mở khoá ở bản cập nhật sau.</td></tr>
-            <tr><td>Hiệu ứng</td><td>Hất tung, làm chậm, trói và choáng đều có dấu hiệu rõ trên đầu nhân vật.</td></tr>
+            <tr><td>Tráº­n PVP</td><td>6 chiáº¿n binh (báº¡n + 5 bot) â€” ai sá»‘ng sÃ³t cuá»‘i cÃ¹ng tháº¯ng. VÃ²ng BÃƒO CÃT co dáº§n dá»“n cáº£ 6 vá» má»™t chá»—!</td></tr>
+            <tr><td>Training</td><td>KhÃ´ng bÃ£o, khÃ´ng bot â€” Ä‘Ã¡nh quÃ¡i + giÃ¡c nguyá»‡n Ä‘á»ƒ táº­p ká»¹ nÄƒng, Ä‘Æ°á»£c há»“i sinh vÃ´ háº¡n.</td></tr>
+            <tr><td>PVP Online</td><td>Chá»n <b>ðŸŒ PVP ONLINE</b> á»Ÿ menu: táº¡o phÃ²ng rá»“i gá»­i mÃ£ 4 kÃ½ tá»±/link cho báº¡n bÃ¨. Host cháº¡y tráº­n; thiáº¿u ngÆ°á»i sáº½ bÃ¹ bot. Cáº§n server <b>node dev-server.js</b> Ä‘ang cháº¡y.</td></tr>
+            <tr><td>QuÃ¡i</td><td>Háº¡ <b>Bá» CÃ¡t</b> (thÆ°á»ng) vÃ  <b>QuÃ¡i Tinh Anh</b> (Ä‘Ã¡ lá»›n) Ä‘á»ƒ nháº­n XP + VÃ€NG â€” LÃªn cáº¥p tÄƒng mÃ¡u &amp; sÃ¡t thÆ°Æ¡ng.</td></tr>
+            <tr><td>Lá»›p tÆ°á»›ng</td><td><b>Xáº¡ Thá»§ / SÃ¡t Thá»§ / PhÃ¡p SÆ°</b>: sÃ¡t thÆ°Æ¡ng lá»›n nhÆ°ng mÃ¡u giáº¥y (92â€“108 HP). <b>Äáº¥u SÄ©</b>: trÃ¢u hÆ¡n (185 HP), sÃ¡t thÆ°Æ¡ng vá»«a pháº£i. SÃ¡t thá»§ cÃ³ tá»‘c cháº¡y cao nháº¥t.</td></tr>
+            <tr><td>Trang bá»‹</td><td>Báº¥m <span class="kbd">B</span> Ä‘á»ƒ mua giÃ y (tá»‘c cháº¡y), giÃ¡p (mÃ¡u + giáº£m sÃ¡t thÆ°Æ¡ng), kiáº¿m/trÆ°á»£ng (sÃ¡t thÆ°Æ¡ng), huyáº¿t kiáº¿m (hÃºt mÃ¡u), khiÃªn (khÃ¡ng khá»‘ng cháº¿). Mua báº±ng vÃ ng kiáº¿m tá»« háº¡ gá»¥c.</td></tr>
+            <tr><td>TÆ°á»›ng má»›i</td><td><b>QuÃ¢n, Nháº­t Huy, TrÆ°á»ng An, Äáº¡t, LÃª Anh</b> Ä‘ang trong khung â€œSáº®P RA Máº®Tâ€ â€” sáº½ má»Ÿ khoÃ¡ á»Ÿ báº£n cáº­p nháº­t sau.</td></tr>
+            <tr><td>Hiá»‡u á»©ng</td><td>Háº¥t tung, lÃ m cháº­m, trÃ³i vÃ  choÃ¡ng Ä‘á»u cÃ³ dáº¥u hiá»‡u rÃµ trÃªn Ä‘áº§u nhÃ¢n váº­t.</td></tr>
         </table>
         <div style="text-align:center; margin-top:16px">
-            <button class="ghostBtn" id="helpClose">Đóng</button>
+            <button class="ghostBtn" id="helpClose">ÄÃ³ng</button>
         </div>
     </div>
 </div>
@@ -298,10 +298,10 @@
 <!-- PAUSE -->
 <div class="screen hidden" id="pauseScreen">
     <div class="pauseCard">
-        <h2>TẠM DỪNG</h2>
+        <h2>Táº M Dá»ªNG</h2>
         <div class="menuActions">
-            <button class="bigBtn" id="resumeBtn">TIẾP TỤC</button>
-            <button class="ghostBtn" id="quitBtn">VỀ MENU</button>
+            <button class="bigBtn" id="resumeBtn">TIáº¾P Tá»¤C</button>
+            <button class="ghostBtn" id="quitBtn">Vá»€ MENU</button>
         </div>
     </div>
 </div>
@@ -309,38 +309,38 @@
 <!-- END -->
 <div class="screen hidden" id="endScreen">
     <div class="endCard">
-        <div id="endTitle">KẾT QUẢ</div>
+        <div id="endTitle">Káº¾T QUáº¢</div>
         <div id="endStats"></div>
         <div class="endActions">
-            <button class="bigBtn" id="endRetryBtn">CHƠI LẠI</button>
-            <button class="ghostBtn" id="endMenuBtn">VỀ MENU</button>
+            <button class="bigBtn" id="endRetryBtn">CHÆ I Láº I</button>
+            <button class="ghostBtn" id="endMenuBtn">Vá»€ MENU</button>
         </div>
     </div>
 </div>
 
-<!-- SHOP: TRANG BỊ TRONG TRẬN -->
+<!-- SHOP: TRANG Bá»Š TRONG TRáº¬N -->
 <div class="screen hidden" id="shopModal">
     <div class="shopCardBox">
         <div class="shopHead">
-            <h3>🎒 TRANG BỊ TRONG TRẬN</h3>
-            <div id="shopGold">🪙 0 VÀNG</div>
+            <h3>ðŸŽ’ TRANG Bá»Š TRONG TRáº¬N</h3>
+            <div id="shopGold">ðŸª™ 0 VÃ€NG</div>
         </div>
-        <div class="shopHint">Hạ gục quái/tướng để nhận vàng, vàng cũng tự tăng theo thời gian. Mỗi món nâng tối đa 3 cấp — mua xong dùng ngay, không cần về căn cứ.</div>
+        <div class="shopHint">Háº¡ gá»¥c quÃ¡i/tÆ°á»›ng Ä‘á»ƒ nháº­n vÃ ng, vÃ ng cÅ©ng tá»± tÄƒng theo thá»i gian. Má»—i mÃ³n nÃ¢ng tá»‘i Ä‘a 3 cáº¥p â€” mua xong dÃ¹ng ngay, khÃ´ng cáº§n vá» cÄƒn cá»©.</div>
         <div id="shopMsg"></div>
         <div id="shopGrid"></div>
         <div style="text-align:center; margin-top:16px">
-            <button class="ghostBtn" id="shopClose">ĐÓNG (B / ESC)</button>
+            <button class="ghostBtn" id="shopClose">ÄÃ“NG (B / ESC)</button>
         </div>
     </div>
 </div>
 
-<script src="hero/sprites.js"></script>
-<script src="hero/core.js"></script>
-<script src="hero/world.js"></script>
-<script src="hero/items.js"></script>
-<script src="hero/net.js"></script>
-<script src="hero/net-p2p.js"></script>
-<script src="hero/entities.js"></script>
-<script src="hero/game.js"></script>
+<script src="hero/sprites.js?v=2"></script>
+<script src="hero/core.js?v=2"></script>
+<script src="hero/world.js?v=2"></script>
+<script src="hero/items.js?v=2"></script>
+<script src="hero/net.js?v=2"></script>
+<script src="hero/net-p2p.js?v=2"></script>
+<script src="hero/entities.js?v=2"></script>
+<script src="hero/game.js?v=2"></script>
 </body>
 </html>
