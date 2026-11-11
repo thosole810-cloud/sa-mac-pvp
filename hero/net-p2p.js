@@ -14,7 +14,7 @@ const NetP2P = {
 
     async load() {
         if (this.lib) return this.lib;
-        const mod = await import('https://cdn.jsdelivr.net/npm/trystero@0.26.0/+esm');
+        const mod = await import('https://cdn.jsdelivr.net/npm/@trystero-p2p/mqtt@0.26.0/+esm');
         this.lib = mod;
         this.selfId = mod.selfId;
         return mod;
@@ -25,15 +25,6 @@ const NetP2P = {
         this.leave();
         const room = lib.joinRoom({
             appId: 'sa-mac-sinh-tu',
-            relayConfig: {
-                urls: [
-                    'wss://relay.damus.io',
-                    'wss://nos.lol',
-                    'wss://relay.primal.net',
-                    'wss://relay.nostr.band',
-                    'wss://nostr.mom',
-                ],
-            },
         }, roomId);
         this.room = room;
         const act = room.makeAction('msg');
