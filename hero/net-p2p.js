@@ -23,7 +23,16 @@ const NetP2P = {
     async join(roomId) {
         const lib = await this.load();
         this.leave();
-        const room = lib.joinRoom({ appId: 'sa-mac-sinh-tu' }, roomId);
+        const room = lib.joinRoom({
+            appId: 'sa-mac-sinh-tu',
+            relayUrls: [
+                'wss://relay.damus.io',
+                'wss://nos.lol',
+                'wss://relay.primal.net',
+                'wss://relay.nostr.band',
+                'wss://nostr.mom',
+            ],
+        }, roomId);
         this.room = room;
         const act = room.makeAction('msg');
         this.msgAction = act;
