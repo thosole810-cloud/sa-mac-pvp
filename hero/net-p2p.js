@@ -124,6 +124,13 @@ const NetP2P = {
         }
         NetP2P.send({ t: 'hello', name: p.name, hero: p.hero, form: p.form });
         this._status('ĐANG CHỜ CHỦ PHÒNG...', '#9fd0ff');
+        // hẹn giờ: nếu 20 giây không thấy host thì báo rõ
+        clearTimeout(this._joinWaitTimer);
+        this._joinWaitTimer = setTimeout(() => {
+            if (this.role === 'client' && (!this.players || this.players.length === 0)) {
+                this._status('KHÔNG THẤY CHỦ PHÒNG — kiểm tra mã phòng/mạng, thử bấm VÀO lại', '#ff7a7a');
+            }
+        }, 20000);
     };
 
     Net.startMatch = function (payload) {
