@@ -31,24 +31,24 @@ const HEROES = {
     },
     // ---------- ĐẤU SĨ: trâu vừa phải, sát thương vừa phải ----------
     binhminh: {
-        id: 'binhminh', name: 'BÌNH MINH', role: 'ĐẤU SĨ', className: 'ĐẤU SĨ', color: '#ffd93d',
-        maxHp: 185, speed: 202, radius: 15, armorPct: 0.08,
-        atk: { kind: 'melee', dmg: 12, cd: 0.40, range: 64, arc: 1.85 },
+        id: 'binhminh', name: 'BÌNH MINH', role: 'ĐẤU THẦN', className: 'ĐẤU THẦN', color: '#ffd93d',
+        maxHp: 195, speed: 206, radius: 15, armorPct: 0.10,
+        atk: { kind: 'melee', dmg: 13, cd: 0.40, range: 66, arc: 1.85 },
         skills: {
-            Q: { name: 'ĐẬM ĐẤT', cd: 8, desc: 'Dậm đất 130px: 18 sát thương + HẤT TUNG 0.8s + làm chậm 1.5s + nứt đất!' },
-            E: { name: 'XUNG PHONG', cd: 7, desc: 'Lao thẳng 230px, kẻ đầu tiên trúng bị hất văng và choáng 0.4s.' },
-            R: { name: 'ĐỊA CHẤN TÀN KHOÁT', cd: 26, desc: 'Bật lên tung "đại địa chấn" 200px: 30 dmg + HẤT TUNG 1.2s. Làm chậm 35% trong bán kính hẹp 140.' },
+            Q: { name: 'PHÁ ĐỊA TRỌNG KÍCH', cd: 7, desc: 'Đấm nứt chiến trường 160px: 24 dmg + HẤT TUNG 0.9s + chậm 50%/1.6s. Nứt đất lửa rực!' },
+            E: { name: 'HỔ HẦU THIẾT BỐI', cd: 8, desc: 'Gầm gừ hút mọi kẻ địch trong 260px về phía mình: 18 dmg + choáng 0.6s, tự tăng 30% sát thương 4s (HỔ UY).' },
+            R: { name: 'THIÊN BĂNG ĐỊA LIỄN', cd: 26, desc: 'Bật lên trời rồi ập xuống 3 tầng sóng xung kích lan xa dần: 30/40/55 dmg — tầng cuối HẤT TUNG cả vùng!' },
         },
     },
     // ---------- SÁT THỦ: cơ động, sát thương lớn, máu giấy ----------
     khaikiet: {
-        id: 'khaikiet', name: 'KHẢI KIỆT', role: 'SÁT THỦ', className: 'SÁT THỦ', color: '#ff5a5a',
-        maxHp: 94, speed: 252, radius: 12,
-        atk: { kind: 'ranged', dmg: 10, cd: 0.24, range: 340, speed: 740 },  // ném phi đao
+        id: 'khaikiet', name: 'KHẢI KIỆT', role: 'SÁT THỦ · SONG KIẾM', className: 'SÁT THỦ', color: '#ff5a5a',
+        maxHp: 98, speed: 256, radius: 12,
+        atk: { kind: 'melee', dmg: 9, cd: 0.22, range: 64, arc: 1.8 },  // song kiếm chém nhanh
         skills: {
-            Q: { name: 'LƯỚT CHÉM', cd: 5, desc: 'Nhoáng qua 260px chém mọi địch trên đường, choáng 0.2s, lướt né đòn.' },
-            E: { name: 'ÁM NHỊ TAM ĐAO', cd: 6, desc: 'Ném 3 phi đao, kẻ địch trúng bị TRÓI 0.7s.' },
-            R: { name: 'BÃO KIẾM XOÁY', cd: 24, desc: 'Xoay thành lốc đâm 2.4s hút địch mỗi giây 12 sát thương, làn gió hút nhẹ.' },
+            Q: { name: 'SONG KIẾM XUYÊN ẢNH', cd: 5, desc: 'Lao xuyên 280px chém song kiếm: 18 dmg + CHẢY MÁU 3s + choáng 0.3s, lướt né đòn.' },
+            E: { name: 'CHÉM CHỮ X', cd: 6, desc: 'Hai đường kiếm chéo trước mặt (260px): 15 dmg mỗi đường + chảy máu — trúng cả hai là 30 dmg!' },
+            R: { name: 'KIẾM VŨ HỘNG NHÂN', cd: 24, desc: 'Song kiếm xoáy thành lốc 2.6s: 15 dmg mỗi nhịp, hút địch quanh mình.' },
         },
     },
     // ---------- PHÁP SƯ: tầm xa, sát thương phép lớn, máu giấy ----------
@@ -87,13 +87,13 @@ const HEROES = {
         },
     },
     truongan: {
-        id: 'truongan', name: 'TRƯỜNG AN', role: 'THẦN TIỄN', className: 'XẠ THỦ', color: '#ff6bd6', color2: '#5a0b3c',
-        maxHp: 94, speed: 216, radius: 12,
-        atk: { kind: 'ranged', dmg: 17, cd: 0.36, range: 560, speed: 1000 },
+        id: 'truongan', name: 'TRƯỜNG AN', role: 'VỢT THỦ', className: 'VỢT THỦ', color: '#ff6bd6', color2: '#5a0b3c',
+        maxHp: 94, speed: 218, radius: 12,
+        atk: { kind: 'ranged', dmg: 16, cd: 0.34, range: 540, speed: 1100 },  // cú vụt cầu lông
         skills: {
-            Q: { name: 'XUYÊN VÂN TIỄN', cd: 6, desc: 'Mũi tên xuyên 560px: 26 dmg, xuyên mọi mục tiêu, khiến chúng chịu +20% sát thương trong 3s.' },
-            E: { name: 'BÃO TIỄN', cd: 10, desc: 'Mưa tên 2.4s tại vùng chỉ định (460px): 7 đợt 7 dmg + làm chậm 35%.' },
-            R: { name: 'NHẤT TIỄN XUYÊN TÂM', cd: 30, desc: 'Bắn xuyên 1400px: 60 dmg + 15% máu đã mất, xuyên mọi kẻ địch, đánh dấu +25% dmg nhận 4s.' },
+            Q: { name: 'VỤT XUYÊN VÂN', cd: 6, desc: 'Cú vụt cầu lông xuyên 560px: 26 dmg, xuyên mọi mục tiêu, khiến chúng chịu +20% sát thương trong 3s.' },
+            E: { name: 'MƯA CẦU XOÁY', cd: 10, desc: 'Phóng cầu xoay lên trời — cầu rơi xuống như mưa tại vùng chỉ định (460px): 7 đợt 7 dmg + làm chậm 35%.' },
+            R: { name: 'SMASH THIÊN THẦN', cd: 30, desc: 'Cú smash khổng lồ xuyên toàn bản đồ: 60 dmg + 15% máu đã mất, xuyên mọi kẻ địch, đánh dấu +25% dmg nhận 4s!' },
         },
     },
     dat: {
@@ -398,13 +398,15 @@ class Fighter {
                 this.stunT = Math.max(this.stunT, 0.25);
                 FX.dust(this.x, this.y, 5);
                 Cam.shake(2.5);
-                // Bình Minh R: đáp xuống → đại địa chấn
+                // Bình Minh R: đáp xuống → 3 tầng sóng thiên băng
                 if (this.channelKind === 'quakePend') {
-                    this.channelKind = '';
-                    this.slam(200, 30 * this.dmgMul, 1.2, { amp: 0.35, dur: 1.4 }, 140);
-                    FX.flash('#ffd93d', 0.3);
-                    FX.ring(this.x, this.y, 20, 260, '#ffe066', 0.55, 7);
-                    Cam.punch(0.05);
+                    this.channelKind = 'bmQuake';
+                    this.channelT = 1.05; this.channelTick = 0.05; this.bmWave = 0;
+                    FX.flash('#ffd93d', 0.28);
+                    FX.ring(this.x, this.y, 20, 200, '#ffe066', 0.5, 7);
+                    FX.dust(this.x, this.y, 18);
+                    Cam.punch(0.05); Cam.shake(9);
+                    Sfx.slam();
                 }
             }
         }
@@ -422,6 +424,7 @@ class Fighter {
                 this.dashShieldGain = 0;
                 this.dashPoisonDps = 0;
                 this.dashExecute = false;
+                this.dashBleed = null;
             }
         }
         // xoay chém (spin)
@@ -444,6 +447,10 @@ class Fighter {
             if (this.channelT <= 0) this.channelKind = '';
         } else if (this.channelKind === 'quakePend') {
             this.channelT -= dt;
+        } else if (this.channelKind === 'bmQuake' && this.channelT > 0) {
+            this.channelT -= dt; this.channelTick -= dt;
+            if (this.channelTick <= 0) { this.channelTick = 0.36; this.bmQuakeWave(); }
+            if (this.channelT <= 0) this.channelKind = '';
         } else if (this.channelKind === 'chainult' && this.channelT > 0) {
             this.channelT -= dt;
             this.channelTick -= dt;
@@ -468,6 +475,30 @@ class Fighter {
             this.channelT -= dt; this.channelTick -= dt;
             if (this.channelTick <= 0) { this.channelTick = 0.5; this.leanhUltTick(); }
             if (this.channelT <= 0) this.channelKind = '';
+        }
+    }
+
+    // THIÊN BĂNG ĐỊA LIỄN: mỗi nhịp một tầng sóng lan xa dần
+    bmQuakeWave() {
+        this.bmWave = (this.bmWave || 0) + 1;
+        const w = this.bmWave;
+        const r = [160, 240, 320][w - 1] || 320;
+        const dmg = [30, 40, 55][w - 1] || 55;
+        const opts = w === 3 ? { launch: 1.1 } : { slow: { amp: 0.45, dur: 1.4 }, slowR: r * 0.6 };
+        FX.shock(this.x, this.y, r, w === 3 ? 'rgba(255,214,120,0.42)' : 'rgba(255,214,120,0.22)', 0.55);
+        FX.ring(this.x, this.y, 14, r, w === 3 ? '#fff3b0' : '#ffe066', 0.5, 6);
+        FX.crack(this.x, this.y, r * 0.72);
+        FX.dust(this.x, this.y, 12 + w * 5);
+        FX.burst(this.x, this.y - 6, 8 + w * 4, '#ffd93d', { speed: 200 + w * 40, life: 0.5, glow: true, size: 3.4 });
+        Cam.shake(7 + w * 2);
+        Sfx.slam();
+        Game.aoeHit(this, this.x, this.y, r, dmg * this.dmgMul, opts);
+        if (w === 3) {
+            FX.flash('#ffd93d', 0.3);
+            Cam.punch(0.06);
+            FX.text(this.x, this.y - 74, 'THIÊN BĂNG!', '#fff3b0', 16);
+        } else {
+            FX.text(this.x, this.y - 60, 'SÓNG ' + w + '!', '#ffe066', 12);
         }
     }
 
@@ -711,12 +742,23 @@ class Fighter {
             Sfx.chain(); Sfx.dash();
             FX.flash('#ffd166', 0.09);
         } else if (this.heroId === 'binhminh') {
+            // PHÁ ĐỊA TRỌNG KÍCH: đấm nứt đất lớn + VFX rực
             this.aim = aimAng; this.facing = Math.cos(aimAng) >= 0 ? 1 : -1;
-            this.slam(130, 18 * this.dmgMul, 0.8, { amp: 0.4, dur: 1.5 }, 90);
-            FX.flash('#ffd93d', 0.15);
+            this.slam(160, 24 * this.dmgMul, 0.9, { amp: 0.5, dur: 1.6 }, 110);
+            FX.slash(this.x, this.y - 16, aimAng, 76, 2.2, '#fff3b0', 7);
+            FX.burst(this.x, this.y - 4, 20, '#ffe066', { speed: 240, life: 0.5, glow: true, size: 3.6 });
+            FX.dust(this.x, this.y, 12);
+            FX.flash('#ffd93d', 0.18);
+            Cam.shake(6);
         } else if (this.heroId === 'khaikiet') {
-            this.dash(aimAng, 260, 640, { ghost: true, hitDmg: 14 * this.dmgMul, stun: 0.35 });
+            // SONG KIẾM XUYÊN ẢNH: lướt chém song kiếm + chảy máu
+            if (this.procedural) this.facing = Math.cos(aimAng) >= 0 ? 1 : -1;
+            this.dash(aimAng, 280, 780, { ghost: true, hitDmg: 18 * this.dmgMul, stun: 0.3 });
+            this.dashBleed = { dps: 4 * this.dmgMul, dur: 3 };
             this.animName = 'dash'; this.animT = 0;
+            FX.slash(this.x, this.y - 14, aimAng - 0.35, 92, 1.8, '#ff8a8a', 6);
+            FX.slash(this.x, this.y - 14, aimAng + 0.35, 92, 1.8, '#ffe9e9', 6);
+            FX.burst(this.x, this.y - 16, 10, '#ff5a5a', { speed: 210, life: 0.35, glow: true, size: 3 });
             Sfx.slash(); FX.flash('#ff5a5a', 0.1);
         } else if (this.heroId === 'annie') {
             // Khi Quyền: chưởng khí đẩy lùi
@@ -778,16 +820,22 @@ class Fighter {
             Sfx.dash(); Sfx.slash();
             Cam.shake(2);
         } else if (this.heroId === 'truongan') {
-            // XUYÊN VÂN TIỄN: mũi tên xuyên + đánh dấu
+            // VỤT XUYÊN VÂN: cú vụt cầu lông xuyên thấu + đánh dấu
             this.aim = aimAng; this.facing = Math.cos(aimAng) >= 0 ? 1 : -1;
             this.animName = 'atk'; this.animT = 0;
             const reach = 560;
+            FX.slash(this.x + Math.cos(aimAng) * 14, this.y - 14, aimAng, 60, 1.6, '#ffc2ea', 6);
             FX.beam(this.x, this.y - 12, this.x + Math.cos(aimAng) * reach, this.y - 12 + Math.sin(aimAng) * reach, '#ff6bd6', 4.5, 0.28);
             FX.beam(this.x, this.y - 12, this.x + Math.cos(aimAng) * reach, this.y - 12 + Math.sin(aimAng) * reach, '#ffe0f4', 1.6, 0.22);
-            for (let i = 1; i <= 5; i++) {
-                const t = i / 5;
-                FX.part(this.x + Math.cos(aimAng) * reach * t, this.y - 12 + Math.sin(aimAng) * reach * t, U.rand(-20, 20), U.rand(-16, 4), 0.35, 2.5, '#ff8ad8', { glow: true });
+            // cầu lông bay dọc theo đường vụt
+            for (let i = 1; i <= 6; i++) {
+                const t = i / 6;
+                const cxp = this.x + Math.cos(aimAng) * reach * t;
+                const cyp = this.y - 12 + Math.sin(aimAng) * reach * t;
+                FX.part(cxp, cyp, U.rand(-16, 16), U.rand(-14, 2), 0.4, 3, i % 2 ? '#ffffff' : '#ff8ad8', { glow: true });
+                if (i === 3) FX.ring(cxp, cyp, 5, 22, '#ffd6f2', 0.3, 2.5);
             }
+            FX.flash('#ff6bd6', 0.08);
             Game.lineHit(this, this.x, this.y, aimAng, reach, 20, 26 * this.dmgMul, {
                 textC: '#ffc2ea', sparkC: '#ff6bd6', vuln: { amp: 0.2, dur: 3 }
             });
@@ -862,16 +910,41 @@ class Fighter {
             this.animName = 'atk'; this.animT = 0;
             Sfx.chainHit();
         } else if (this.heroId === 'binhminh') {
-            this.dash(aimAng, 230, 620, { hitDmg: 16 * this.dmgMul, stun: 0.45, knockback: 260 });
-            this.animName = 'charge'; this.animT = 0;
-            Sfx.dash(); Sfx.growl();
-        } else if (this.heroId === 'khaikiet') {
-            for (let i = -1; i <= 1; i++) {
-                const ang = aimAng + i * 0.18;
-                this.spawnProj(this.x, this.y - 12, ang, 480, 6, '#e9f4ff', 260, { root: 0.7, dagger: true });
+            // HỔ HẦU THIẾT BỐI: hút địch về phía mình + HỔ UY
+            this.animName = 'cast'; this.animT = 0;
+            let pulled = 0;
+            for (const en of Game.enemyTargets(this)) {
+                const d = U.dist(en.x, en.y, this.x, this.y);
+                if (d < 260 + en.r) {
+                    const a = U.angleTo(en.x, en.y, this.x, this.y);
+                    const step = Math.min(d * 0.55, 175);
+                    en.x += Math.cos(a) * step; en.y += Math.sin(a) * step;
+                    World.clampEnt(en);
+                    en.hurt(18 * this.dmgMul, this, { stun: 0.6, textC: '#ffe066', sparkC: '#ffd93d' });
+                    pulled++;
+                    FX.ring(en.x, en.y - 10, 6, 28, '#ffd93d', 0.35, 3);
+                }
             }
-            this.animName = 'toss'; this.animT = 0;
-            Sfx.slash();
+            this.rageT = Math.max(this.rageT, 4);
+            FX.ring(this.x, this.y - 16, 10, 250, '#ffd93d', 0.5, 6);
+            FX.ring(this.x, this.y - 16, 40, 210, '#ffe9a8', 0.4, 4);
+            FX.burst(this.x, this.y - 24, 24, '#ffd93d', { speed: 260, life: 0.55, glow: true, size: 3.6 });
+            FX.text(this.x, this.y - 62, 'HỔ HẦU!', '#ffd93d', 15);
+            Cam.shake(6);
+            Sfx.growl(); Sfx.cast();
+        } else if (this.heroId === 'khaikiet') {
+            // CHÉM CHỮ X: hai đường kiếm chéo + chảy máu
+            this.animName = 'atk'; this.animT = 0;
+            const reach = 280, halfW = 34;
+            const px = this.x + Math.cos(aimAng) * 110, py = this.y + Math.sin(aimAng) * 110;
+            FX.slash(px, py - 12, aimAng - 0.6, reach, 2.6, '#ff8a8a', 8);
+            FX.slash(px, py - 12, aimAng + 0.6, reach, 2.6, '#ffe9e9', 8);
+            FX.sparkHit(px, py - 12, '#ffdada', 10);
+            Cam.shake(3);
+            const t1 = Game.lineHit(this, px, py, aimAng - 0.6, reach, halfW, 15 * this.dmgMul, { textC: '#ffdada', sparkC: '#ff8a8a', bleed: { dps: 4 * this.dmgMul, dur: 3 } });
+            const t2 = Game.lineHit(this, px, py, aimAng + 0.6, reach, halfW, 15 * this.dmgMul, { textC: '#ffe9e9', sparkC: '#ff5a5a', bleed: { dps: 4 * this.dmgMul, dur: 3 } });
+            if (t1 > 0 && t2 > 0) FX.text(px, py - 46, 'CHÉM X!', '#ff5a5a', 13);
+            Sfx.slash(); Sfx.slash();
         } else if (this.heroId === 'annie') {
             this.spinT = 0.5; this.spinTick = 0; this.spinRadius = 115; this.spinDmg = 14 * this.dmgMul; this.spinPull = 120;
             this.spinKind = 'annie';
@@ -912,7 +985,7 @@ class Fighter {
             FX.ring(this.channelX, this.channelY, 10, 155, '#ff6bd6', 0.55, 4);
             FX.runeBurst(this.channelX, this.channelY - 6, '#ff8ad8', 10, 120, 0.5);
             FX.beam(this.channelX, this.channelY - 300, this.channelX, this.channelY, '#ffb3e6', 7, 0.3);
-            FX.text(this.channelX, this.channelY - 36, 'BÃO TIỄN', '#ff6bd6', 13);
+            FX.text(this.channelX, this.channelY - 36, 'MƯA CẦU XOÁY', '#ff6bd6', 13);
             Sfx.cast(); Sfx.shoot();
         } else if (this.heroId === 'dat') {
             // TRÓI LINH HỒN: xích phép trói vùng chỉ định
@@ -964,15 +1037,20 @@ class Fighter {
             FX.premiumShock(this.x, this.y, 300, '#ffd166', { hitstop: false });
             Game.announce('XÍCH VẠN NĂNG — THIÊN LA ĐỊA VÕNG!', '#ffd166');
         } else if (this.heroId === 'binhminh') {
-            // cú bật nhảy rồi ập xuống địa chấn
-            this.launch(1.4);
+            // cú bật nhảy rồi ập xuống 3 tầng sóng
+            this.launch(1.5);
             this.channelKind = 'quakePend'; this.channelT = 0.75;
-            Game.announce('ĐỊA CHẤN TÀN KHOÁT!', '#ffd93d');
+            FX.runeBurst(this.x, this.y - 10, '#ffd93d', 16, 150, 0.8);
+            FX.burst(this.x, this.y - 10, 18, '#ffe066', { speed: 220, life: 0.6, glow: true, size: 3.4 });
+            Game.announce('THIÊN BĂNG ĐỊA LIỄN!', '#ffd93d');
         } else if (this.heroId === 'khaikiet') {
-            this.spinT = 2.4; this.spinTick = 0; this.spinRadius = 105; this.spinDmg = 13 * this.dmgMul; this.spinPull = 150;
+            // KIẾM VŨ HỘNG NHÂN: song kiếm xoáy thành lốc
+            this.spinT = 2.6; this.spinTick = 0; this.spinRadius = 118; this.spinDmg = 15 * this.dmgMul; this.spinPull = 190;
             this.spinKind = 'khaikiet';
             this.animName = 'dash'; this.animT = 0;
-            Game.announce('BÃO KIẾM XOÁY!', '#ff5a5a');
+            FX.ring(this.x, this.y - 10, 16, 120, '#ff8a8a', 0.5, 5);
+            FX.burst(this.x, this.y - 16, 16, '#ff5a5a', { speed: 200, life: 0.5, glow: true, size: 3 });
+            Game.announce('KIẾM VŨ HỘNG NHÂN!', '#ff5a5a');
         } else if (this.heroId === 'annie') {
             this.spinT = 4.2; this.spinTick = 0; this.spinRadius = 126; this.spinDmg = 11 * this.dmgMul; this.spinPull = 170;
             this.spinKind = 'annieUlt';
@@ -1001,13 +1079,19 @@ class Fighter {
             }
             Game.announce('VÔ ẢNH SÁT!', '#7dff9a');
         } else if (this.heroId === 'truongan') {
-            // NHẤT TIỄN XUYÊN TÂM: xuyên toàn bản đồ
+            // SMASH THIÊN THẦN: cú smash cầu lông xuyên toàn bản đồ
             this.aim = aimAng; this.animName = 'atk'; this.animT = 0;
             const reach = 1400;
             const ex = this.x + Math.cos(aimAng) * reach, ey = this.y + Math.sin(aimAng) * reach;
             FX.beam(this.x, this.y - 14, ex, ey, '#ff6bd6', 12, 0.4);
             FX.beam(this.x, this.y - 14, ex, ey, '#ffffff', 4, 0.3);
             FX.bolt(this.x, this.y - 14, ex, ey, '#ffc2ea', 0.3, 12);
+            FX.slash(this.x, this.y - 14, aimAng, 80, 2.4, '#ffe0f4', 8);
+            // quả cầu lông khổng lồ bay dọc đường smash
+            for (let i = 1; i <= 8; i++) {
+                const t = i / 8;
+                FX.part(this.x + Math.cos(aimAng) * reach * t, this.y - 14 + Math.sin(aimAng) * reach * t, U.rand(-20, 20), U.rand(-20, 6), 0.5, 4.5, i % 2 ? '#ffffff' : '#ff6bd6', { glow: true });
+            }
             FX.flash('#ff6bd6', 0.3);
             Cam.shake(12); Cam.punch(0.05);
             for (const en of Game.enemyTargets(this)) {
@@ -1024,7 +1108,7 @@ class Fighter {
             }
             FX.ring(this.x, this.y - 10, 20, 110, '#ffc2ea', 0.5, 5);
             Sfx.ult(); Sfx.slam();
-            Game.announce('NHẤT TIỄN XUYÊN TÂM!', '#ff6bd6');
+            Game.announce('SMASH THIÊN THẦN!', '#ff6bd6');
         } else if (this.heroId === 'dat') {
             // THIÊN ĐỊA HOÀN VŨ: vùng phép hồi máu + trói chân
             this.channelKind = 'datult'; this.channelT = 3.2; this.channelTick = 0.4;
@@ -1061,6 +1145,7 @@ class Fighter {
         this.dashHitDmg = opts.hitDmg || 0;
         this.dashStun = opts.stun || 0;
         this.dashKnock = opts.knockback || 0;
+        this.dashBleed = opts.bleed || null;
         this.aimDash = ang;
         this.invulnT = Math.max(this.invulnT, opts.invuln || 0);
     }
@@ -1073,6 +1158,8 @@ class Fighter {
             if (U.dist2(en.x, en.y, this.x, this.y) < (en.r + 26) * (en.r + 26)) {
                 this.dashHitSet.add(en);
                 en.hurt(this.dashHitDmg, this, { textC: '#ff9d9d', stun: this.dashStun, launch: this.dashKnock ? 0.5 : undefined, vx: this.dashKnock ? Math.cos(this.aimDash || 0) * this.dashKnock : undefined });
+                // Khải Kiệt Q: chảy máu song kiếm
+                if (this.dashBleed && en.addDot) en.addDot('bleed', this.dashBleed.dps, this.dashBleed.dur, this);
                 // Nhật Huy R: độc + xử tử mục tiêu yếu
                 if (this.dashPoisonDps && en.addDot) en.addDot('poison', this.dashPoisonDps, this.dashPoisonDur || 3, this);
                 if (this.dashExecute && !en.dead && en.hp > 0 && en.hp < en.maxHp * 0.25) {
@@ -1108,7 +1195,10 @@ class Fighter {
             }
         }
         // hiệu ứng
-        if (this.spinKind === 'khaikiet') FX.slash(this.x, this.y - 14, this.t * 9, this.spinRadius, 2.4, '#ffb3b3', 6);
+        if (this.spinKind === 'khaikiet') {
+            FX.slash(this.x, this.y - 14, this.t * 9, this.spinRadius, 2.0, '#ff8a8a', 5);
+            FX.slash(this.x, this.y - 14, this.t * 9 + Math.PI, this.spinRadius, 2.0, '#ffe9e9', 5);
+        }
         if (this.spinKind === 'annie' || this.spinKind === 'annieUlt') FX.ring(this.x, this.y - 8, this.spinRadius * 0.4, this.spinRadius, '#b06bff', 0.2, 3);
     }
 
@@ -1349,7 +1439,7 @@ class Fighter {
         }
         // vũ khí: V1 súng trường / V2 xích quấn tay / tướng mới vũ khí riêng
         const aim = this.aim;
-        if (isNew) {
+        if (isNew || hid === 'khaikiet') {
             this.drawHeroWeapon(ctx, x, y, lean);
         } else {
         const gx = x + Math.cos(aim) * 10, gy = y - 12 + Math.sin(aim) * 6;
@@ -1429,7 +1519,29 @@ class Fighter {
         ctx.translate(x + Math.cos(aim) * 9, y - 12 + Math.sin(aim) * 5 + (lean || 0) * 0.4);
         ctx.rotate(aim * (this.facing === -1 ? -1 : 1));
         ctx.lineCap = 'round';
-        if (hid === 'quan') {
+        if (hid === 'khaikiet') {
+            // SONG KIẾM: hai lưỡi đao chéo hai bên
+            for (const s of [-1, 1]) {
+                ctx.save();
+                ctx.rotate(s * 0.22);
+                ctx.strokeStyle = '#3a1010'; ctx.lineWidth = 3.2;
+                ctx.beginPath(); ctx.moveTo(-4, s * 1.5); ctx.lineTo(4, s * 1.5); ctx.stroke();
+                ctx.fillStyle = '#ff5a5a';
+                ctx.beginPath(); ctx.arc(-4, s * 1.5, 2.2, 0, U.TAU); ctx.fill();
+                ctx.strokeStyle = '#e93030'; ctx.lineWidth = 3.6;
+                ctx.beginPath(); ctx.moveTo(4, s * 1.5); ctx.lineTo(26, s * 1.5 - 3 * s); ctx.stroke();
+                ctx.strokeStyle = '#ffe9e9'; ctx.lineWidth = 1.4;
+                ctx.beginPath(); ctx.moveTo(6, s * 1.5); ctx.lineTo(25, s * 1.5 - 3 * s); ctx.stroke();
+                ctx.restore();
+            }
+            if (swing > 0) {
+                ctx.globalAlpha = 0.45 + swing * 0.4;
+                ctx.strokeStyle = '#ffb3b3'; ctx.lineWidth = 2.2;
+                ctx.beginPath(); ctx.arc(10, 0, 26, -0.8, 0.8); ctx.stroke();
+                ctx.beginPath(); ctx.arc(10, 0, 33, 0.6, 2.2); ctx.stroke();
+                ctx.globalAlpha = 1;
+            }
+        } else if (hid === 'quan') {
             // đại đao
             ctx.strokeStyle = '#3a2408'; ctx.lineWidth = 4;
             ctx.beginPath(); ctx.moveTo(-7, 0); ctx.lineTo(35, 0); ctx.stroke();
@@ -1462,16 +1574,22 @@ class Fighter {
                 ctx.beginPath(); ctx.arc(24, -2, 3 + Math.random() * 2, 0, U.TAU); ctx.fill();
             }
         } else if (hid === 'truongan') {
-            // thần cung
-            ctx.strokeStyle = c2; ctx.lineWidth = 3.2;
-            ctx.beginPath(); ctx.arc(9, 0, 16, -1.18, 1.18); ctx.stroke();
-            ctx.strokeStyle = '#ffc2ea'; ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.moveTo(9 + Math.cos(-1.18) * 16, Math.sin(-1.18) * 16);
-            ctx.lineTo(9 + Math.cos(1.18) * 16, Math.sin(1.18) * 16); ctx.stroke();
-            ctx.strokeStyle = '#ffe9f7'; ctx.lineWidth = 2;
-            ctx.beginPath(); ctx.moveTo(-2, 0); ctx.lineTo(30, 0); ctx.stroke();
-            ctx.fillStyle = '#ff6bd6';
-            ctx.beginPath(); ctx.moveTo(31, 0); ctx.lineTo(25, -2.6); ctx.lineTo(25, 2.6); ctx.closePath(); ctx.fill();
+            // VỢT CẦU LÔNG
+            ctx.strokeStyle = '#3d2a1a'; ctx.lineWidth = 3.4;
+            ctx.beginPath(); ctx.moveTo(-8, 3); ctx.lineTo(9, 0); ctx.stroke();
+            ctx.strokeStyle = '#ff6bd6'; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.ellipse(19, -1, 10.5, 13.5, -0.22, 0, U.TAU); ctx.stroke();
+            ctx.strokeStyle = 'rgba(255,240,250,0.8)'; ctx.lineWidth = 1;
+            for (let i = -2; i <= 2; i++) {
+                ctx.beginPath(); ctx.moveTo(11, -1 + i * 4.4); ctx.lineTo(27, -1 + i * 4.4); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(19 + i * 3.4, -12); ctx.lineTo(19 + i * 3.4, 10); ctx.stroke();
+            }
+            if (swing > 0) {
+                ctx.globalAlpha = 0.5 + swing * 0.4;
+                ctx.strokeStyle = '#ffd6f2'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.arc(14, 0, 24, -0.9, 0.9); ctx.stroke();
+                ctx.globalAlpha = 1;
+            }
         } else if (hid === 'dat') {
             // trượng lá + hồn phép
             ctx.strokeStyle = '#4a2a08'; ctx.lineWidth = 3.4;
@@ -1935,7 +2053,7 @@ const BotBrain = {
         // Q
         if (c.cdQ <= 0 && U.chance(0.012)) {
             if (c.heroId === 'binhminh') { if (d < 110) c.castQ(a, tgt); }
-            else if (c.heroId === 'khaikiet') { if (d > 120 && d < 300) { c.aim = a; c.castQ(a); } }
+            else if (c.heroId === 'khaikiet') { if (d < 320 && d > 40) { c.aim = a; c.castQ(a); } }
             else if (c.heroId === 'binhan') { if (lowHp && U.chance(0.5)) c.castQ(a); }
             else if (c.heroId === 'binhan2') { if (d > 140 && d < 340) c.castQ(a, tgt); }
             else if (c.heroId === 'annie') { if (d < 130) c.castQ(a); }
