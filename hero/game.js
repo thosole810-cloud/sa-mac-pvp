@@ -1595,7 +1595,7 @@ function roundRect(ctx, x, y, w, h, r) {
             card.appendChild(nm);
             const rl = document.createElement('div');
             rl.className = 'heroRole';
-            rl.textContent = (d.className && d.className !== d.role) ? d.className + ' · ' + d.role : d.role;
+            rl.textContent = (d.role || '').startsWith(d.className) ? d.role : (d.className && d.className !== d.role) ? d.className + ' · ' + d.role : d.role;
             card.appendChild(rl);
             // thanh chỉ số lớp: sát thương / độ trâu / cơ động
             const st = document.createElement('div');
