@@ -336,9 +336,8 @@ const Net = {
         if (this.hintEl && isPublic) {
             this.hintEl.textContent = '🌍 Link đã PUBLIC: gửi ' + location.origin + '/hero.html cho bạn bè — họ nhập mã phòng (hoặc bấm link mời có ?room=) để chơi chung.';
         }
-        if (this.hintEl) {
+        if (this.hintEl && !isPublic) {
             fetch('/__netinfo').then(r => r.json()).then(d => {
-                if (isPublic) return;
                 const ip = (d.ips && d.ips[0]) || location.hostname;
                 this.hintEl.textContent = 'Bạn bè cùng mạng LAN mở: http://' + ip + ':' + d.port + '/hero.html (hoặc link mời có ?room=). Internet: cần mở cổng ' + d.port + ' / dùng tunnel.';
             }).catch(() => { });
