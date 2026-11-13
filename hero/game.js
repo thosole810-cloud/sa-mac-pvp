@@ -254,6 +254,24 @@ const Game = {
                 const b = this.makeBot(bid, cx + Math.cos(p.a) * p.d, cy + Math.sin(p.a) * p.d, i);
                 this.fighters.push(b);
             }
+        } else if (mode === 'team5') {
+            // ---- TEAM 5v5 (kiểu Liên Quân): 2 căn cứ, hồi sinh, thắng 15 hạ gục ----
+            Storm.reset(false);
+            const pool = ['quan', 'nhathuy', 'truongan', 'dat', 'leanh', 'binhan2', 'annie'];
+            this._teamBase = [{ x: cx - 980, y: cy }, { x: cx + 980, y: cy }];
+            this.player = this.makeFighter(this.playerHeroId(), cx - 980, cy, 0, false);
+            this.fighters.push(this.player);
+            for (let i = 1; i < 5; i++) {
+                const a = U.rand(0, U.TAU), d = U.rand(110, 280);
+                const b = this.makeBot(pool[i % pool.length], cx - 980 + Math.cos(a) * d, cy + Math.sin(a) * d, 0);
+                this.fighters.push(b);
+            }
+            for (let i = 0; i < 5; i++) {
+                const a = U.rand(0, U.TAU), d = U.rand(110, 280);
+                const b = this.makeBot(pool[(i + 2) % pool.length], cx + 980 + Math.cos(a) * d, cy + Math.sin(a) * d, 1);
+                this.fighters.push(b);
+            }
+            this._respawnT = undefined;
         } else {
             this.player = this.makeFighter(this.playerHeroId(), cx, cy, 0, false);
             this.fighters.push(this.player);
@@ -286,7 +304,7 @@ const Game = {
                 x: Math.round(cx + Math.cos(a) * 860), y: Math.round(cy + Math.sin(a) * 860),
             };
         });
-        const botPool = ['quan', 'nhathuy', 'truongan', 'dat', 'leanh', 'khaikiet', 'annie', 'binhan2'];
+        const botPool = ['quan', 'nhathuy', 'truongan', 'dat', 'leanh', 'annie', 'binhan2'];
         const bots = [];
         for (let i = humans.length; i < 6; i++) {
             const a = i * U.TAU / 6 + 0.22;
@@ -344,7 +362,7 @@ const Game = {
         });
         (payload.bots || []).forEach((b, i) => {
             const team = humans.length + i;
-            const f = this.makeBot(b.hero || 'khaikiet', b.x, b.y, team);
+            const f = this.makeBot(b.hero || 'quan', b.x, b.y, team);
             f.netId = 'bot' + i;
             f.name = b.name || f.name;
             this.fighters.push(f);
@@ -392,6 +410,7 @@ const Game = {
         if (inp.q) { inp.q = false; f.castQ(inp.aim); }
         if (inp.e) { inp.e = false; f.castE(inp.aim); }
         if (inp.r) { inp.r = false; f.castR(inp.aim); }
+        if (inp.f) { inp.f = false; f.activateFury(); }
         if (inp.atk && !f.dead) f.tryAttack(inp.aim);
         if (inp.mag > 0.04 && !f.dead) f.move(dt, inp.mvx * inp.mag, inp.mvy * inp.mag);
     },
@@ -501,7 +520,7 @@ const Game = {
     makeFighter(heroId, x, y, team, isBot) {
         const f = new Fighter(heroId, x, y, team, isBot);
         // ánh xạ sprite
-        const sheetMap = { binhan: null, binhan2: null, binhminh: 'boxer', khaikiet: 'girl', annie: 'monk' };
+        const sheetMap = { binhan: null, binhan2: null, binhminh: 'boxer', annie: 'monk' };
         f.sheetKey = sheetMap[heroId] || '';
         f.sheetScale = f.sheetKey ? ({ boxer: 0.30, girl: 0.30, monk: 0.30 })[f.sheetKey] : 0;
         f.isPlayer = !isBot;
@@ -607,6 +626,7 @@ const Game = {
             if (Input.pressed('KeyQ')) P.castQ(P.aim);
             if (Input.pressed('KeyE')) P.castE(P.aim);
             if (Input.pressed('KeyR')) P.castR(P.aim);
+            if (Input.pressed('KeyF')) P.activateFury();
             const Bs = Input.btns;
             if (Bs.Q.down) { P.castQ(P.aim); Bs.Q.down = false; Bs.Q.id = -1; }
             if (Bs.E.down) { P.castE(P.aim); Bs.E.down = false; Bs.E.id = -1; }
@@ -666,7 +686,7 @@ const Game = {
         this._spawnT -= dt;
         const aliveMons = this.monsters.length;
         if (this._spawnT <= 0) {
-            this._spawnT = 9;
+            this._spawnT = 13;
             const cap = (this.mode === 'pvp' || this.mode === 'online') ? 16 : 14;
             if (aliveMons < cap) {
                 const a = U.rand(0, U.TAU), r = U.rand(200, Storm.enabled ? Storm.r * 0.8 : 900);
@@ -685,7 +705,7 @@ const Game = {
             }
         } else {
             this._waveT += dt;
-            if (this._waveT > 55) {
+            if (this._waveT > 80) {
                 this._waveT = 0;
                 // chỉ thêm đợt mới khi chưa vượt trần
                 if (this.monsters.length < 14) {
@@ -727,6 +747,37 @@ const Game = {
             } else {
                 const alive = this.fighters.filter(f => !f.dead);
                 if (alive.length === 1 && alive[0] === this.player) this.end(true);
+            }
+        } else if (this.mode === 'team5') {
+            // TEAM 5v5: hồi sinh 10s, thắng khi đội mình đạt 15 hạ gục trước
+            const tk = t => this.fighters.filter(f => f.team === t).reduce((s, f) => s + (f.killCount || 0), 0);
+            this.teamScore = [tk(0), tk(1)];
+            if (!this._ended) {
+                if (tk(0) >= 15 || tk(1) >= 15) {
+                    this.killRank = tk(0) >= 15 ? 1 : 2;
+                    this.end(tk(0) >= 15);
+                } else if (this.time > 900) {
+                    this.killRank = tk(0) > tk(1) ? 1 : 2;
+                    this.end(tk(0) > tk(1));
+                }
+            }
+            for (const f of this.fighters) {
+                if (f.dead) {
+                    if (f._respT === undefined) f._respT = 10;
+                    f._respT -= dt;
+                    if (f._respT <= 0) {
+                        f._respT = undefined;
+                        f.dead = false; f.hp = f.maxHp; f.z = 0; f.vz = 0;
+                        f.slowT = f.rootT = f.stunT = f.knockT = 0;
+                        f.cdQ = f.cdE = f.cdR = 0; f.atkCd = 0;
+                        f.invulnT = 2.5; f.dashT = 0; f.channelKind = ''; f.spinT = 0;
+                        f.x = this._teamBase[f.team].x + U.rand(-90, 90);
+                        f.y = this._teamBase[f.team].y + U.rand(-90, 90);
+                        World.clampEnt(f);
+                        FX.ring(f.x, f.y, 8, 70, f.def.color, 0.6, 5);
+                        if (f === this.player) { this.banner('TRỞ LẠI TRẬN!', '#9ae06a'); Sfx.go(); }
+                    }
+                }
             }
         } else if (this.player.dead) {
             // Training: hồi sinh sau 3 giây
@@ -869,6 +920,7 @@ const Game = {
         if (Input.pressed('KeyQ')) this._npQ = true;
         if (Input.pressed('KeyE')) this._npE = true;
         if (Input.pressed('KeyR')) this._npR = true;
+        if (Input.pressed('KeyF')) this._npF = true;
         const Bs0 = Input.btns;
         if (Bs0.Q.down) { this._npQ = true; Bs0.Q.down = false; Bs0.Q.id = -1; }
         if (Bs0.E.down) { this._npE = true; Bs0.E.down = false; Bs0.E.id = -1; }
@@ -902,8 +954,8 @@ const Game = {
                 aim = U.angleTo(P.x, P.y, mw.x, mw.y);
             }
         }
-        const q = !!this._npQ, e = !!this._npE, r = !!this._npR;
-        this._npQ = this._npE = this._npR = false;
+        const q = !!this._npQ, e = !!this._npE, r = !!this._npR, fu = !!this._npF;
+        this._npQ = this._npE = this._npR = this._npF = false;
         const mv = Input.moveVec();
         Net.sendInput({
             mvx: Math.round(mv.x * 100) / 100,
@@ -911,7 +963,7 @@ const Game = {
             mag: Math.round(mv.mag * 100) / 100,
             aim: Math.round(aim * 1000) / 1000,
             atk: Input.wantAttack() ? 1 : 0,
-            q: q ? 1 : 0, e: e ? 1 : 0, r: r ? 1 : 0,
+            q: q ? 1 : 0, e: e ? 1 : 0, r: r ? 1 : 0, f: fu ? 1 : 0,
         });
     },
 
@@ -1034,11 +1086,27 @@ function render(dt) {
     FX.drawDecals(ctx);
     FX.drawAmbient(ctx, view, Game.time);
 
-    // thực thể: quái + fighters theo y
+    // thực thể: quái + fighters theo y (chỉ hiện kẻ địch trong TẦM NHÌN)
+    const me = Game.player;
+    const canSee = (e) => {
+        if (!me || me.dead) return true;
+        const d = U.dist(me.x, me.y, e.x, e.y);
+        if (d < 230) return true;
+        if (d > 640) return false;
+        return !World.losBlocked(me.x, me.y, e.x, e.y);
+    };
     const ents = [];
-    for (const m of Game.monsters) if (m.x > view.x0 && m.x < view.x1 && m.y > view.y0 - 60 && m.y < view.y1 + 60) ents.push(m);
-    for (const f of Game.fighters) if (!f.dead && f.x > view.x0 && f.x < view.x1 && f.y > view.y0 - 60 && f.y < view.y1 + 60) ents.push(f);
-    for (const f of Game.fighters) if (f.dead) ents.push(f); // hồn mờ?
+    for (const m of Game.monsters) {
+        if (m.x < view.x0 || m.x > view.x1 || m.y < view.y0 - 60 || m.y > view.y1 + 60) continue;
+        if (canSee(m)) ents.push(m);
+    }
+    for (const f of Game.fighters) {
+        if (f.dead) { ents.push(f); continue; } // hồn mờ
+        if (f.x < view.x0 || f.x > view.x1 || f.y < view.y0 - 60 || f.y > view.y1 + 60) continue;
+        // đồng đội luôn thấy; địch phải trong tầm nhìn & không bị tường che
+        if (me && !me.dead && f.team !== me.team && f !== me) { if (!canSee(f)) continue; }
+        ents.push(f);
+    }
     ents.sort((a, b) => a.y - b.y);
     for (const e of ents) e.draw(ctx);
 
@@ -1049,6 +1117,15 @@ function render(dt) {
     Storm.draw(ctx, view);
     Storm.drawWind(ctx, view, Game.time);
     FX.drawWorld(ctx);
+    // sương mù chiến trường: hạn chế tầm nhìn quanh người chơi
+    if (me && !me.dead && Game.state === 'playing') {
+        const R = 640;
+        const fog = ctx.createRadialGradient(me.x, me.y, R * 0.5, me.x, me.y, R);
+        fog.addColorStop(0, 'rgba(10,7,14,0)');
+        fog.addColorStop(1, 'rgba(10,7,14,0.62)');
+        ctx.fillStyle = fog;
+        ctx.fillRect(view.x0, view.y0, view.x1 - view.x0, view.y1 - view.y0);
+    }
     ctx.restore();
 
     // hiệu ứng màn hình
@@ -1126,6 +1203,10 @@ function drawHUD(ctx, dt) {
     if (Game.mode === 'training') {
         ctx.fillStyle = '#9ae06a';
         ctx.fillText('TRAINING — bấm ESC để về menu', W / 2, 70);
+    } else if (Game.mode === 'team5') {
+        const s0 = Game.teamScore ? Game.teamScore[0] : 0, s1 = Game.teamScore ? Game.teamScore[1] : 0;
+        ctx.fillStyle = '#7fe3ff';
+        ctx.fillText('TEAM 5v5 — XANH ' + s0 + ' : ' + s1 + ' ĐỎ  (15 hạ gục thắng)', W / 2, 70);
     } else if (onlineMode) {
         ctx.fillStyle = '#7fe3ff';
         ctx.fillText('🌐 ONLINE · PHÒNG ' + (Net.code || '----') + ' · ' + Net.latency + 'ms' +
@@ -1293,6 +1374,26 @@ function drawHUD(ctx, dt) {
     if (xf > 0.03 && shine < hbW * xf) {
         ctx.fillStyle = 'rgba(255,255,255,0.4)';
         ctx.fillRect(hbX + shine - 6, hbY + 13, 6, 5);
+    }
+    // NỘ (thanh linh thú)
+    const ff = U.clamp((P.fury || 0) / 100, 0, 1);
+    const ny = hbY + 21;
+    ctx.fillStyle = 'rgba(255,255,255,0.09)';
+    roundRect(ctx, hbX, ny, hbW, 5, 3); ctx.fill();
+    if (ff > 0.003) {
+        const fg2 = ctx.createLinearGradient(hbX, 0, hbX + hbW, 0);
+        fg2.addColorStop(0, '#ff7a1a'); fg2.addColorStop(0.7, '#ffb347'); fg2.addColorStop(1, '#ffe38a');
+        ctx.fillStyle = fg2;
+        roundRect(ctx, hbX, ny, hbW * ff, 5, 3); ctx.fill();
+    }
+    ctx.textAlign = 'left';
+    if (P.mountT > 0) {
+        ctx.fillStyle = '#ffb347'; ctx.font = '700 10px system-ui';
+        ctx.fillText('🔥 NỘ · LINH THÚ ' + Math.ceil(P.mountT) + 's', hbX + hbW + 6, ny + 5);
+    } else if (ff >= 1) {
+        const pulse = 0.55 + 0.45 * Math.sin(performance.now() / 140);
+        ctx.fillStyle = 'rgba(255,179,71,' + pulse.toFixed(2) + ')'; ctx.font = '800 10px system-ui';
+        ctx.fillText('F — CƯỠI LINH THÚ!', hbX + hbW + 6, ny + 5);
     }
 
     ctx.restore();
@@ -1553,7 +1654,7 @@ function roundRect(ctx, x, y, w, h, r) {
                 tmp.drawFallback(c2);
                 c2.restore();
             } else {
-                const sk = { binhminh: 'boxer', khaikiet: 'girl', annie: 'monk' }[heroId];
+                const sk = { binhminh: 'boxer', annie: 'monk' }[heroId];
                 if (sk) {
                     const set = SPR.ANIM[sk];
                     const sc = { boxer: 0.44, girl: 0.42, monk: 0.42 }[heroId];
@@ -1580,7 +1681,7 @@ function roundRect(ctx, x, y, w, h, r) {
     function buildMenuCards() {
         const grid = document.getElementById('heroGrid');
         grid.innerHTML = '';
-        for (const id of ['binhan', 'binhminh', 'khaikiet', 'annie', 'quan', 'nhathuy', 'truongan', 'dat', 'leanh']) {
+        for (const id of ['binhan', 'binhminh', 'annie', 'quan', 'nhathuy', 'truongan', 'dat', 'leanh']) {
             const d = HEROES[id];
             const card = document.createElement('div');
             card.className = 'heroCard' + (d.locked ? ' locked' : '') + (id === Game.selectedHero ? ' sel' : '');

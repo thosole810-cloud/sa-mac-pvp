@@ -6,6 +6,7 @@
 const World = {
     size: 3000,
     solids: [],   // {x,y,r,kind,tall} — chặn di chuyển & đạn: rock, cactus, tree
+    walls: [],    // {x,y,w,h,seed} — tường sa mạc chia lane, chặn di chuyển & TẦM NHÌN
     props: [],    // trang trí không chặn: bone, pebble, crack, shrub
     _pat: null, _patCv: null,
 
@@ -16,8 +17,26 @@ const World = {
         const rand = (a, b) => a + rnd() * (b - a);
         const chance = p => rnd() < p;
 
-        this.solids.length = 0; this.props.length = 0;
+        this.solids.length = 0; this.props.length = 0; this.walls.length = 0;
         const S = this.size, n = 120;
+        // ---- TƯỜNG SA MẠC chia lane: vành quanh trung tâm + 4 khối góc ----
+        const L = S * 0.26, R = S * 0.74, T = S * 0.26, B = S * 0.74, M = S * 0.5;
+        const gapW = 150; // lối đi giữa các tường
+        const mkWall = (x, y, w, h) => this.walls.push({ x, y, w, h, seed: rnd() });
+        const segWithGap = (a, b) => {
+            const gl = rand(a + 70, b - 70 - gapW);
+            return [[a, gl], [gl + gapW, b]];
+        };
+        for (const y of [T, B]) for (const [a, b] of segWithGap(L, R)) mkWall(a, y, b - a, 44);
+        for (const x of [L, R]) for (const [a, b] of segWithGap(T, B)) mkWall(x, a, 44, b - a);
+        // khối tường góc tư phần (tạo góc khuất, cản tầm nhìn)
+        for (let q = 0; q < 4; q++) {
+            const qx = q % 2, qy = (q / 2) | 0;
+            const x0 = qx ? M + 170 : 120, x1 = qx ? S - 120 : M - 170;
+            const y0 = qy ? M + 170 : 120, y1 = qy ? M - 170 : S - 120;
+            const bw = rand(170, 330), bh = rand(170, 330);
+            mkWall(rand(x0, Math.max(x0 + 10, x1 - bw)), rand(y0, Math.max(y0 + 10, y1 - bh)), bw, bh);
+        }
         const placed = [];
         // chướng ngại vật có va chạm
         let tries = 0;
@@ -30,6 +49,9 @@ const World = {
             for (const o of placed) {
                 const minD = o.r + r + 70;
                 if (U.dist(x, y, o.x, o.y) < minD) { ok = false; break; }
+            }
+            if (ok) for (const w of this.walls) {
+                if (x > w.x - r - 50 && x < w.x + w.w + r + 50 && y > w.y - r - 50 && y < w.y + w.h + r + 50) { ok = false; break; }
             }
             if (!ok) continue;
             // tránh giữa map (khu spawn an toàn)
@@ -49,11 +71,27 @@ const World = {
         }
     },
 
-    // đẩy một vòng tròn ra khỏi chướng ngại + biên
+    // đẩy một vòng tròn ra khỏi tường + chướng ngại + biên
     clampEnt(e) {
         const S = this.size;
         e.x = U.clamp(e.x, e.r + 8, S - e.r - 8);
         e.y = U.clamp(e.y, e.r + 8, S - e.r - 8);
+        // tường (hình chữ nhật)
+        for (const w of this.walls) {
+            const cx = U.clamp(e.x, w.x, w.x + w.w), cy = U.clamp(e.y, w.y, w.y + w.h);
+            const dx = e.x - cx, dy = e.y - cy, d2 = dx * dx + dy * dy;
+            if (d2 < e.r * e.r) {
+                if (d2 < 0.0001) { // ở trong tường: đẩy ra cạnh gần nhất
+                    const dl = e.x - w.x, dr = w.x + w.w - e.x, du = e.y - w.y, db = w.y + w.h - e.y;
+                    const m = Math.min(dl, dr, du, db);
+                    if (m === dl) e.x = w.x - e.r; else if (m === dr) e.x = w.x + w.w + e.r;
+                    else if (m === du) e.y = w.y - e.r; else e.y = w.y + w.h + e.r;
+                } else {
+                    const d = Math.sqrt(d2);
+                    e.x = cx + dx / d * e.r; e.y = cy + dy / d * e.r;
+                }
+            }
+        }
         for (const o of this.solids) {
             const d = U.dist(e.x, e.y, o.x, o.y);
             const min = e.r + o.r;
@@ -65,8 +103,16 @@ const World = {
         }
     },
 
-    // đạn bay qua đá/tr réal bị chặn? — đá & cây chặn, xương rồng cho xuyên
+    // đạn bay qua đá/tr réal bị chặn? — đá & cây & TƯỜNG chặn, xương rồng cho xuyên
     blockedSegment(x1, y1, x2, y2) {
+        // quét dọc đoạn, kiểm tra tường
+        const L = U.dist(x1, y1, x2, y2), NS = Math.max(4, Math.ceil(L / 12));
+        for (let i = 0; i <= NS; i++) {
+            const t = i / NS, px = x1 + (x2 - x1) * t, py = y1 + (y2 - y1) * t;
+            for (const w of this.walls) {
+                if (px > w.x - 2 && px < w.x + w.w + 2 && py > w.y - 2 && py < w.y + w.h + 2) return { x: px, y: py };
+            }
+        }
         for (const o of this.solids) {
             if (o.kind === 'cactus') continue;
             // khoảng cách đoạn-điểm
@@ -78,6 +124,18 @@ const World = {
             if (U.dist2(px, py, o.x, o.y) < o.r * o.r) return { x: px, y: py };
         }
         return null;
+    },
+
+    // tầm nhìn bị tường chặn? (dùng để ẩn kẻ địch sau tường + sương mù)
+    losBlocked(x1, y1, x2, y2) {
+        const L = U.dist(x1, y1, x2, y2), NS = Math.max(4, Math.ceil(L / 16));
+        for (let i = 0; i <= NS; i++) {
+            const t = i / NS, px = x1 + (x2 - x1) * t, py = y1 + (y2 - y1) * t;
+            for (const w of this.walls) {
+                if (px > w.x && px < w.x + w.w && py > w.y && py < w.y + w.h) return true;
+            }
+        }
+        return false;
     },
 
     makePattern() {
@@ -123,6 +181,38 @@ const World = {
 
     // vẽ các chướng ngại & trang trí trong khung nhìn
     drawProps(ctx, view, time) {
+        // ---- TƯỜNG SA MẠC: khối đá cát lớn, có mặt trên sáng + vết nứt ----
+        for (const w of this.walls) {
+            if (w.x > view.x1 || w.x + w.w < view.x0 || w.y > view.y1 || w.y + w.h < view.y0) continue;
+            const sh = 16; // cao giả lập 2.5D
+            // bóng đổ
+            ctx.fillStyle = 'rgba(20,14,6,0.35)';
+            ctx.fillRect(w.x + 5, w.y + w.h + 3, w.w, 9);
+            // thân tường
+            const gr = ctx.createLinearGradient(0, w.y - sh, 0, w.y + w.h);
+            gr.addColorStop(0, '#b39064'); gr.addColorStop(0.25, '#9a7850'); gr.addColorStop(1, '#6e5433');
+            ctx.fillStyle = gr;
+            ctx.fillRect(w.x, w.y - sh, w.w, w.h + sh);
+            // mặt trên (nắng chiếu)
+            ctx.fillStyle = 'rgba(240,214,160,0.38)';
+            ctx.fillRect(w.x, w.y - sh, w.w, 9);
+            // gờ đá theo texture
+            ctx.strokeStyle = 'rgba(70,50,26,0.35)'; ctx.lineWidth = 1.4;
+            const step = 46;
+            for (let gx = w.x + step; gx < w.x + w.w - 6; gx += step) {
+                ctx.beginPath(); ctx.moveTo(gx, w.y - sh + 9);
+                ctx.lineTo(gx + (Math.sin(gx * 12.9898 + w.seed * 7) * 5), w.y + w.h);
+                ctx.stroke();
+            }
+            for (let gy = w.y + 34; gy < w.y + w.h - 8; gy += 34) {
+                ctx.beginPath(); ctx.moveTo(w.x, gy);
+                ctx.lineTo(w.x + w.w, gy + Math.sin(gy * 7.7 + w.seed * 3) * 3);
+                ctx.stroke();
+            }
+            // viền sáng mép
+            ctx.strokeStyle = 'rgba(255,232,180,0.25)'; ctx.lineWidth = 1.2;
+            ctx.strokeRect(w.x + 0.6, w.y - sh + 0.6, w.w - 1.2, w.h + sh - 1.2);
+        }
         // trang trí trước (nằm dưới)
         for (const p of this.props) {
             if (p.x < view.x0 - 40 || p.x > view.x1 + 40 || p.y < view.y0 - 40 || p.y > view.y1 + 40) continue;
@@ -250,11 +340,11 @@ const Storm = {
     oldR: 1050, oldX: 1500, oldY: 1500, dstR: 1050, dstX: 1500, dstY: 1500,
     dps: 2, enabled: true,
     PHASES: [
-        { wait: 24, dura: 20, to: 640, dps: 3 },
-        { wait: 20, dura: 17, to: 380, dps: 4 },
-        { wait: 17, dura: 16, to: 215, dps: 7 },
-        { wait: 14, dura: 14, to: 100, dps: 10 },
-        { wait: 13, dura: 14, to: 34,  dps: 14 },
+        { wait: 40, dura: 26, to: 640, dps: 3 },
+        { wait: 34, dura: 22, to: 380, dps: 4 },
+        { wait: 30, dura: 20, to: 215, dps: 7 },
+        { wait: 26, dura: 18, to: 100, dps: 10 },
+        { wait: 24, dura: 16, to: 34,  dps: 14 },
     ],
     reset(enabled) {
         this.enabled = enabled;
@@ -304,7 +394,7 @@ const Storm = {
                 // giữ đích đã chọn
             } else if (this.t <= 0) {
                 // đã ở cuối → tiếp tục chờ chậm
-                this.t = 30;
+                this.t = 45;
             }
         }
     },

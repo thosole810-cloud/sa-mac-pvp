@@ -186,7 +186,7 @@ const Net = {
                     this.remotes[m.id] = {
                         mvx: +d.mvx || 0, mvy: +d.mvy || 0, mag: U.clamp(+d.mag || 0, 0, 1),
                         aim: +d.aim || 0, atk: d.atk ? 1 : 0,
-                        q: !!d.q || !!prev.q, e: !!d.e || !!prev.e, r: !!d.r || !!prev.r,
+                        q: !!d.q || !!prev.q, e: !!d.e || !!prev.e, r: !!d.r || !!prev.r, f: !!d.f || !!prev.f,
                     };
                     this.remoteSeen[m.id] = Date.now();
                 }
